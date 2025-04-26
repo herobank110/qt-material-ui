@@ -1,3 +1,9 @@
+name: Build and release
+
+on:
+  release:
+    types: [published]
+
 jobs:
   release-build:
     runs-on: ubuntu-latest
@@ -27,6 +33,10 @@ jobs:
       - release-build
     permissions:
       id-token: write
+    environment:
+      name: pypi
+      # OPTIONAL: uncomment and update to include your PyPI project URL in the deployment status:
+      # url: https://pypi.org/p/qt-material
 
     steps:
       - name: Retrieve release distributions
