@@ -15,13 +15,13 @@ def main() -> None:
 
     headline_label = Typography(
         text="Overview",
-        type_scale="display-medium",
+        typescale="display",
     )
     vbox.addWidget(headline_label)
 
     description_label = Typography(
         text="Material 3 component library for Qt Widgets",
-        type_scale="title-medium",
+        typescale="title",
     )
     vbox.addWidget(description_label)
 
