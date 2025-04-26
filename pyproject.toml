@@ -4,16 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "qt-material-ui"
-version = "0.1.0"
+version = "0.1.1"
 description = "Material 3 component library for Qt Widgets"
 requires-python = ">=3.10"
 dependencies = [
     "QtPy==2.4.*"
 ]
 readme = "README.md"
-authors = [
-    { name = "David Kanekanian", email = "dkanekanian1@gmail.com" },
-]
 license = "MIT"
 license-files = ["LICENSE"]
 classifiers = [
@@ -28,6 +25,7 @@ dev = [
 
 [project.urls]
 Repository = "https://github.com/herobank110/qt-material-ui"
+Documentation = "https://qt-material-ui.readthedocs.io"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/material_ui"]
