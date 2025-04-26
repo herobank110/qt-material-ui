@@ -8,6 +8,7 @@ version = "0.1.0"
 description = "Material 3 component library for Qt Widgets"
 requires-python = ">=3.10"
 dependencies = [
+    "QtPy==2.4.*"
 ]
 readme = "README.md"
 authors = [
