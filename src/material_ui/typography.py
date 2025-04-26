@@ -1,6 +1,6 @@
 """Typography module."""
 
-from material_ui._widget import Widget
+from material_ui._component import Component
 from qtpy.QtWidgets import QLabel
 from typing import Literal
 
@@ -29,7 +29,7 @@ Typescale = Literal[
 ]
 
 
-class Typography(Widget):
+class Typography(Component):
     """Typography helps make writing legible and beautiful."""
 
     def __init__(self, *, text: str = "", typescale: Typescale = "body") -> None:

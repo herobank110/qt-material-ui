@@ -3,7 +3,7 @@
 from qtpy import QtWidgets
 
 
-class Widget(QtWidgets.QWidget):
+class Component(QtWidgets.QWidget):
     """Base class for all widgets."""
 
     def __init__(self, *args, **kwargs) -> None:
