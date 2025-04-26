@@ -27,3 +27,6 @@ dev = [
 
 [project.urls]
 Repository = "https://github.com/herobank110/qt-material-ui"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/material_ui"]
