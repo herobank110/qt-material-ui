@@ -233,18 +233,6 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(widget)
 
-    # def add_state(self, default_value: _T) -> Variable[_T]:
-    #     """Add a state to the component.
-
-    #     Args:
-    #         value: The value of the state.
-
-    #     Returns:
-    #         The variable object.
-    #     """
-    #     var = Variable(default_value)
-    #     return var
-
     @effect(sx)
     def _apply_sx(self):
         """Apply the sx property to the widget."""
