@@ -71,8 +71,13 @@ def _find_signal_annotations(attrs: dict[str, Any]) -> dict[str, int]:
     """
     ret_val = {}
     for key, value in attrs.get("__annotations__", {}).items():
-        value = getattr(value, "__origin__", value)
-        if value and issubclass(value, Signal):
+        # Value is a Signal type hint, so need to get the actual type
+        # out of it. This is needed for signals with no arguments, since
+        # it's invalid syntax to write `Signal[]` with no arguments to
+        # the square brackets. However this means the value is the
+        # actual type not a _GenericAlias, so use it as the default arg.
+        underlying_value = getattr(value, "__origin__", value)
+        if underlying_value and issubclass(underlying_value, Signal):
             num_args = len(get_args(value))
             ret_val[key] = num_args
     return ret_val
