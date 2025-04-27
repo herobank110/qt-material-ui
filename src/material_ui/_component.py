@@ -1,5 +1,6 @@
 """Internal widgets common functionality and helpers for Qt Widgets."""
 
+from dataclasses import dataclass
 from typing import (
     Any,
     Callable,
@@ -103,25 +104,11 @@ class _ComponentMeta(type(QtCore.QObject)):
         return super().__new__(cls, name, bases, attrs)
 
 
-def effect(*dependencies: Variable[Any]):
-    """Decorator to mark a method as an effect.
-
-    Args:
-        dependencies: List of dependencies for the effect.
-    """
-
-    def decorator(func: Callable) -> Callable:
-        func._dependencies = dependencies
-        return func
-
-    return decorator
-
-
+@dataclass
 class _VariableMarker:
     """Marker to hold the default value on class variable."""
 
-    def __init__(self, default_value: Any) -> None:
-        self.default_value = default_value
+    default_value: Any
 
 
 def use_state(default_value: _T) -> Variable[_T]:
@@ -136,6 +123,64 @@ def use_state(default_value: _T) -> Variable[_T]:
     return _VariableMarker(default_value)
 
 
+def _find_variable_markers(obj: object) -> dict[str, _VariableMarker]:
+    """Find instances of use_state in the class.
+
+    Args:
+        obj: The object to search.
+
+    Returns:
+        Dictionary of variable name and variable marker.
+    """
+    ret_val: dict[str, _VariableMarker] = {}
+    for name in dir(obj):
+        value = getattr(obj, name)
+        if isinstance(value, _VariableMarker):
+            ret_val[name] = value
+    return ret_val
+
+
+@dataclass
+class _EffectMarker:
+    """Marker to hold the dependencies of an effect."""
+
+    dependencies: list[_VariableMarker]
+
+
+_EFFECT_MARKER_KEY = "__effect_marker__"
+
+
+def effect(*dependencies: Variable[Any]):
+    """Decorator to mark a method as an effect.
+
+    Args:
+        dependencies: List of dependencies for the effect.
+    """
+
+    def decorator(func: Callable) -> Callable:
+        setattr(func, _EFFECT_MARKER_KEY, _EffectMarker(list(dependencies)))
+        return func
+
+    return decorator
+
+
+def _find_effect_markers(obj: object) -> dict[str, _EffectMarker]:
+    """Find instances of effect in the class.
+
+    Args:
+        obj: The object to search.
+
+    Returns:
+        Dictionary of effect name and effect marker.
+    """
+    ret_val: dict[str, _EffectMarker] = {}
+    for name in dir(obj):
+        value = getattr(obj, name)
+        if marker := getattr(value, _EFFECT_MARKER_KEY, None):
+            ret_val[name] = marker
+    return ret_val
+
+
 class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
     """Base class for all widgets."""
 
@@ -143,21 +188,50 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
 
     def __init__(self) -> None:
         super().__init__()
-        # Convert all class variables marked with use_state to Variable
-        # objects.
-        for name in dir(self):
-            value = getattr(self, name)
-            if isinstance(value, _VariableMarker):
-                variable = Variable(value.default_value, name, type(self).__name__)
-                variable.setParent(self)
-                setattr(self, name, variable)
+
+        # Find markers before they're replaced with actual instances.
+        variable_markers = _find_variable_markers(self)
+
+        # Create Variable instances from class variables.
+        for name, marker in variable_markers.items():
+            variable = Variable(marker.default_value, name, type(self).__name__)
+            variable.setParent(self)
+            setattr(self, name, variable)
+
+        self.__bind_effects()
 
         # Make qt stylesheets work properly!
         self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
 
         # self.sx = self.add_state({})
-        self.sx.changed.connect(lambda x: print('mytest', x, self))
+        self.sx.changed.connect(lambda x: print("mytest", x, self))
         self.sx.set({"a": 1})
+
+    def __bind_effects(self, variable_markers: ) -> None:
+        """Bind effects to the newly created variables."""
+        for name, marker in _find_effect_markers(self).items():
+            # Get the function object from the class.
+            func = getattr(self, name)
+            for dependency in marker.dependencies:
+                # Find the corresponding variable object.
+                variable_name = next(
+                    (
+                        name
+                        for name, marker in variable_markers.items()
+                        if marker is dependency
+                    ),
+                    None,
+                )
+                if variable_name is None:
+                    raise RuntimeError(
+                        f"Failed to find one or more dependencies for effect '{name}'"
+                    )
+                variable = getattr(self, variable_name)
+                if not isinstance(variable, Variable):
+                    raise RuntimeError(
+                        f"Effect dependencies can only be Variables, not {type(variable).__name__} (effect '{name}')"
+                    )
+                variable.changed.connect(func)
 
     def overlay_widget(self, widget: QtWidgets.QWidget) -> None:
         """Overlay a widget on top of this widget.
