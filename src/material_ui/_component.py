@@ -1,6 +1,6 @@
 """Internal widgets common functionality and helpers for Qt Widgets."""
 
-from typing import Any, Callable, Generic, TypeVarTuple, Unpack, get_args
+from typing import Any, Callable, Generic, TypeVar, TypeVarTuple, Unpack, get_args
 from qtpy import QtCore, QtWidgets
 
 
@@ -18,6 +18,39 @@ class Signal(Generic[Unpack[_Ts]]):
     def connect(self, slot: Callable[[Unpack[_Ts]], None]) -> None: ...
     def disconnect(self, slot: Callable[[Unpack[_Ts]], None]) -> None: ...
     def emit(self, *args: Unpack[_Ts]) -> None: ...
+
+
+_T = TypeVar("_T")
+
+
+class Variable(Generic[_T]):
+    """Type safe property wrapper object.
+
+    Creates a Qt property with a getter and setter and changed signal.
+
+    Also used for one-way data binding and defined dependencies between
+    variables.
+    """
+
+    changed: Signal[_T]
+
+    def __init__(self, default_value: _T) -> None:
+        self._value = default_value
+        self._default_value = default_value
+
+    def bind(self, other: "Variable[_T]") -> None:
+        """Bind this variable to another variable."""
+        self.changed.connect(other.set)
+
+    def set(self, value: _T) -> None:
+        """Set the value of the variable."""
+        if self._value != value:
+            self._value = value
+            self.changed.emit(value)
+
+    def get(self) -> _T:
+        """Get the value of the variable."""
+        return self._value
 
 
 def _find_signal_annotations(attrs: dict[str, Any]) -> dict[str, int]:
@@ -74,3 +107,15 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
         layout.setSpacing(0)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(widget)
+
+    def add_state(self, default_value: _T) -> Variable[_T]:
+        """Add a state to the component.
+
+        Args:
+            value: The value of the state.
+
+        Returns:
+            The variable object.
+        """
+        var = Variable(default_value)
+        return var
