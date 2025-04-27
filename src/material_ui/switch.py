@@ -24,13 +24,13 @@ class Switch(Component):
 
         self.setFixedSize(52 + 8, 32 + 8)
 
-        ripple = QtWidgets.QWidget()
-        ripple.setParent(self)
-        ripple.setStyleSheet(
+        self._ripple = QtWidgets.QWidget()
+        self._ripple.setParent(self)
+        self._ripple.setStyleSheet(
             f"background:{state_layer_color};border-radius:20px;border:none;margin:0px;"
         )
-        ripple.setGeometry(QtCore.QRect(52 - (32 - 8) - 8, 0, 32 + 8, 32 + 8))
-        # ripple.setVisible(False)
+        self._ripple.setGeometry(QtCore.QRect(52 - (32 - 8) - 8, 0, 32 + 8, 32 + 8))
+        # self._ripple.setVisible(False)
 
         handle = QtWidgets.QWidget()
         handle.setParent(self)
@@ -38,6 +38,11 @@ class Switch(Component):
             f"background:{md_comp_switch_selected_handle_color};border:none;border-radius:14px;margin:0px;"
         )
         handle.setGeometry(QtCore.QRect(52 - 28 - 2 + 4, 2 + 4, 28, 28))
+
+        # Set the internal selected state but use the change_requested
+        # signal as source of truth, so using it as a 'controlled' input
+        # the parent component can hook into into to set its bound state.
+        self.change_requested.connect(self.selected.set)
 
         # graphics_scene = QtWidgets.QGraphicsScene()
         # graphics_scene.setSceneRect(self.rect())
@@ -63,12 +68,6 @@ class Switch(Component):
         # graphics_view.setScene(graphics_scene)
         # graphics_view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
 
-    def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
-        if event.button() == QtCore.Qt.LeftButton:
-            # Toggle the checked state
-            self.selected.set(not self.selected.get())
-        return super().mousePressEvent(event)
-
     @effect(selected)
     def _apply_style(self) -> None:
         """Apply the style based on the selected state."""
@@ -92,3 +91,27 @@ class Switch(Component):
             }
         )
         self.sx.set(style)
+
+    @effect(pressed, hovered)
+    def _show_hide_ripple(self) -> None:
+        self._ripple.setVisible(self.pressed.get() or self.hovered.get())
+
+    def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
+        if event.button() == QtCore.Qt.LeftButton:
+            self.pressed.set(True)
+        return super().mousePressEvent(event)
+
+    def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
+        if event.button() == QtCore.Qt.LeftButton:
+            self.pressed.set(False)
+            # self.selected.set(not self.selected.get())
+            self.change_requested.emit(not self.selected.get())
+        return super().mouseReleaseEvent(event)
+
+    def enterEvent(self, event: QtGui.QEnterEvent) -> None:  # noqa: N802
+        self.hovered.set(True)
+        return super().enterEvent(event)
+
+    def leaveEvent(self, event: QtCore.QEvent) -> None:  # noqa: N802
+        self.hovered.set(False)
+        return super().leaveEvent(event)
