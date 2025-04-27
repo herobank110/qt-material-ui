@@ -1,6 +1,6 @@
 """Internal widgets common functionality and helpers for Qt Widgets."""
 
-from typing import Callable, Generic, TypeVarTuple, Unpack, get_args
+from typing import Any, Callable, Generic, TypeVarTuple, Unpack, get_args
 from qtpy import QtCore, QtWidgets
 
 
@@ -20,19 +20,37 @@ class Signal(Generic[Unpack[_Ts]]):
     def emit(self, *args: Unpack[_Ts]) -> None: ...
 
 
+def _find_signal_annotations(attrs: dict[str, Any]) -> dict[str, int]:
+    """Find all signal annotations in the class attributes.
+
+    Args:
+        attrs: Class attributes dictionary.
+
+    Returns:
+        Dictionary of signal name and number of arguments.
+    """
+    ret_val = {}
+    for key, value in attrs.get("__annotations__", {}).items():
+        value = getattr(value, "__origin__", value)
+        if value and issubclass(value, Signal):
+            num_args = len(get_args(value))
+            ret_val[key] = num_args
+    return ret_val
+
+
 class _ComponentMeta(type(QtCore.QObject)):
     """Meta class for all widgets."""
 
     def __new__(cls, name: str, bases: tuple, attrs: dict) -> type:
         # Convert Signal annotations to actual Qt Signal objects.
-        for key, value in attrs.get("__annotations__", {}).items():
-            value = getattr(value, "__origin__", value)
-            if value and issubclass(value, Signal):
-                num_args = len(get_args(value))
-                # Use QVariant to avoid runtime type checking by Qt.
-                # Can't remember exact examples but it can fail for
-                # certain types.
-                attrs[key] = QtCore.Signal(*["QVariant"] * num_args)
+        # Use QVariant to avoid runtime type checking by Qt. Can't
+        # remember exact examples but it can fail for certain types.
+        attrs.update(
+            {
+                key: QtCore.Signal(*["QVariant"] * num_args)
+                for key, num_args in _find_signal_annotations(attrs).items()
+            }
+        )
         return super().__new__(cls, name, bases, attrs)
 
 
