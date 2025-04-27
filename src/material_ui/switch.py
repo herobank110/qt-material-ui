@@ -14,4 +14,4 @@ class Switch(Component):
 
         self.setFixedSize(52, 32)
 
-        self.setStyleSheet("background-color: red;")
+        self.setStyleSheet("background-color:red;border-radius:16px;")
