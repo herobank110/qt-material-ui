@@ -29,16 +29,16 @@ class Switch(Component):
     @effect(selected)
     def _apply_style(self) -> None:
         """Apply the style based on the selected state."""
-        base = {
+        style = {
             "background-color": md_comp_switch_unselected_track_color,
             "border-radius": "16px",
             "border": f"2px solid {md_comp_switch_unselected_track_outline_color}",
         }
         if self.selected.get():
-            base.update(
+            style.update(
                 {
                     "background-color": md_comp_switch_selected_track_color,
                     "border": "none",
                 }
             )
-        self.sx.set(base)
+        self.sx.set(style)
