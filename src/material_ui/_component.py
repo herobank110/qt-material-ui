@@ -217,7 +217,8 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
                         f"on effect '{effect_marker.name}'"
                     )
                 variable.changed.connect(func)
-        # TODO: should each effect be called once on binding after the constructor?
+            # Call the function to apply the initial state.
+            func()
 
     def overlay_widget(self, widget: QtWidgets.QWidget) -> None:
         """Overlay a widget on top of this widget.
