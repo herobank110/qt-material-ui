@@ -16,7 +16,8 @@ class Switch(Component):
     def __init__(self, *, defaultChecked: bool = False) -> None:
         super().__init__()
 
-        self.selected = self.add_state(defaultChecked)
+        # self.selected = self.add_state(defaultChecked)
+        # self.sx.bind(self._get_sx, [self.selected])
 
         self.setFixedSize(52, 32)
         self.setStyleSheet(

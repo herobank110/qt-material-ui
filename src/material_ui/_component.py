@@ -1,6 +1,16 @@
 """Internal widgets common functionality and helpers for Qt Widgets."""
 
-from typing import Any, Callable, Generic, TypeVar, TypeVarTuple, Unpack, get_args
+from typing import (
+    Any,
+    Callable,
+    Generic,
+    Protocol,
+    TypeVar,
+    TypeVarTuple,
+    Unpack,
+    cast,
+    get_args,
+)
 from qtpy import QtCore, QtWidgets
 
 
@@ -23,7 +33,7 @@ class Signal(Generic[Unpack[_Ts]]):
 _T = TypeVar("_T")
 
 
-class Variable(Generic[_T]):
+class Variable(QtCore.QObject, Generic[_T]):
     """Type safe property wrapper object.
 
     Creates a Qt property with a getter and setter and changed signal.
@@ -32,15 +42,16 @@ class Variable(Generic[_T]):
     variables.
     """
 
-    changed: Signal[_T]
+    changed: Signal[_T] = QtCore.Signal("QVariant")
 
     def __init__(self, default_value: _T) -> None:
+        super().__init__()
         self._value = default_value
         self._default_value = default_value
 
-    def bind(self, other: "Variable[_T]") -> None:
-        """Bind this variable to another variable."""
-        self.changed.connect(other.set)
+    def get(self) -> _T:
+        """Get the value of the variable."""
+        return self._value
 
     def set(self, value: _T) -> None:
         """Set the value of the variable."""
@@ -48,9 +59,9 @@ class Variable(Generic[_T]):
             self._value = value
             self.changed.emit(value)
 
-    def get(self) -> _T:
-        """Get the value of the variable."""
-        return self._value
+    def bind(self, other: "Variable[_T]") -> None:
+        """Bind this variable to another variable."""
+        self.changed.connect(other.set)
 
 
 def _find_signal_annotations(attrs: dict[str, Any]) -> dict[str, int]:
@@ -86,13 +97,67 @@ class _ComponentMeta(type(QtCore.QObject)):
         )
         return super().__new__(cls, name, bases, attrs)
 
+    def __init__(self, *args, **kwargs):
+        pass
+
+
+def effect(dependencies: list[str]):
+    """Decorator to mark a method as an effect.
+
+    Args:
+        dependencies: List of dependencies for the effect.
+    """
+
+    def decorator(func: Callable) -> Callable:
+        func._dependencies = dependencies
+        return func
+
+    return decorator
+
+
+class _VariableMarker:
+    """Marker to hold the default value on class variable."""
+
+    def __init__(self, default_value: Any) -> None:
+        self.default_value = default_value
+
+
+def use_state(default_value: _T) -> Variable[_T]:
+    """Declare a state variable.
+
+    This is intended to be used as a class variable. The default value
+    will be used by all component instances, referring to the same
+    value.
+    """
+    # This is the wrong type but assert it so that IDEs give completion
+    # based on the expected return type.
+    return _VariableMarker(default_value)
+
 
 class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
     """Base class for all widgets."""
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+    sx = use_state({})
+
+    def __init__(self) -> None:
+        super().__init__()
+        # Convert all class variables marked with use_state to Variable
+        # objects.
+        for name in dir(self):
+            value = getattr(self, name)
+            if isinstance(value, _VariableMarker):
+                variable = Variable(value.default_value)
+                variable.setParent(self)
+                setattr(self, name, variable)
+
+        # Make qt stylesheets work properly!
         self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
+
+        # self.sx = self.add_state({})
+        self.sx.changed.connect(lambda x: print('mytest', x, self))
+        self.sx.set({"a": 1})
+
+        # use_effect(self._apply_sx, [self.sx])
 
     def overlay_widget(self, widget: QtWidgets.QWidget) -> None:
         """Overlay a widget on top of this widget.
@@ -108,14 +173,19 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(widget)
 
-    def add_state(self, default_value: _T) -> Variable[_T]:
-        """Add a state to the component.
+    # def add_state(self, default_value: _T) -> Variable[_T]:
+    #     """Add a state to the component.
 
-        Args:
-            value: The value of the state.
+    #     Args:
+    #         value: The value of the state.
 
-        Returns:
-            The variable object.
-        """
-        var = Variable(default_value)
-        return var
+    #     Returns:
+    #         The variable object.
+    #     """
+    #     var = Variable(default_value)
+    #     return var
+
+    @effect([sx])
+    def _apply_sx(self):
+        """Apply the sx property to the widget."""
+        print("Applying sx", self.sx.get())
