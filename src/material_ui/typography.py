@@ -35,12 +35,6 @@ class Typography(Component):
     def __init__(self, *, text: str = "", typescale: Typescale = "body") -> None:
         super().__init__()
 
-        self.text = self.add_state(text)
-        """The text to display."""
-
-        self.typescale = self.add_state(typescale)
-        """Typescale class to use. Exact styling can be configured in the theme."""
-
-        qt_label = QLabel(self.text.get())
-        self.text.changed.connect(self._label.setText)
+        qt_label = QLabel(text)
+        # qt_label.setStyleSheet()
         self.overlay_widget(qt_label)
