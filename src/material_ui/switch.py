@@ -26,7 +26,7 @@ class Switch(Component):
         ripple.setStyleSheet(
             f"background:{state_layer_color};border-radius:20px;border:none;margin:0px;"
         )
-        ripple.setGeometry(QtCore.QRect(52-(32-8)-8, 0, 32 + 8, 32 + 8))
+        ripple.setGeometry(QtCore.QRect(52 - (32 - 8) - 8, 0, 32 + 8, 32 + 8))
         # ripple.setVisible(False)
 
         handle = QtWidgets.QWidget()
@@ -34,8 +34,7 @@ class Switch(Component):
         handle.setStyleSheet(
             f"background:{md_comp_switch_selected_handle_color};border:none;border-radius:14px;margin:0px;"
         )
-        handle.setGeometry(QtCore.QRect(52 - 28 - 2+4, 2+4, 28, 28))
-
+        handle.setGeometry(QtCore.QRect(52 - 28 - 2 + 4, 2 + 4, 28, 28))
 
         # graphics_scene = QtWidgets.QGraphicsScene()
         # graphics_scene.setSceneRect(self.rect())
