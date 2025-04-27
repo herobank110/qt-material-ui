@@ -12,7 +12,8 @@ def main() -> None:
     window = Stack()
     window.resize(300, 200)
 
-    switch = Switch(defaultChecked=True)
+    switch = Switch()
+    switch.selected.set(True)
     window.add_widget(switch)
 
     window.show()
