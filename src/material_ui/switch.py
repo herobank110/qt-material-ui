@@ -30,6 +30,7 @@ class Switch(Component):
             f"background:{state_layer_color};border-radius:20px;border:none;margin:0px;"
         )
         self._ripple.setGeometry(QtCore.QRect(52 - (32 - 8) - 8, 0, 32 + 8, 32 + 8))
+        # ripple.visible.bind(self.hovered)
         # self._ripple.setVisible(False)
 
         handle = QtWidgets.QWidget()
@@ -44,29 +45,7 @@ class Switch(Component):
         # the parent component can hook into into to set its bound state.
         self.change_requested.connect(self.selected.set)
 
-        # graphics_scene = QtWidgets.QGraphicsScene()
-        # graphics_scene.setSceneRect(self.rect())
-        # handle = graphics_scene.addEllipse(
-        #     QtCore.QRect(),
-        #     QtCore.Qt.NoPen,
-        #     QtGui.QBrush(md_comp_switch_selected_handle_color),
-        # )
-        # handle.setRect(QtCore.QRect(0, 0, 16, 16))
-        # handle.setPos(QtCore.QPoint(4, (32 - 16) / 2 - 4))
-
-        # handle.setRect(QtCore.QRect(0, 0, 28, 28))
-        # handle.setPos(QtCore.QPoint(52 - 28 - 2, 2))
-
-        # graphics_view = QtWidgets.QGraphicsView()
-        # graphics_view.setRenderHint(QtGui.QPainter.Antialiasing)
-        # graphics_view.setParent(self)
-        # graphics_view.setStyleSheet(
-        #     "background:transparent;border:none;border-radius:none;"
-        # )
-        # # graphics_view.move(0, 0)
-        # # graphics_view.resize(50, 50)
-        # graphics_view.setScene(graphics_scene)
-        # graphics_view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.hovered.changed.connect(self._ripple.setVisible)
 
     @effect(selected)
     def _apply_style(self) -> None:
