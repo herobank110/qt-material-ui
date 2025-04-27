@@ -59,6 +59,7 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
 
     def overlay_widget(self, widget: QtWidgets.QWidget) -> None:
         """Overlay a widget on top of this widget.
