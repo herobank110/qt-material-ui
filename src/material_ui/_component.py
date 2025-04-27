@@ -146,6 +146,7 @@ def _find_variable_markers(obj: object) -> list[_VariableMarker]:
 class _EffectMarker:
     """Marker to hold the dependencies of an effect."""
 
+    name: str
     dependencies: list[_VariableMarker]
 
 
@@ -160,13 +161,14 @@ def effect(*dependencies: Variable[Any]):
     """
 
     def decorator(func: Callable) -> Callable:
-        setattr(func, _EFFECT_MARKER_KEY, _EffectMarker(list(dependencies)))
+        marker = _EffectMarker(name=func.__name__, dependencies=list(dependencies))
+        setattr(func, _EFFECT_MARKER_KEY, marker)
         return func
 
     return decorator
 
 
-def _find_effect_markers(obj: object) -> dict[str, _EffectMarker]:
+def _find_effect_markers(obj: object) -> list[_EffectMarker]:
     """Find instances of effect in the class.
 
     Args:
@@ -175,11 +177,12 @@ def _find_effect_markers(obj: object) -> dict[str, _EffectMarker]:
     Returns:
         Dictionary of effect name and effect marker.
     """
-    ret_val: dict[str, _EffectMarker] = {}
+    ret_val: list[_EffectMarker] = []
     for name in dir(obj):
         value = getattr(obj, name)
         if marker := getattr(value, _EFFECT_MARKER_KEY, None):
-            ret_val[name] = marker
+            assert marker.name == name, "Effect name mismatch"
+            ret_val.append(marker)
     return ret_val
 
 
@@ -191,10 +194,8 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
     def __init__(self) -> None:
         super().__init__()
 
-        # Find markers before they're replaced with actual instances.
-        variable_markers = _find_variable_markers(self)
-        self.__instantiate_variables(variable_markers)
-        self.__bind_effects(variable_markers)
+        self.__instantiate_variables()
+        self.__bind_effects()
 
         # Make qt stylesheets work properly!
         self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
@@ -203,28 +204,29 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
         self.sx.changed.connect(lambda x: print("mytest", x, self))
         self.sx.set({"a": 1})
 
-    def __instantiate_variables(self, variable_markers: list[_VariableMarker]) -> None:
+    def __instantiate_variables(self) -> None:
         """Create Variable instances from class variables."""
-        for marker in variable_markers:
+        for marker in _find_variable_markers(self):
             variable = Variable(marker.default_value, marker.name, type(self).__name__)
             variable.setParent(self)
             setattr(self, marker.name, variable)
 
-    def __bind_effects(self, variable_markers: list[_VariableMarker]) -> None:
+    def __bind_effects(self) -> None:
         """Bind effects to the newly created variables."""
-        for name, marker in _find_effect_markers(self).items():
+        for effect_marker in _find_effect_markers(self):
             # Get the function object from the class.
-            func = getattr(self, name)
-            for dependency in marker.dependencies:
+            func = getattr(self, effect_marker.name)
+            for dependency in effect_marker.dependencies:
                 # Find the corresponding variable object.
                 variable = getattr(self, dependency.name, None)
                 if not isinstance(variable, Variable):
                     raise RuntimeError(
                         f"Effect dependencies can only be Variables, found "
                         f"{type(variable).__name__} for '{dependency.name}' "
-                        f"on effect '{name}'"
+                        f"on effect '{effect_marker.name}'"
                     )
                 variable.changed.connect(func)
+        # TODO: should each effect be called once on binding after the constructor?
 
     def overlay_widget(self, widget: QtWidgets.QWidget) -> None:
         """Overlay a widget on top of this widget.
