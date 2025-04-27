@@ -24,18 +24,15 @@ class _ComponentMeta(type(QtCore.QObject)):
     """Meta class for all widgets."""
 
     def __new__(cls, name: str, bases: tuple, attrs: dict) -> type:
-        # Check if the class has a signal attribute
+        # Convert Signal annotations to actual Qt Signal objects.
         for key, value in attrs.get("__annotations__", {}).items():
-            if issubclass(getattr(value, "__origin__", None), Signal):
-                # Convert the signal to a QtCore.Signal object
+            value = getattr(value, "__origin__", value)
+            if value and issubclass(value, Signal):
                 num_args = len(get_args(value))
-                if num_args == 0:
-                    raise TypeError(
-                        f"Signal {key} on class {name} must have at least one type argument"
-                    )
+                # Use QVariant to avoid runtime type checking by Qt.
+                # Can't remember exact examples but it can fail for
+                # certain types.
                 attrs[key] = QtCore.Signal(*["QVariant"] * num_args)
-
-        # Create the class
         return super().__new__(cls, name, bases, attrs)
 
 
