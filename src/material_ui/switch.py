@@ -24,14 +24,17 @@ class Switch(Component):
 
         self.setFixedSize(52 + 8, 32 + 8)
 
-        self._ripple = QtWidgets.QWidget()
-        self._ripple.setParent(self)
-        self._ripple.setStyleSheet(
+        ripple = QtWidgets.QWidget()
+        ripple.setParent(self)
+        ripple.setStyleSheet(
             f"background:{state_layer_color};border-radius:20px;border:none;margin:0px;"
         )
-        self._ripple.setGeometry(QtCore.QRect(52 - (32 - 8) - 8, 0, 32 + 8, 32 + 8))
+        ripple.setGeometry(QtCore.QRect(52 - (32 - 8) - 8, 0, 32 + 8, 32 + 8))
+        # ripple.setVisible(self.hovered.get())
+        # For some reason this fn needs to be wrapped in a lambda.
+        self.hovered.changed.connect(lambda value: ripple.setVisible(value))
+        # TODO: create a Shape class and have duplicate stuff like visible as Variable.
         # ripple.visible.bind(self.hovered)
-        # self._ripple.setVisible(False)
 
         handle = QtWidgets.QWidget()
         handle.setParent(self)
@@ -44,8 +47,6 @@ class Switch(Component):
         # signal as source of truth, so using it as a 'controlled' input
         # the parent component can hook into into to set its bound state.
         self.change_requested.connect(self.selected.set)
-
-        self.hovered.changed.connect(self._ripple.setVisible)
 
     @effect(selected)
     def _apply_style(self) -> None:
@@ -70,10 +71,6 @@ class Switch(Component):
             }
         )
         self.sx.set(style)
-
-    @effect(hovered)
-    def _show_hide_ripple(self) -> None:
-        self._ripple.setVisible(self.hovered.get())
 
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
         if event.button() == QtCore.Qt.LeftButton:
