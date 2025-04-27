@@ -12,6 +12,9 @@ class Switch(Component):
     """Switches toggle the selection of an item on or off."""
 
     selected = use_state(False)
+    hovered = use_state(False)
+    pressed = use_state(False)
+    disabled = use_state(False)
 
     change_requested: Signal[bool]
     """Signal emitted when the switch is toggled."""
