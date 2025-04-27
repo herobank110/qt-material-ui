@@ -44,8 +44,10 @@ class Variable(QtCore.QObject, Generic[_T]):
 
     changed: Signal[_T] = QtCore.Signal("QVariant")
 
-    def __init__(self, default_value: _T) -> None:
+    def __init__(self, default_value: _T, name: str, component_name: str) -> None:
         super().__init__()
+        self.setObjectName(name)
+        self.__component_name = component_name
         self._value = default_value
         self._default_value = default_value
 
@@ -62,6 +64,9 @@ class Variable(QtCore.QObject, Generic[_T]):
     def bind(self, other: "Variable[_T]") -> None:
         """Bind this variable to another variable."""
         self.changed.connect(other.set)
+
+    def __repr__(self):
+        return f"<Variable '{self.objectName()}' of component '{self.__component_name}' (current value: {str(self._value)[:20]})>"
 
 
 def _find_signal_annotations(attrs: dict[str, Any]) -> dict[str, int]:
@@ -97,11 +102,8 @@ class _ComponentMeta(type(QtCore.QObject)):
         )
         return super().__new__(cls, name, bases, attrs)
 
-    def __init__(self, *args, **kwargs):
-        pass
 
-
-def effect(dependencies: list[str]):
+def effect(*dependencies: Variable[Any]):
     """Decorator to mark a method as an effect.
 
     Args:
@@ -146,7 +148,7 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
         for name in dir(self):
             value = getattr(self, name)
             if isinstance(value, _VariableMarker):
-                variable = Variable(value.default_value)
+                variable = Variable(value.default_value, name, type(self).__name__)
                 variable.setParent(self)
                 setattr(self, name, variable)
 
@@ -156,8 +158,6 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
         # self.sx = self.add_state({})
         self.sx.changed.connect(lambda x: print('mytest', x, self))
         self.sx.set({"a": 1})
-
-        # use_effect(self._apply_sx, [self.sx])
 
     def overlay_widget(self, widget: QtWidgets.QWidget) -> None:
         """Overlay a widget on top of this widget.
@@ -185,7 +185,7 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
     #     var = Variable(default_value)
     #     return var
 
-    @effect([sx])
+    @effect(sx)
     def _apply_sx(self):
         """Apply the sx property to the widget."""
         print("Applying sx", self.sx.get())
