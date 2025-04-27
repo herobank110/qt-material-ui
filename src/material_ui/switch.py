@@ -92,9 +92,9 @@ class Switch(Component):
         )
         self.sx.set(style)
 
-    @effect(pressed, hovered)
+    @effect(hovered)
     def _show_hide_ripple(self) -> None:
-        self._ripple.setVisible(self.pressed.get() or self.hovered.get())
+        self._ripple.setVisible(self.hovered.get())
 
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
         if event.button() == QtCore.Qt.LeftButton:
@@ -102,9 +102,9 @@ class Switch(Component):
         return super().mousePressEvent(event)
 
     def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
-        if event.button() == QtCore.Qt.LeftButton:
-            self.pressed.set(False)
-            # self.selected.set(not self.selected.get())
+        self.pressed.set(False)
+        mouse_inside = self.rect().contains(event.pos())
+        if event.button() == QtCore.Qt.LeftButton and mouse_inside:
             self.change_requested.emit(not self.selected.get())
         return super().mouseReleaseEvent(event)
 

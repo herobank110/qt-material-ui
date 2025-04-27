@@ -217,8 +217,9 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
                         f"on effect '{effect_marker.name}'"
                     )
                 variable.changed.connect(func)
-            # Call the function to apply the initial state.
-            func()
+            # Call the function to apply the initial state. The timer
+            # ensures the derived class's constructor is finished first.
+            QtCore.QTimer.singleShot(0, func)
 
     def overlay_widget(self, widget: QtWidgets.QWidget) -> None:
         """Overlay a widget on top of this widget.
