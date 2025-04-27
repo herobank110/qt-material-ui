@@ -1,17 +1,7 @@
 """Internal widgets common functionality and helpers for Qt Widgets."""
 
 from dataclasses import dataclass
-from typing import (
-    Any,
-    Callable,
-    Generic,
-    Protocol,
-    TypeVar,
-    TypeVarTuple,
-    Unpack,
-    cast,
-    get_args,
-)
+from typing import Any, Callable, Generic, TypeVar, TypeVarTuple, Unpack, get_args
 from qtpy import QtCore, QtWidgets
 
 
