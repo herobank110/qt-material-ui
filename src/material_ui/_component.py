@@ -190,10 +190,6 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
         # Make qt stylesheets work properly!
         self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
 
-        # self.sx = self.add_state({})
-        self.sx.changed.connect(lambda x: print("mytest", x, self))
-        self.sx.set({"a": 1})
-
     def __instantiate_variables(self) -> None:
         """Create Variable instances from class variables."""
         for marker in _find_variable_markers(self):
@@ -247,4 +243,4 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
     @effect(sx)
     def _apply_sx(self):
         """Apply the sx property to the widget."""
-        print("Applying sx", self.sx.get())
+        self.setStyleSheet(";".join(map(":".join, self.sx.get().items())))

@@ -16,21 +16,13 @@ class Switch(Component):
     def __init__(self, *, defaultChecked: bool = False) -> None:
         super().__init__()
 
-        # self.selected = self.add_state(defaultChecked)
-        # self.sx.bind(self._get_sx, [self.selected])
-
         self.setFixedSize(52, 32)
-        self.setStyleSheet(
-            ";".join(
-                map(
-                    ":".join,
-                    {
-                        "background-color": md_comp_switch_unselected_track_color,
-                        "border-radius": "16px",
-                        "border": f"2px solid {md_comp_switch_unselected_track_outline_color}",
-                    }.items(),
-                )
-            )
+        self.sx.set(
+            {
+                "background-color": md_comp_switch_unselected_track_color,
+                "border-radius": "16px",
+                "border": f"2px solid {md_comp_switch_unselected_track_outline_color}",
+            }
         )
 
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
