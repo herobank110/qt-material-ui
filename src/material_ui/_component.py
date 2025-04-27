@@ -193,13 +193,7 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
 
         # Find markers before they're replaced with actual instances.
         variable_markers = _find_variable_markers(self)
-
-        # Create Variable instances from class variables.
-        for marker in variable_markers:
-            variable = Variable(marker.default_value, marker.name, type(self).__name__)
-            variable.setParent(self)
-            setattr(self, marker.name, variable)
-
+        self.__instantiate_variables(variable_markers)
         self.__bind_effects(variable_markers)
 
         # Make qt stylesheets work properly!
@@ -208,6 +202,13 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
         # self.sx = self.add_state({})
         self.sx.changed.connect(lambda x: print("mytest", x, self))
         self.sx.set({"a": 1})
+
+    def __instantiate_variables(self, variable_markers: list[_VariableMarker]) -> None:
+        """Create Variable instances from class variables."""
+        for marker in variable_markers:
+            variable = Variable(marker.default_value, marker.name, type(self).__name__)
+            variable.setParent(self)
+            setattr(self, marker.name, variable)
 
     def __bind_effects(self, variable_markers: list[_VariableMarker]) -> None:
         """Bind effects to the newly created variables."""
