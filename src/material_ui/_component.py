@@ -108,6 +108,7 @@ class _ComponentMeta(type(QtCore.QObject)):
 class _VariableMarker:
     """Marker to hold the default value on class variable."""
 
+    name: str
     default_value: Any
 
 
@@ -120,10 +121,10 @@ def use_state(default_value: _T) -> Variable[_T]:
     """
     # This is the wrong type but assert it so that IDEs give completion
     # based on the expected return type.
-    return _VariableMarker(default_value)
+    return _VariableMarker(name="<unset>", default_value=default_value)
 
 
-def _find_variable_markers(obj: object) -> dict[str, _VariableMarker]:
+def _find_variable_markers(obj: object) -> list[_VariableMarker]:
     """Find instances of use_state in the class.
 
     Args:
@@ -132,11 +133,12 @@ def _find_variable_markers(obj: object) -> dict[str, _VariableMarker]:
     Returns:
         Dictionary of variable name and variable marker.
     """
-    ret_val: dict[str, _VariableMarker] = {}
+    ret_val: list[_VariableMarker] = []
     for name in dir(obj):
         value = getattr(obj, name)
         if isinstance(value, _VariableMarker):
-            ret_val[name] = value
+            value.name = name  # Set the name now we have access to it.
+            ret_val.append(value)
     return ret_val
 
 
@@ -193,12 +195,12 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
         variable_markers = _find_variable_markers(self)
 
         # Create Variable instances from class variables.
-        for name, marker in variable_markers.items():
-            variable = Variable(marker.default_value, name, type(self).__name__)
+        for marker in variable_markers:
+            variable = Variable(marker.default_value, marker.name, type(self).__name__)
             variable.setParent(self)
-            setattr(self, name, variable)
+            setattr(self, marker.name, variable)
 
-        self.__bind_effects()
+        self.__bind_effects(variable_markers)
 
         # Make qt stylesheets work properly!
         self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
@@ -207,29 +209,19 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
         self.sx.changed.connect(lambda x: print("mytest", x, self))
         self.sx.set({"a": 1})
 
-    def __bind_effects(self, variable_markers: ) -> None:
+    def __bind_effects(self, variable_markers: list[_VariableMarker]) -> None:
         """Bind effects to the newly created variables."""
         for name, marker in _find_effect_markers(self).items():
             # Get the function object from the class.
             func = getattr(self, name)
             for dependency in marker.dependencies:
                 # Find the corresponding variable object.
-                variable_name = next(
-                    (
-                        name
-                        for name, marker in variable_markers.items()
-                        if marker is dependency
-                    ),
-                    None,
-                )
-                if variable_name is None:
-                    raise RuntimeError(
-                        f"Failed to find one or more dependencies for effect '{name}'"
-                    )
-                variable = getattr(self, variable_name)
+                variable = getattr(self, dependency.name, None)
                 if not isinstance(variable, Variable):
                     raise RuntimeError(
-                        f"Effect dependencies can only be Variables, not {type(variable).__name__} (effect '{name}')"
+                        f"Effect dependencies can only be Variables, found "
+                        f"{type(variable).__name__} for '{dependency.name}' "
+                        f"on effect '{name}'"
                     )
                 variable.changed.connect(func)
 
