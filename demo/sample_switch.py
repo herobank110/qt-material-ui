@@ -10,6 +10,7 @@ def main() -> None:
     app = QtWidgets.QApplication()
 
     window = Stack()
+    window.sx.set({"background-color": "white"})
     window.resize(300, 200)
 
     switch = Switch()

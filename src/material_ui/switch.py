@@ -71,17 +71,12 @@ class Switch(Component):
                 "border-radius": "20px",
             }
         )
-
         self._state_layer.setGeometry(_STATE_LAYER_GEOMETRY)
         self._state_layer.visible.bind(self.hovered)
 
         self._handle = Shape()
+        self._handle.corner_shape.set("full")
         self._handle.setParent(self)
-        # self._handle.sx.set(
-        #     {
-        #         "border-radius": "14px",
-        #     }
-        # )
 
         # Set the internal selected state but use the change_requested
         # signal as source of truth, so using it as a 'controlled' input
@@ -122,7 +117,8 @@ class Switch(Component):
             else _UNSELECTED_HANDLE_GEOMETRY
         )
         self._handle.sx.set(
-            {
+            lambda prev: prev
+            | {
                 "background-color": _HOVER_HANDLE_COLOR
                 if self.hovered.get()
                 else _SELECTED_HANDLE_COLOR
