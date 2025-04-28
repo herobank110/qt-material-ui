@@ -19,12 +19,18 @@ _UNSELECTED_HANDLE_WIDTH = 16
 _PRESSED_HANDLE_WIDTH = 28
 _SELECTED_HANDLE_WIDTH = 24
 _UNSELECTED_HANDLE_GEOMETRY = QtCore.QRect(
-    _STATE_LAYER_MARGIN + _TRACK_HEIGHT - _UNSELECTED_HANDLE_WIDTH / 2,
-    _STATE_LAYER_MARGIN + _TRACK_HEIGHT - _UNSELECTED_HANDLE_WIDTH / 2,
+    _STATE_LAYER_MARGIN + (_TRACK_HEIGHT - _UNSELECTED_HANDLE_WIDTH) / 2,
+    _STATE_LAYER_MARGIN + (_TRACK_HEIGHT - _UNSELECTED_HANDLE_WIDTH) / 2,
     _UNSELECTED_HANDLE_WIDTH,
     _UNSELECTED_HANDLE_WIDTH,
 )
-_PRESSED_HANDLE_GEOMETRY = QtCore.QRect(
+_UNSELECTED_PRESSED_HANDLE_GEOMETRY = QtCore.QRect(
+    _STATE_LAYER_MARGIN + _TRACK_OUTLINE_WIDTH,
+    _STATE_LAYER_MARGIN + _TRACK_OUTLINE_WIDTH,
+    _PRESSED_HANDLE_WIDTH,
+    _PRESSED_HANDLE_WIDTH,
+)
+_SELECTED_PRESSED_HANDLE_GEOMETRY = QtCore.QRect(
     _STATE_LAYER_MARGIN + _TRACK_WIDTH - _PRESSED_HANDLE_WIDTH - _TRACK_OUTLINE_WIDTH,
     _STATE_LAYER_MARGIN + _TRACK_OUTLINE_WIDTH,
     _PRESSED_HANDLE_WIDTH,
@@ -39,11 +45,9 @@ _SELECTED_HANDLE_GEOMETRY = QtCore.QRect(
     _SELECTED_HANDLE_WIDTH,
     _SELECTED_HANDLE_WIDTH,
 )
-_STATE_LAYER_GEOMETRY = QtCore.QRect(
-    _TRACK_WIDTH - _TRACK_HEIGHT - _STATE_LAYER_MARGIN * 2,
-    0,
-    _SWITCH_HEIGHT,
-    _SWITCH_HEIGHT,
+_UNSELECTED_STATE_LAYER_GEOMETRY = QtCore.QRect(0, 0, _SWITCH_HEIGHT, _SWITCH_HEIGHT)
+_SELECTED_STATE_LAYER_GEOMETRY = QtCore.QRect(
+    _SWITCH_WIDTH - _SWITCH_HEIGHT, 0, _SWITCH_HEIGHT, _SWITCH_HEIGHT
 )
 
 
@@ -71,7 +75,7 @@ class Switch(Component):
                 "border-radius": "20px",
             }
         )
-        self._state_layer.setGeometry(_STATE_LAYER_GEOMETRY)
+        self._state_layer.setGeometry(_SELECTED_STATE_LAYER_GEOMETRY)
         self._state_layer.visible.bind(self.hovered)
 
         self._handle = Shape()
@@ -110,7 +114,9 @@ class Switch(Component):
     @effect(selected, pressed, hovered)
     def _refresh_shapes(self):
         self._handle.setGeometry(
-            _PRESSED_HANDLE_GEOMETRY
+            _SELECTED_PRESSED_HANDLE_GEOMETRY
+            if self.selected.get() and self.pressed.get()
+            else _UNSELECTED_PRESSED_HANDLE_GEOMETRY
             if self.pressed.get()
             else _SELECTED_HANDLE_GEOMETRY
             if self.selected.get()
@@ -123,6 +129,12 @@ class Switch(Component):
                 if self.hovered.get()
                 else _SELECTED_HANDLE_COLOR
             }
+        )
+
+        self._state_layer.setGeometry(
+            _SELECTED_STATE_LAYER_GEOMETRY
+            if self.selected.get()
+            else _UNSELECTED_STATE_LAYER_GEOMETRY
         )
 
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
