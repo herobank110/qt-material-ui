@@ -7,7 +7,7 @@ _UNSELECTED_TRACK_COLOR = "#E6E0E9"
 _HOVER_HANDLE_COLOR = "#EADDFF"
 _SELECTED_TRACK_COLOR = "#6750A4"
 _SELECTED_HANDLE_COLOR = "#FFFFFF"
-state_layer_color = "rgba(0, 0, 0, 40)"
+_STATE_LAYER_COLOR = "rgba(0, 0, 0, 40)"
 
 _TRACK_WIDTH = 52
 _TRACK_HEIGHT = 32
@@ -39,6 +39,12 @@ _SELECTED_HANDLE_GEOMETRY = QtCore.QRect(
     _SELECTED_HANDLE_WIDTH,
     _SELECTED_HANDLE_WIDTH,
 )
+_STATE_LAYER_GEOMETRY = QtCore.QRect(
+    _TRACK_WIDTH - _TRACK_HEIGHT - _STATE_LAYER_MARGIN * 2,
+    0,
+    _SWITCH_HEIGHT,
+    _SWITCH_HEIGHT,
+)
 
 
 class Switch(Component):
@@ -59,20 +65,15 @@ class Switch(Component):
         self.setFixedSize(_SWITCH_WIDTH, _SWITCH_HEIGHT)
 
         self._state_layer = Shape()
-        # self._state_layer.setParent(self)
+        self._state_layer.setParent(self)
         self._state_layer.sx.set(
             {
-                "background-color": state_layer_color,
+                "background-color": _STATE_LAYER_COLOR,
                 "border-radius": "20px",
             }
         )
-        self._state_layer.setGeometry(
-            QtCore.QRect(52 - (32 - 8) - 8, 0, 32 + 8, 32 + 8)
-        )
-        # self._state_layer.setVisible(self.hovered.get())  # initial state - TODO: use binding
-        # For some reason this fn needs to be wrapped in a lambda.
-        # self.hovered.changed.connect(lambda value: self._state_layer.setVisible(value))
-        # TODO: create a Shape class and have duplicate stuff like visible as Variable.
+
+        self._state_layer.setGeometry(_STATE_LAYER_GEOMETRY)
         self._state_layer.visible.bind(self.hovered)
 
         self._handle = Shape()
