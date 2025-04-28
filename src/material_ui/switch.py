@@ -24,7 +24,7 @@ class Switch(Component):
 
         self.setFixedSize(52 + 8, 32 + 8)
 
-        state_layer = QtWidgets.QWidget()
+        state_layer = Component()
         state_layer.setParent(self)
         state_layer.setStyleSheet(
             f"background:{state_layer_color};border-radius:20px;border:none;margin:0px;"
@@ -36,7 +36,7 @@ class Switch(Component):
         # TODO: create a Shape class and have duplicate stuff like visible as Variable.
         # ripple.visible.bind(self.hovered)
 
-        handle = QtWidgets.QWidget()
+        handle = Component(corner="full")
         handle.setParent(self)
         handle.setStyleSheet(
             f"background:{md_comp_switch_selected_handle_color};border:none;border-radius:14px;margin:0px;"
