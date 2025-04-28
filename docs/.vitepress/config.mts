@@ -16,10 +16,10 @@ export default defineConfig({
         },
         sidebar: [
             {
-                text: 'Examples',
+                text: 'Components',
                 items: [
-                    { text: 'Markdown Examples', link: '/markdown-examples' },
-                    { text: 'Runtime API Examples', link: '/api-examples' }
+                    { text: 'Introduction', link: '/components' },
+                    { text: 'Switch', link: '/components/switch' },
                 ]
             }
         ],

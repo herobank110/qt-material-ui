@@ -1,4 +1,4 @@
-"""Quick overview of some of the available components."""
+"""Sample of using the switch."""
 
 from qtpy import QtCore, QtWidgets
 from material_ui.layout_basics import Stack

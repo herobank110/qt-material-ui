@@ -10,8 +10,8 @@ hero:
       text: Get Started
       link: /get-started
     - theme: alt
-      text: Examples
-      link: /examples
+      text: Components Reference
+      link: /components
 
 features:
   - title: Fresh Look

@@ -80,7 +80,7 @@ class Switch(Component):
     _track_color = use_state(_UNSELECTED_TRACK_COLOR)
 
     change_requested: Signal[bool]
-    """Signal emitted when the switch is toggled."""
+    """Emitted when the user toggles the switch."""
 
     def __init__(self) -> None:
         super().__init__()
