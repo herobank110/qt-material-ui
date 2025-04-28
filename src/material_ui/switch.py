@@ -146,7 +146,6 @@ class Switch(Component):
                 else _UNSELECTED_HANDLE_COLOR
             }
         )
-
         self._state_layer.setGeometry(
             _SELECTED_STATE_LAYER_GEOMETRY
             if self.selected.get()
