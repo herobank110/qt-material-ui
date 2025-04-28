@@ -1,6 +1,6 @@
 """Quick overview of some of the available components."""
 
-from qtpy import QtWidgets
+from qtpy import QtCore, QtWidgets
 from material_ui.layout_basics import Stack
 from material_ui.switch import Switch
 
@@ -10,6 +10,8 @@ def main() -> None:
     app = QtWidgets.QApplication()
 
     window = Stack()
+    window.alignment.set(QtCore.Qt.AlignCenter)
+    window.gap.set(30)
     window.sx.set({"background-color": "white"})
     window.resize(300, 200)
 
