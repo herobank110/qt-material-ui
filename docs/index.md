@@ -3,7 +3,7 @@
 layout: home
 
 hero:
-  name: "qt-material-ui"
+  name: "Qt Material UI"
   tagline: Material 3 component library for Qt Widgets
   actions:
     - theme: brand
