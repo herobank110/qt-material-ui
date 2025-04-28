@@ -17,6 +17,12 @@ def main() -> None:
     switch.selected.set(True)
     window.add_widget(switch)
 
+    switch2 = Switch()
+    switch2.selected.bind(switch.selected)
+    # TODO: avoid 2 way binding, make array of switches!
+    switch2.change_requested.connect(switch.selected.set)
+    window.add_widget(switch2)
+
     window.show()
     app.exec_()
 
