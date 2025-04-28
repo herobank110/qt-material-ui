@@ -8,6 +8,32 @@ md_comp_switch_selected_track_color = "#6750A4"
 md_comp_switch_selected_handle_color = "#FFFFFF"
 state_layer_color = "rgba(0, 0, 0, 40)"
 
+_STATE_LAYER_MARGIN = 4
+_TRACK_WIDTH = 52
+_TRACK_HEIGHT = 32
+_TRACK_OUTLINE_WIDTH = 2
+_HANDLE_UNSELECTED_WIDTH = 16
+_HANDLE_PRESSED_WIDTH = 28
+_HANDLE_SELECTED_WIDTH = 24
+_HANDLE_UNSELECTED_GEOMETRY = QtCore.QRect(
+    _STATE_LAYER_MARGIN + _TRACK_HEIGHT - _HANDLE_UNSELECTED_WIDTH / 2,
+    _STATE_LAYER_MARGIN + _TRACK_HEIGHT - _HANDLE_UNSELECTED_WIDTH / 2,
+    _HANDLE_UNSELECTED_WIDTH,
+    _HANDLE_UNSELECTED_WIDTH,
+)
+_HANDLE_PRESSED_GEOMETRY = QtCore.QRect(
+    _STATE_LAYER_MARGIN + _TRACK_WIDTH - _HANDLE_PRESSED_WIDTH - _TRACK_OUTLINE_WIDTH,
+    _STATE_LAYER_MARGIN + _TRACK_OUTLINE_WIDTH,
+    _HANDLE_PRESSED_WIDTH,
+    _HANDLE_PRESSED_WIDTH,
+)
+_HANDLE_SELECTED_GEOMETRY = QtCore.QRect(
+    _STATE_LAYER_MARGIN + _TRACK_WIDTH - _HANDLE_SELECTED_WIDTH - _TRACK_OUTLINE_WIDTH,
+    _STATE_LAYER_MARGIN + _TRACK_OUTLINE_WIDTH,
+    _HANDLE_SELECTED_WIDTH,
+    _HANDLE_SELECTED_WIDTH,
+)
+
 
 class Switch(Component):
     """Switches toggle the selection of an item on or off."""
@@ -16,6 +42,7 @@ class Switch(Component):
     hovered = use_state(False)
     pressed = use_state(False)
     disabled = use_state(False)
+    _handle_geometry = use_state(_HANDLE_UNSELECTED_GEOMETRY)
 
     change_requested: Signal[bool]
     """Signal emitted when the switch is toggled."""
@@ -48,7 +75,8 @@ class Switch(Component):
                 "border-radius": "14px",
             }
         )
-        handle.setGeometry(QtCore.QRect(52 - 28 - 2 + 4, 2 + 4, 28, 28))
+        handle.setGeometry(self._handle_geometry.get())
+        self._handle_geometry.changed.connect(handle.setGeometry)
 
         # Set the internal selected state but use the change_requested
         # signal as source of truth, so using it as a 'controlled' input
