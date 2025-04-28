@@ -2,10 +2,11 @@ from qtpy import QtCore, QtGui
 from material_ui._component import Component, Signal, effect, use_state
 from material_ui.shape import Shape
 
-md_comp_switch_unselected_track_outline_color = "#79747E"
-md_comp_switch_unselected_track_color = "#E6E0E9"
-md_comp_switch_selected_track_color = "#6750A4"
-md_comp_switch_selected_handle_color = "#FFFFFF"
+_UNSELECTED_TRACK_OUTLINE_COLOR = "#79747E"
+_UNSELECTED_TRACK_COLOR = "#E6E0E9"
+_HOVER_HANDLE_COLOR = "#EADDFF"
+_SELECTED_TRACK_COLOR = "#6750A4"
+_SELECTED_HANDLE_COLOR = "#FFFFFF"
 state_layer_color = "rgba(0, 0, 0, 40)"
 
 _TRACK_WIDTH = 52
@@ -14,29 +15,29 @@ _STATE_LAYER_MARGIN = 4
 _SWITCH_WIDTH = _TRACK_WIDTH + _STATE_LAYER_MARGIN * 2
 _SWITCH_HEIGHT = _TRACK_HEIGHT + _STATE_LAYER_MARGIN * 2
 _TRACK_OUTLINE_WIDTH = 2
-_HANDLE_UNSELECTED_WIDTH = 16
-_HANDLE_PRESSED_WIDTH = 28
-_HANDLE_SELECTED_WIDTH = 24
-_HANDLE_UNSELECTED_GEOMETRY = QtCore.QRect(
-    _STATE_LAYER_MARGIN + _TRACK_HEIGHT - _HANDLE_UNSELECTED_WIDTH / 2,
-    _STATE_LAYER_MARGIN + _TRACK_HEIGHT - _HANDLE_UNSELECTED_WIDTH / 2,
-    _HANDLE_UNSELECTED_WIDTH,
-    _HANDLE_UNSELECTED_WIDTH,
+_UNSELECTED_HANDLE_WIDTH = 16
+_PRESSED_HANDLE_WIDTH = 28
+_SELECTED_HANDLE_WIDTH = 24
+_UNSELECTED_HANDLE_GEOMETRY = QtCore.QRect(
+    _STATE_LAYER_MARGIN + _TRACK_HEIGHT - _UNSELECTED_HANDLE_WIDTH / 2,
+    _STATE_LAYER_MARGIN + _TRACK_HEIGHT - _UNSELECTED_HANDLE_WIDTH / 2,
+    _UNSELECTED_HANDLE_WIDTH,
+    _UNSELECTED_HANDLE_WIDTH,
 )
-_HANDLE_PRESSED_GEOMETRY = QtCore.QRect(
-    _STATE_LAYER_MARGIN + _TRACK_WIDTH - _HANDLE_PRESSED_WIDTH - _TRACK_OUTLINE_WIDTH,
+_PRESSED_HANDLE_GEOMETRY = QtCore.QRect(
+    _STATE_LAYER_MARGIN + _TRACK_WIDTH - _PRESSED_HANDLE_WIDTH - _TRACK_OUTLINE_WIDTH,
     _STATE_LAYER_MARGIN + _TRACK_OUTLINE_WIDTH,
-    _HANDLE_PRESSED_WIDTH,
-    _HANDLE_PRESSED_WIDTH,
+    _PRESSED_HANDLE_WIDTH,
+    _PRESSED_HANDLE_WIDTH,
 )
-_HANDLE_SELECTED_GEOMETRY = QtCore.QRect(
+_SELECTED_HANDLE_GEOMETRY = QtCore.QRect(
     _STATE_LAYER_MARGIN
     + _TRACK_WIDTH
-    - _HANDLE_SELECTED_WIDTH
+    - _SELECTED_HANDLE_WIDTH
     - _TRACK_OUTLINE_WIDTH * 2,
-    _STATE_LAYER_MARGIN + (_TRACK_HEIGHT - _HANDLE_SELECTED_WIDTH) / 2,
-    _HANDLE_SELECTED_WIDTH,
-    _HANDLE_SELECTED_WIDTH,
+    _STATE_LAYER_MARGIN + (_TRACK_HEIGHT - _SELECTED_HANDLE_WIDTH) / 2,
+    _SELECTED_HANDLE_WIDTH,
+    _SELECTED_HANDLE_WIDTH,
 )
 
 
@@ -47,7 +48,7 @@ class Switch(Component):
     hovered = use_state(False)
     pressed = use_state(False)
     disabled = use_state(False)
-    _handle_geometry = use_state(_HANDLE_UNSELECTED_GEOMETRY)
+    _handle_geometry = use_state(_UNSELECTED_HANDLE_GEOMETRY)
 
     change_requested: Signal[bool]
     """Signal emitted when the switch is toggled."""
@@ -76,12 +77,11 @@ class Switch(Component):
 
         self._handle = Shape()
         self._handle.setParent(self)
-        self._handle.sx.set(
-            {
-                "background-color": md_comp_switch_selected_handle_color,
-                "border-radius": "14px",
-            }
-        )
+        # self._handle.sx.set(
+        #     {
+        #         "border-radius": "14px",
+        #     }
+        # )
 
         # Set the internal selected state but use the change_requested
         # signal as source of truth, so using it as a 'controlled' input
@@ -94,13 +94,13 @@ class Switch(Component):
         if not self.selected.get():
             # unselected
             style = {
-                "background-color": md_comp_switch_unselected_track_color,
-                "border": f"2px solid {md_comp_switch_unselected_track_outline_color}",
+                "background-color": _UNSELECTED_TRACK_COLOR,
+                "border": f"2px solid {_UNSELECTED_TRACK_OUTLINE_COLOR}",
             }
         else:
             # selected
             style = {
-                "background-color": md_comp_switch_selected_track_color,
+                "background-color": _SELECTED_TRACK_COLOR,
             }
 
         # TODO: find some way to use corner radius token full with resize event in the base class and merge it with the style dict
@@ -115,15 +115,18 @@ class Switch(Component):
     @effect(selected, pressed, hovered)
     def _refresh_shapes(self):
         self._handle.setGeometry(
-            _HANDLE_PRESSED_GEOMETRY
+            _PRESSED_HANDLE_GEOMETRY
             if self.pressed.get()
-            else _HANDLE_SELECTED_GEOMETRY
+            else _SELECTED_HANDLE_GEOMETRY
             if self.selected.get()
-            else _HANDLE_UNSELECTED_GEOMETRY
+            else _UNSELECTED_HANDLE_GEOMETRY
         )
         self._handle.sx.set(
-            lambda prev: prev
-            | {"background-color": "red"}
+            {
+                "background-color": _HOVER_HANDLE_COLOR
+                if self.hovered.get()
+                else _SELECTED_HANDLE_COLOR
+            }
         )
 
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802

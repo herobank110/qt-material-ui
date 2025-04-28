@@ -64,8 +64,9 @@ class Variable(QtCore.QObject, Generic[_T]):
 
     def bind(self, other: "Variable[_T]") -> None:
         """Bind this variable to another variable."""
-        self.changed.connect(other.set)
-        other.set(self.get())  # set initial state
+        other.changed.connect(self.set)
+        self.set(other.get())  # Set initial state.
+        # TODO: track object deletion
 
     def __repr__(self):
         return (
