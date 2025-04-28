@@ -132,14 +132,16 @@ class Switch(Component):
             }
         )
 
-        self._handle_geometry.set(
+        self._handle_geometry.animate_to(
             _SELECTED_PRESSED_HANDLE_GEOMETRY
             if self.selected.get() and self.pressed.get()
             else _UNSELECTED_PRESSED_HANDLE_GEOMETRY
             if self.pressed.get()
             else _SELECTED_HANDLE_GEOMETRY
             if self.selected.get()
-            else _UNSELECTED_HANDLE_GEOMETRY
+            else _UNSELECTED_HANDLE_GEOMETRY,
+            duration_ms=100,
+            easing=QtCore.QEasingCurve.InOutCubic,
         )
 
         self._handle.sx.set(

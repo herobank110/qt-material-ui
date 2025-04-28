@@ -62,6 +62,26 @@ class Variable(QtCore.QObject, Generic[_T]):
             self._value = value
             self.changed.emit(value)
 
+    def animate_to(
+        self, value: _T, duration_ms: int, easing: QtCore.QEasingCurve.Type
+    ) -> None:
+        """Transition from current value to a new value.
+
+        Args:
+            value: The value to animate to.
+            duration_ms: The duration of the animation in milliseconds.
+            easing: The easing curve to use for the animation.
+        """
+        animation = QtCore.QPropertyAnimation()
+        animation.setParent(self)
+        animation.setTargetObject(self)
+        animation.setPropertyName(self._QT_PROPERTY_NAME.encode())
+        animation.setDuration(duration_ms)
+        animation.setEasingCurve(easing)
+        animation.setStartValue(self._value)
+        animation.setEndValue(value)
+        animation.start()
+
     def bind(self, other: "Variable[_T]") -> None:
         """Bind this variable to another variable."""
         other.changed.connect(self.set)
@@ -73,6 +93,12 @@ class Variable(QtCore.QObject, Generic[_T]):
             f"<Variable '{self.objectName()}' of component '{self.__component_name}' "
             f"(current value: {str(self._value)[:20]})>"
         )
+
+    _qt_property = QtCore.Property("QVariant", get, set)
+    """This is used by Qt to drive the animation."""
+
+    _QT_PROPERTY_NAME = "_qt_property"
+    """Name of the Qt property."""
 
 
 def _find_signal_annotations(attrs: dict[str, Any]) -> dict[str, int]:
