@@ -74,7 +74,8 @@ class Switch(Component):
     pressed = use_state(False)
     disabled = use_state(False)
 
-    # Create states for the animated properties.
+    # Create states for the animated properties. Can't be bothered
+    # animating the rest - these seem like the most useful.
     _handle_geometry = use_state(_UNSELECTED_HANDLE_GEOMETRY)
     _track_color = use_state(_UNSELECTED_TRACK_COLOR)
 
