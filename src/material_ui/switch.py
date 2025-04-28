@@ -8,9 +8,9 @@ md_comp_switch_selected_track_color = "#6750A4"
 md_comp_switch_selected_handle_color = "#FFFFFF"
 state_layer_color = "rgba(0, 0, 0, 40)"
 
-_STATE_LAYER_MARGIN = 4
 _TRACK_WIDTH = 52
 _TRACK_HEIGHT = 32
+_STATE_LAYER_MARGIN = 4
 _SWITCH_WIDTH = _TRACK_WIDTH + _STATE_LAYER_MARGIN * 2
 _SWITCH_HEIGHT = _TRACK_HEIGHT + _STATE_LAYER_MARGIN * 2
 _TRACK_OUTLINE_WIDTH = 2
