@@ -1,4 +1,4 @@
-from qtpy import QtCore, QtGui, QtWidgets
+from qtpy import QtCore, QtGui
 from material_ui._component import Component, Signal, effect, use_state
 from material_ui.shape import Shape
 
