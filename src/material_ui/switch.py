@@ -74,6 +74,9 @@ class Switch(Component):
     pressed = use_state(False)
     disabled = use_state(False)
 
+    # Create states for the animated properties.
+    _handle_geometry = use_state(_UNSELECTED_HANDLE_GEOMETRY)
+
     change_requested: Signal[bool]
     """Signal emitted when the switch is toggled."""
 
@@ -96,6 +99,19 @@ class Switch(Component):
         self._handle = Shape()
         self._handle.corner_shape.set("full")
         self._handle.setParent(self)
+        # TODO: make geometry a property of shape? even though conflict with qt property?
+        # self._handle.geometry.bind(self._handle_geometry)
+        self._handle_geometry.changed.connect(self._handle.setGeometry)
+
+        anim1 = QtCore.QPropertyAnimation()
+        anim1.setParent(self)
+        anim1.setTargetObject(self._handle)
+        anim1.setPropertyName(b"geometry")
+        anim1.setDuration(200)
+        anim1.setEasingCurve(QtCore.QEasingCurve.InOutCubic)
+        anim1.setStartValue(_UNSELECTED_HANDLE_GEOMETRY)
+        anim1.setEndValue(_SELECTED_HANDLE_GEOMETRY)
+        anim1.start()
 
         # Set the internal selected state but use the change_requested
         # signal as source of truth, so using it as a 'controlled' input
@@ -116,7 +132,7 @@ class Switch(Component):
             }
         )
 
-        self._handle.setGeometry(
+        self._handle_geometry.set(
             _SELECTED_PRESSED_HANDLE_GEOMETRY
             if self.selected.get() and self.pressed.get()
             else _UNSELECTED_PRESSED_HANDLE_GEOMETRY
@@ -125,6 +141,7 @@ class Switch(Component):
             if self.selected.get()
             else _UNSELECTED_HANDLE_GEOMETRY
         )
+
         self._handle.sx.set(
             lambda prev: prev
             | {
