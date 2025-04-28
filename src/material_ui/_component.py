@@ -184,6 +184,16 @@ def _find_effect_markers(obj: object) -> list[_EffectMarker]:
     return ret_val
 
 
+_COMPONENT_STYLESHEET_RESET = {
+    "background-color": "transparent",
+    "border-radius": "0px",
+    "border": "none",
+    "margin": "0px",
+    "padding": "0px",
+}
+"""Prevent Qt's unexpected behavior from inheriting parent's style."""
+
+
 class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
     """Base class for all widgets."""
 
@@ -241,4 +251,6 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
     @effect(sx)
     def _apply_sx(self):
         """Apply the sx property to the widget."""
-        self.setStyleSheet(";".join(map(":".join, self.sx.get().items())))
+        sx = _COMPONENT_STYLESHEET_RESET.copy()
+        sx.update(self.sx.get())
+        self.setStyleSheet(";".join(map(":".join, sx.items())))

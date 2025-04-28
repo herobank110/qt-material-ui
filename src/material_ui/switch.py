@@ -31,8 +31,6 @@ class Switch(Component):
             {
                 "background-color": state_layer_color,
                 "border-radius": "20px",
-                "border": "none",
-                "margin": "0px",
             }
         )
         state_layer.setGeometry(QtCore.QRect(52 - (32 - 8) - 8, 0, 32 + 8, 32 + 8))
@@ -48,8 +46,6 @@ class Switch(Component):
             {
                 "background-color": md_comp_switch_selected_handle_color,
                 "border-radius": "14px",
-                "border": "none",
-                "margin": "0px",
             }
         )
         handle.setGeometry(QtCore.QRect(52 - 28 - 2 + 4, 2 + 4, 28, 28))
