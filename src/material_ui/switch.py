@@ -54,7 +54,6 @@ class Switch(Component):
     hovered = use_state(False)
     pressed = use_state(False)
     disabled = use_state(False)
-    _handle_geometry = use_state(_UNSELECTED_HANDLE_GEOMETRY)
 
     change_requested: Signal[bool]
     """Signal emitted when the switch is toggled."""
