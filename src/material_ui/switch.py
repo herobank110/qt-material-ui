@@ -3,12 +3,12 @@ from material_ui._component import Component, Signal, effect, use_state
 from material_ui.shape import Shape
 
 _UNSELECTED_TRACK_OUTLINE_COLOR = "#79747E"
-_UNSELECTED_TRACK_COLOR = "#E6E0E9"
+_UNSELECTED_TRACK_COLOR = QtGui.QColor("#E6E0E9")
 _UNSELECTED_HANDLE_COLOR = "#79747E"
 _UNSELECTED_HOVER_HANDLE_COLOR = "#49454F"
 _SELECTED_HANDLE_COLOR = "#FFFFFF"
 _SELECTED_HOVER_HANDLE_COLOR = "#EADDFF"
-_SELECTED_TRACK_COLOR = "#6750A4"
+_SELECTED_TRACK_COLOR = QtGui.QColor("#6750A4")
 _STATE_LAYER_COLOR = "rgba(0, 0, 0, 40)"
 
 _TRACK_WIDTH = 52
@@ -76,6 +76,7 @@ class Switch(Component):
 
     # Create states for the animated properties.
     _handle_geometry = use_state(_UNSELECTED_HANDLE_GEOMETRY)
+    _track_color = use_state(_UNSELECTED_TRACK_COLOR)
 
     change_requested: Signal[bool]
     """Signal emitted when the switch is toggled."""
@@ -103,29 +104,30 @@ class Switch(Component):
         # self._handle.geometry.bind(self._handle_geometry)
         self._handle_geometry.changed.connect(self._handle.setGeometry)
 
-        anim1 = QtCore.QPropertyAnimation()
-        anim1.setParent(self)
-        anim1.setTargetObject(self._handle)
-        anim1.setPropertyName(b"geometry")
-        anim1.setDuration(200)
-        anim1.setEasingCurve(QtCore.QEasingCurve.InOutCubic)
-        anim1.setStartValue(_UNSELECTED_HANDLE_GEOMETRY)
-        anim1.setEndValue(_SELECTED_HANDLE_GEOMETRY)
-        anim1.start()
-
         # Set the internal selected state but use the change_requested
         # signal as source of truth, so using it as a 'controlled' input
         # the parent component can hook into into to set its bound state.
         self.change_requested.connect(self.selected.set)
 
+    @effect(_track_color)
+    def _apply_track_color(self):
+        self._track.sx.set(
+            lambda prev: prev
+            | {"background-color": "#%06x" % self._track_color.get().rgb()}
+        )
+
     @effect(selected, pressed, hovered)
     def _refresh_shapes(self):
+        self._track_color.animate_to(
+            _SELECTED_TRACK_COLOR if self.selected.get() else _UNSELECTED_TRACK_COLOR,
+            # Shorter than the handle geometry animation to draw more
+            # attention to the handle.
+            duration_ms=70,
+            easing=QtCore.QEasingCurve.InOutCubic,
+        )
         self._track.sx.set(
             lambda prev: prev
             | {
-                "background-color": _SELECTED_TRACK_COLOR
-                if self.selected.get()
-                else _UNSELECTED_TRACK_COLOR,
                 "border": f"{_TRACK_OUTLINE_WIDTH}px solid {_UNSELECTED_TRACK_OUTLINE_COLOR}"
                 if not self.selected.get()
                 else "none",
@@ -143,7 +145,6 @@ class Switch(Component):
             duration_ms=100,
             easing=QtCore.QEasingCurve.InOutCubic,
         )
-
         self._handle.sx.set(
             lambda prev: prev
             | {
