@@ -46,8 +46,18 @@ class Variable(QtCore.QObject, Generic[_T]):
         """Get the value of the variable."""
         return self._value
 
-    def set(self, value: _T) -> None:
-        """Set the value of the variable."""
+    def set(self, value_or_fn: _T | Callable[[_T], _T]) -> None:
+        """Set the value of the variable.
+
+        Args:
+            value_or_fn: Either a value directly, or a function that
+                takes the current value as input and returns a new one.
+        """
+        value: _T = (
+            value_or_fn(self._value)
+            if hasattr(value_or_fn, "__call__")
+            else value_or_fn
+        )
         if self._value != value:
             self._value = value
             self.changed.emit(value)

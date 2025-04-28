@@ -30,7 +30,10 @@ _HANDLE_PRESSED_GEOMETRY = QtCore.QRect(
     _HANDLE_PRESSED_WIDTH,
 )
 _HANDLE_SELECTED_GEOMETRY = QtCore.QRect(
-    _STATE_LAYER_MARGIN + _TRACK_WIDTH - _HANDLE_SELECTED_WIDTH - _TRACK_OUTLINE_WIDTH * 2,
+    _STATE_LAYER_MARGIN
+    + _TRACK_WIDTH
+    - _HANDLE_SELECTED_WIDTH
+    - _TRACK_OUTLINE_WIDTH * 2,
     _STATE_LAYER_MARGIN + (_TRACK_HEIGHT - _HANDLE_SELECTED_WIDTH) / 2,
     _HANDLE_SELECTED_WIDTH,
     _HANDLE_SELECTED_WIDTH,
@@ -110,14 +113,17 @@ class Switch(Component):
         self.sx.set(style)
 
     @effect(selected, pressed, hovered)
-    def _update_shapes(self):
-        """Update the handle shape based on the selected state."""
+    def _refresh_shapes(self):
         self._handle.setGeometry(
             _HANDLE_PRESSED_GEOMETRY
             if self.pressed.get()
             else _HANDLE_SELECTED_GEOMETRY
             if self.selected.get()
             else _HANDLE_UNSELECTED_GEOMETRY
+        )
+        self._handle.sx.set(
+            lambda prev: prev
+            | {"background-color": "red"}
         )
 
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
