@@ -22,6 +22,9 @@ _UNSELECTED_HANDLE_WIDTH = 16
 _PRESSED_HANDLE_WIDTH = 28
 _SELECTED_HANDLE_WIDTH = 24
 
+_TRACK_GEOMETRY = QtCore.QRect(
+    _STATE_LAYER_MARGIN, _STATE_LAYER_MARGIN, _TRACK_WIDTH, _TRACK_HEIGHT
+)
 _UNSELECTED_HANDLE_GEOMETRY = QtCore.QRect(
     _STATE_LAYER_MARGIN + (_TRACK_HEIGHT - _UNSELECTED_HANDLE_WIDTH) / 2,
     _STATE_LAYER_MARGIN + (_TRACK_HEIGHT - _UNSELECTED_HANDLE_WIDTH) / 2,
@@ -79,16 +82,16 @@ class Switch(Component):
 
         self.setFixedSize(_SWITCH_WIDTH, _SWITCH_HEIGHT)
 
+        self._track = Shape()
+        self._track.corner_shape.set("full")
+        self._track.setGeometry(_TRACK_GEOMETRY)
+        self._track.setParent(self)
+
         self._state_layer = Shape()
-        self._state_layer.setParent(self)
-        self._state_layer.sx.set(
-            {
-                "background-color": _STATE_LAYER_COLOR,
-                "border-radius": "20px",
-            }
-        )
-        self._state_layer.setGeometry(_SELECTED_STATE_LAYER_GEOMETRY)
+        self._state_layer.sx.set({"background-color": _STATE_LAYER_COLOR})
+        self._state_layer.corner_shape.set("full")
         self._state_layer.visible.bind(self.hovered)
+        self._state_layer.setParent(self)
 
         self._handle = Shape()
         self._handle.corner_shape.set("full")
@@ -99,32 +102,20 @@ class Switch(Component):
         # the parent component can hook into into to set its bound state.
         self.change_requested.connect(self.selected.set)
 
-    @effect(selected)
-    def _apply_style(self) -> None:
-        """Apply the style based on the selected state."""
-        if not self.selected.get():
-            # unselected
-            style = {
-                "background-color": _UNSELECTED_TRACK_COLOR,
-                "border": f"2px solid {_UNSELECTED_TRACK_OUTLINE_COLOR}",
-            }
-        else:
-            # selected
-            style = {
-                "background-color": _SELECTED_TRACK_COLOR,
-            }
-
-        # TODO: find some way to use corner radius token full with resize event in the base class and merge it with the style dict
-        style.update(
-            {
-                "border-radius": "16px",
-                "margin": "4px",
-            }
-        )
-        self.sx.set(style)
-
     @effect(selected, pressed, hovered)
     def _refresh_shapes(self):
+        self._track.sx.set(
+            lambda prev: prev
+            | {
+                "background-color": _SELECTED_TRACK_COLOR
+                if self.selected.get()
+                else _UNSELECTED_TRACK_COLOR,
+                "border": f"{_TRACK_OUTLINE_WIDTH}px solid {_UNSELECTED_TRACK_OUTLINE_COLOR}"
+                if not self.selected.get()
+                else "none",
+            }
+        )
+
         self._handle.setGeometry(
             _SELECTED_PRESSED_HANDLE_GEOMETRY
             if self.selected.get() and self.pressed.get()
@@ -146,6 +137,7 @@ class Switch(Component):
                 else _UNSELECTED_HANDLE_COLOR
             }
         )
+
         self._state_layer.setGeometry(
             _SELECTED_STATE_LAYER_GEOMETRY
             if self.selected.get()
