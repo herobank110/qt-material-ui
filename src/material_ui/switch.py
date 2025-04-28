@@ -4,9 +4,11 @@ from material_ui.shape import Shape
 
 _UNSELECTED_TRACK_OUTLINE_COLOR = "#79747E"
 _UNSELECTED_TRACK_COLOR = "#E6E0E9"
-_HOVER_HANDLE_COLOR = "#EADDFF"
-_SELECTED_TRACK_COLOR = "#6750A4"
+_UNSELECTED_HANDLE_COLOR = "#79747E"
+_UNSELECTED_HOVER_HANDLE_COLOR = "#49454F"
 _SELECTED_HANDLE_COLOR = "#FFFFFF"
+_SELECTED_HOVER_HANDLE_COLOR = "#EADDFF"
+_SELECTED_TRACK_COLOR = "#6750A4"
 _STATE_LAYER_COLOR = "rgba(0, 0, 0, 40)"
 
 _TRACK_WIDTH = 52
@@ -125,9 +127,13 @@ class Switch(Component):
         self._handle.sx.set(
             lambda prev: prev
             | {
-                "background-color": _HOVER_HANDLE_COLOR
-                if self.hovered.get()
+                "background-color": _SELECTED_HOVER_HANDLE_COLOR
+                if self.selected.get() and self.hovered.get()
                 else _SELECTED_HANDLE_COLOR
+                if self.selected.get()
+                else _UNSELECTED_HOVER_HANDLE_COLOR
+                if self.hovered.get()
+                else _UNSELECTED_HANDLE_COLOR
             }
         )
 
