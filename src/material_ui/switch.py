@@ -30,8 +30,8 @@ _HANDLE_PRESSED_GEOMETRY = QtCore.QRect(
     _HANDLE_PRESSED_WIDTH,
 )
 _HANDLE_SELECTED_GEOMETRY = QtCore.QRect(
-    _STATE_LAYER_MARGIN + _TRACK_WIDTH - _HANDLE_SELECTED_WIDTH - _TRACK_OUTLINE_WIDTH,
-    _STATE_LAYER_MARGIN + _TRACK_OUTLINE_WIDTH,
+    _STATE_LAYER_MARGIN + _TRACK_WIDTH - _HANDLE_SELECTED_WIDTH - _TRACK_OUTLINE_WIDTH * 2,
+    _STATE_LAYER_MARGIN + (_TRACK_HEIGHT - _HANDLE_SELECTED_WIDTH) / 2,
     _HANDLE_SELECTED_WIDTH,
     _HANDLE_SELECTED_WIDTH,
 )
@@ -55,15 +55,17 @@ class Switch(Component):
         self.setFixedSize(_SWITCH_WIDTH, _SWITCH_HEIGHT)
 
         self._state_layer = Shape()
-        self._state_layer.setParent(self)
+        # self._state_layer.setParent(self)
         self._state_layer.sx.set(
             {
                 "background-color": state_layer_color,
                 "border-radius": "20px",
             }
         )
-        self._state_layer.setGeometry(QtCore.QRect(52 - (32 - 8) - 8, 0, 32 + 8, 32 + 8))
-        self._state_layer.setVisible(self.hovered.get())  # initial state - TODO: use binding
+        self._state_layer.setGeometry(
+            QtCore.QRect(52 - (32 - 8) - 8, 0, 32 + 8, 32 + 8)
+        )
+        # self._state_layer.setVisible(self.hovered.get())  # initial state - TODO: use binding
         # For some reason this fn needs to be wrapped in a lambda.
         # self.hovered.changed.connect(lambda value: self._state_layer.setVisible(value))
         # TODO: create a Shape class and have duplicate stuff like visible as Variable.
@@ -106,6 +108,17 @@ class Switch(Component):
             }
         )
         self.sx.set(style)
+
+    @effect(selected, pressed, hovered)
+    def _update_shapes(self):
+        """Update the handle shape based on the selected state."""
+        self._handle.setGeometry(
+            _HANDLE_PRESSED_GEOMETRY
+            if self.pressed.get()
+            else _HANDLE_SELECTED_GEOMETRY
+            if self.selected.get()
+            else _HANDLE_UNSELECTED_GEOMETRY
+        )
 
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
         if event.button() == QtCore.Qt.LeftButton:
