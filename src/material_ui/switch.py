@@ -65,9 +65,9 @@ class Switch(Component):
         self._state_layer.setGeometry(QtCore.QRect(52 - (32 - 8) - 8, 0, 32 + 8, 32 + 8))
         self._state_layer.setVisible(self.hovered.get())  # initial state - TODO: use binding
         # For some reason this fn needs to be wrapped in a lambda.
-        self.hovered.changed.connect(lambda value: self._state_layer.setVisible(value))
+        # self.hovered.changed.connect(lambda value: self._state_layer.setVisible(value))
         # TODO: create a Shape class and have duplicate stuff like visible as Variable.
-        # ripple.visible.bind(self.hovered)
+        self._state_layer.visible.bind(self.hovered)
 
         self._handle = Shape()
         self._handle.setParent(self)
