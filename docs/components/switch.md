@@ -4,6 +4,8 @@
 
 ![switch](./switch.gif)
 
+## Usage
+
 ```python
 from material_ui import Switch
 
