@@ -57,7 +57,10 @@ class Variable(QtCore.QObject, Generic[_T]):
         self.changed.connect(other.set)
 
     def __repr__(self):
-        return f"<Variable '{self.objectName()}' of component '{self.__component_name}' (current value: {str(self._value)[:20]})>"
+        return (
+            f"<Variable '{self.objectName()}' of component '{self.__component_name}' "
+            f"(current value: {str(self._value)[:20]})>"
+        )
 
 
 def _find_signal_annotations(attrs: dict[str, Any]) -> dict[str, int]:

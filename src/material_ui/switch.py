@@ -1,5 +1,6 @@
 from qtpy import QtCore, QtGui, QtWidgets
 from material_ui._component import Component, Signal, effect, use_state
+from material_ui.shape import Shape
 
 md_comp_switch_unselected_track_outline_color = "#79747E"
 md_comp_switch_unselected_track_color = "#E6E0E9"
@@ -24,10 +25,15 @@ class Switch(Component):
 
         self.setFixedSize(52 + 8, 32 + 8)
 
-        state_layer = Component()
+        state_layer = Shape()
         state_layer.setParent(self)
-        state_layer.setStyleSheet(
-            f"background:{state_layer_color};border-radius:20px;border:none;margin:0px;"
+        state_layer.sx.set(
+            {
+                "background-color": state_layer_color,
+                "border-radius": "20px",
+                "border": "none",
+                "margin": "0px",
+            }
         )
         state_layer.setGeometry(QtCore.QRect(52 - (32 - 8) - 8, 0, 32 + 8, 32 + 8))
         state_layer.setVisible(self.hovered.get())  # initial state - TODO: use binding
@@ -36,10 +42,15 @@ class Switch(Component):
         # TODO: create a Shape class and have duplicate stuff like visible as Variable.
         # ripple.visible.bind(self.hovered)
 
-        handle = Component(corner="full")
+        handle = Shape()
         handle.setParent(self)
-        handle.setStyleSheet(
-            f"background:{md_comp_switch_selected_handle_color};border:none;border-radius:14px;margin:0px;"
+        handle.sx.set(
+            {
+                "background-color": md_comp_switch_selected_handle_color,
+                "border-radius": "14px",
+                "border": "none",
+                "margin": "0px",
+            }
         )
         handle.setGeometry(QtCore.QRect(52 - 28 - 2 + 4, 2 + 4, 28, 28))
 
