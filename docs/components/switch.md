@@ -25,4 +25,3 @@ switch = Switch()
 | Name               | Description                               |
 | ------------------ | ----------------------------------------- |
 | `change_requested` | Emitted when the user toggles the switch. |
-
