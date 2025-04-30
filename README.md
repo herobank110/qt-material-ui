@@ -2,20 +2,6 @@
 
 Material 3 component library for Qt Widgets
 
-## Why a Qt Widgets library?
-
-There aren't enough high quality component libraries for Qt Widgets. The
-Qt Company keep pushing QML but the mixture of javascript and a custom
-markup language feels restrictive compared to the original Qt Widgets
-where you can just use Python. Frontend development these days relies on
-JavaScript while Python fades away. This library aims to change
-perceptions of Qt as an ancient technology by bringing in some modern
-frontend ideas and wrapping it all up in a modern aesthetic.
-
-That said, web technology is undoubtedly the future. This library is
-mainly for fun and paying respect to the roots of desktop GUIs some 'old
-timers' may have started our frontend journey with.
-
 ## Get Started
 
 This library is available on PyPI and can be installed with pip:
