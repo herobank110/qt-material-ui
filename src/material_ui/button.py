@@ -1,5 +1,6 @@
-from typing import Literal
-from material_ui._component import Component
+from typing import Literal, cast
+from material_ui._component import Component, use_state
+from material_ui.typography import Typography
 
 
 ButtonVariant = Literal[
@@ -14,5 +15,21 @@ ButtonVariant = Literal[
 class Button(Component):
     """Buttons let people take action and make choices with one tap."""
 
-    def __init__(self, *, text: str = "") -> None:
-        pass
+    text = use_state("")
+    variant = use_state(cast(ButtonVariant, "elevated"))
+
+    def __init__(self) -> None:
+        super().__init__()
+
+        self.sx.set({
+            "background-color": "red",
+            # "color": "white",
+            "border-radius": "8px",
+            "padding": "8px 16px",
+            "border": "none",
+        })
+
+        self._label = Typography()
+        self._label.text.bind(self.text)
+        self.overlay_widget(self._label)
+

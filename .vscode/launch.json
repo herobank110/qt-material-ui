@@ -10,6 +10,13 @@
       "request": "launch",
       "program": "${workspaceFolder}/demo/sample_switch.py",
       "console": "integratedTerminal"
+    },
+    {
+      "name": "Sample - Button",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/demo/sample_button.py",
+      "console": "integratedTerminal"
     }
   ]
 }
