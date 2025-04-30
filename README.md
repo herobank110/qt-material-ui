@@ -35,7 +35,7 @@ npm install
 Subsequently you can work on the docs with a hot reload server:
 
 ```
-cd docs; npx vitepress
+cd docs && npx vitepress
 ```
 
 > This is also available as a VSCode task called `serve docs locally`.
