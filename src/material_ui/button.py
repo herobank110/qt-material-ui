@@ -6,7 +6,7 @@ from material_ui.typography import Typography
 ButtonVariant = Literal[
     "elevated",
     "filled",
-    "tonal",
+    "filled-tonal",
     "outlined",
     "text",
 ]

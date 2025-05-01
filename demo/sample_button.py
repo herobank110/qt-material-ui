@@ -18,7 +18,7 @@ def main() -> None:
     for variant in [
         "elevated",
         "filled",
-        "tonal",
+        "filled-tonal",
         "outlined",
         "text",
     ]:
