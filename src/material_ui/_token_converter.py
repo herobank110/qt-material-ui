@@ -13,8 +13,6 @@ values = token_table["system"]["values"]
 tokens = token_table["system"]["tokens"]
 contextual_reference_trees = token_table["system"]["contextualReferenceTrees"]
 
-_all_context_tags = set()
-
 
 def _get_tree_context_score(tree: dict, terms: set[str]) -> float:
     """Returns score of a tree based on context tags.
@@ -23,11 +21,11 @@ def _get_tree_context_score(tree: dict, terms: set[str]) -> float:
         RuntimeError: The tree does not have a context defined.
     """
     if "contextTags" not in tree:
-        raise RuntimeError("Tree does not have a context defined.")
+        raise RuntimeError("Tree does not have a context defined")
     resolved_tags = map(_resolve_context_tag, tree["contextTags"])
     tree_tag_names = {tag["tagName"] for tag in resolved_tags}
     difference = tree_tag_names.difference(terms)
-    return (1 - (len(difference) / len(terms))) * 10.0
+    return len(terms) - len(difference)
 
 
 def _resolve_context_tag(name: str) -> dict | None:
@@ -88,7 +86,6 @@ for token in tokens:
             if reference_value["color"]["alpha"] != 1:
                 color_str += "%02x" % int(255 * reference_tree["value"]["alpha"])
             output(color_str)
-            # output(reference_value["color"])
         elif "length" in reference_value:
             output(
                 f"{reference_value['length']['value']} {reference_value['length']['unit']}"
@@ -101,5 +98,3 @@ for token in tokens:
             reference_tree["childNodes"][0] if "childNodes" in reference_tree else None
         )
         indent += 1
-
-print(_all_context_tags)
