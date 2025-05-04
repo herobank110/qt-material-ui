@@ -4,13 +4,7 @@ import json
 from pathlib import Path
 
 
-@dataclass
-class ContextMatchParams:
-    required: set[str]
-    optional: set[str]
-
-
-SELECTED_CONTEXT = ContextMatchParams(required={"3p"}, optional={"light", "dynamic"})
+SELECTED_CONTEXT = {"light", "3p", "dynamic"}
 
 with open(Path(__file__).parent / "TOKEN_TABLE_2.json") as f:
     token_table = json.load(f)
@@ -22,8 +16,8 @@ contextual_reference_trees = token_table["system"]["contextualReferenceTrees"]
 _all_context_tags = set()
 
 
-def _tree_matches_context(tree: dict, params: ContextMatchParams) -> bool:
-    """Returns whether the tree matches the given context.
+def _get_tree_context_score(tree: dict, terms: set[str]) -> float:
+    """Returns score of a tree based on context tags.
 
     Raises:
         RuntimeError: The tree does not have a context defined.
@@ -32,10 +26,10 @@ def _tree_matches_context(tree: dict, params: ContextMatchParams) -> bool:
         raise RuntimeError("Tree does not have a context defined.")
     resolved_tags = map(_resolve_context_tag, tree["contextTags"])
     tree_tag_names = {tag["tagName"] for tag in resolved_tags}
-    return (
-        tree_tag_names.issuperset(params.required)  #
-        and (tree_tag_names - params.required).issubset(params.optional)
-    )
+    difference = tree_tag_names.difference(terms)
+    if not difference:
+        return 10.0  # perfect match
+    return len(difference) / len(terms) * 10.0
 
 
 def _resolve_context_tag(name: str) -> dict | None:
@@ -49,24 +43,21 @@ def _resolve_context_tag(name: str) -> dict | None:
     )
 
 
-def _find_matching_context_tree(
-    trees: list[dict], params: ContextMatchParams
-) -> dict | None:
+def _find_matching_context_tree(trees: list[dict], terms: set[str]) -> dict:
     """Find the contextual reference tree matching a given context.
 
     Args:
         trees: List of contextual reference trees.
-        tag_names: List of context tag names to match.
+        terms: Context tag names to match on.
 
     Returns:
-        The first matching contextual reference tree. If no tree matches
-        the context, None is returned. If no trees define a context, the
-        first item is returned.
+        Highest scoring tree based on tags. If no trees define a
+        context, the first one is returned.
     """
     if trees and all("contextTags" not in x for x in trees):
         return trees[0]  # no contexts defined - return first one
-    filter_fn = partial(_tree_matches_context, params=params)
-    return next(filter(filter_fn, trees), None)
+    key_fn = partial(_get_tree_context_score, terms=terms)
+    return next(iter(sorted(trees, key=key_fn, reverse=True)), None)
 
 
 for token in tokens:
