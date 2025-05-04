@@ -29,7 +29,7 @@ def _get_tree_context_score(tree: dict, terms: set[str]) -> float:
     difference = tree_tag_names.difference(terms)
     if not difference:
         return 10.0  # perfect match
-    return len(difference) / len(terms) * 10.0
+    return (1 - (len(difference) / len(terms))) * 10.0
 
 
 def _resolve_context_tag(name: str) -> dict | None:
@@ -56,8 +56,8 @@ def _find_matching_context_tree(trees: list[dict], terms: set[str]) -> dict:
     """
     if trees and all("contextTags" not in x for x in trees):
         return trees[0]  # no contexts defined - return first one
-    key_fn = partial(_get_tree_context_score, terms=terms)
-    return next(iter(sorted(trees, key=key_fn, reverse=True)), None)
+    score_fn = partial(_get_tree_context_score, terms=terms)
+    return next(iter(sorted(trees, key=score_fn, reverse=True)), None)
 
 
 for token in tokens:
