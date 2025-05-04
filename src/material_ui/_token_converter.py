@@ -1,10 +1,9 @@
-from dataclasses import dataclass
 from functools import partial
 import json
 from pathlib import Path
 
 
-SELECTED_CONTEXT = {"light", "3p", "dynamic"}
+CONTEXT_MATCH_TERMS = {"light", "3p", "dynamic"}
 
 with open(Path(__file__).parent / "TOKEN_TABLE_2.json") as f:
     token_table = json.load(f)
@@ -65,7 +64,7 @@ for token in tokens:
     contextual_reference_tree = contextual_reference_trees[name][
         "contextualReferenceTree"
     ]
-    tree = _find_matching_context_tree(contextual_reference_tree, SELECTED_CONTEXT)
+    tree = _find_matching_context_tree(contextual_reference_tree, CONTEXT_MATCH_TERMS)
     indent = 1
 
     def output(value):
