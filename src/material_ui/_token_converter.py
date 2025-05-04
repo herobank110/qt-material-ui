@@ -27,8 +27,6 @@ def _get_tree_context_score(tree: dict, terms: set[str]) -> float:
     resolved_tags = map(_resolve_context_tag, tree["contextTags"])
     tree_tag_names = {tag["tagName"] for tag in resolved_tags}
     difference = tree_tag_names.difference(terms)
-    if not difference:
-        return 10.0  # perfect match
     return (1 - (len(difference) / len(terms))) * 10.0
 
 
