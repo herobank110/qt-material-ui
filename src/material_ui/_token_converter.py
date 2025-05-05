@@ -93,6 +93,23 @@ for token in tokens:
             output(reference_value["opacity"])
         elif "shape" in reference_value:
             output(reference_value["shape"]["family"])
+        elif "fontWeight" in reference_value:
+            output(reference_value["fontWeight"])
+        elif "lineHeight" in reference_value:
+            output(f"{reference_value['lineHeight']['value']} {reference_value['lineHeight']['unit']}")
+        elif "fontTracking" in reference_value:
+            output(f"{reference_value['fontTracking']['value']} {reference_value['fontTracking']['unit']}")
+        elif "fontSize" in reference_value:
+            output(f"{reference_value['fontSize']['value']} {reference_value['fontSize']['unit']}")
+        elif "type" in reference_value:
+            output(reference_value["type"])
+            break
+        elif "fontNames" in reference_value:
+            output(reference_value["fontNames"]["values"])
+        elif "elevation" in reference_value:
+            output(f"{reference_value['elevation'].get('value', 0)} {reference_value['elevation']['unit']}")
+        else:
+            raise RuntimeError("unexpected reference value", reference_value)
         reference_tree = (
             reference_tree["childNodes"][0] if "childNodes" in reference_tree else None
         )
