@@ -18,3 +18,8 @@ def resolve_token(token_name: str) -> TokenValue:
     resolved until a value is obtained.
     """
     raise NotImplementedError()
+
+
+def override_token(token_name: str, value: TokenValue) -> None:
+    """Override a token value in the global theme."""
+    raise NotImplementedError()
