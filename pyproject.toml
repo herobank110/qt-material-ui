@@ -22,6 +22,8 @@ keywords = ["qt", "material", "ui", "components", "widgets"]
 
 [project.optional-dependencies]
 dev = [
+    "PySide6",
+    "httpx",
 ]
 
 [project.urls]
