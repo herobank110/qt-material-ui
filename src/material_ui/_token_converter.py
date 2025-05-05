@@ -90,9 +90,23 @@ def _find_matching_context_tree(
 ParsedTokens = dict[str, str]
 
 
-def parse_tokens(token_tables: list[dict], context_terms: set[str]) -> ParsedTokens:
+def parse_tokens(
+    token_tables: list[dict], context_terms: set[str] | None = None
+) -> ParsedTokens:
     """Parse the token tables into a list of tokens."""
     ret_val: ParsedTokens = {}
+
+    if context_terms is None:
+        # Collect all context terms from the token tables. Different
+        # contexts will get combined with common keys replaced by the
+        # last one.
+        for context_terms in product(
+            ["light", "dark"], ["3p", "1p"], ["dynamic", "non-dynamic"]
+        ):
+            ret_val |= parse_tokens(token_tables, set(context_terms))
+        ret_val |= parse_tokens(token_tables, DEFAULT_CONTEXT_TERMS)
+        return ret_val
+
     for token_table in token_tables:
         values = token_table["system"]["values"]
         tokens = token_table["system"]["tokens"]
@@ -172,12 +186,7 @@ def parse_tokens(token_tables: list[dict], context_terms: set[str]) -> ParsedTok
 
 def main() -> None:
     token_tables = asyncio.run(fetch_token_tables())
-    tokens = {}
-    for context_terms in product(
-        ["light", "dark"], ["3p", "1p"], ["dynamic", "non-dynamic"]
-    ):
-        tokens |= parse_tokens(token_tables, set(context_terms))
-    tokens |= parse_tokens(token_tables, DEFAULT_CONTEXT_TERMS)
+    tokens = parse_tokens(token_tables)
     print(tokens)
 
 
