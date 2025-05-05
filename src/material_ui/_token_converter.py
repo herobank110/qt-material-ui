@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from functools import partial
 from itertools import batched, product
 import json
@@ -165,7 +164,8 @@ def parse_tokens(
                         f"{reference_value['fontSize']['value']} {reference_value['fontSize']['unit']}"
                     )
                 elif "type" in reference_value:
-                    ret_val[token_name] = reference_value["type"]
+                    # Type isn't very useful as it seems to just be a
+                    # combination of the other font properties.
                     break
                 elif "fontNames" in reference_value:
                     ret_val[token_name] = reference_value["fontNames"]["values"]
@@ -187,7 +187,12 @@ def parse_tokens(
 def main() -> None:
     token_tables = asyncio.run(fetch_token_tables())
     tokens = parse_tokens(token_tables)
-    print(tokens)
+    tokens = {x: tokens[x] for x in sorted(tokens)}
+    token_cache_path = (
+        Path(tempfile.gettempdir()) / "78eb23ae-4a5a-4c98-af82-62405ff0d7fb"
+    )
+    with open(token_cache_path, "w") as f:
+        json.dump(tokens, f, indent=2)
 
 
 if __name__ == "__main__":

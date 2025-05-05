@@ -1,4 +1,5 @@
 from typing import Literal, cast
+from material_ui.tokens import md_ref_palette
 from material_ui._component import Component, use_state
 from material_ui.typography import Typography
 
@@ -23,7 +24,7 @@ class Button(Component):
 
         self.sx.set(
             {
-                "background-color": "red",
+                "background-color": md_ref_palette[""],
                 "border-radius": "8px",
                 "padding": "8px 16px",
                 "border": "none",
