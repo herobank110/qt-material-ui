@@ -1,6 +1,45 @@
 from functools import partial
+from itertools import batched
 import json
 from pathlib import Path
+
+import tempfile
+import httpx
+import asyncio
+
+
+TOKEN_TABLE_URL_FORMAT = (
+    "https://m3.material.io/_dsm/data/dsdb-m3/latest/TOKEN_TABLE.json"
+)
+
+
+async def fetch_token_tables(no_cache: bool = False) -> list[dict]:
+    """Fetch the token tables from the Material API.
+
+    Args:
+        no_cache: Results are cached to disk. If no_cache is True, the
+            cache is cleared first.
+
+    Returns:
+        A list of dictionaries containing the token tables.
+    """
+    cache_path = Path(tempfile.gettempdir()) / "c28a72b4-37c2-448b-9bbf-c143a4186ffb"
+    if no_cache:
+        cache_path.unlink(missing_ok=True)
+    if cache_path.exists():
+        with open(cache_path) as f:
+            return json.load(f)
+    token_table_ids = list(map("".join, batched(input("TOKEN_TABLE_IDS"), 16)))
+    async with httpx.AsyncClient() as client:
+        url_fn = TOKEN_TABLE_URL_FORMAT.replace("json", "{}.json").format
+        responses = await asyncio.gather(*map(client.get, map(url_fn, token_table_ids)))
+    ret_val = [x.json() for x in responses]
+    with open(cache_path, "w") as f:
+        json.dump(ret_val, f)
+    return ret_val
+
+
+asyncio.run(fetch_token_tables())
 
 
 CONTEXT_MATCH_TERMS = {"light", "3p", "dynamic"}
@@ -96,18 +135,26 @@ for token in tokens:
         elif "fontWeight" in reference_value:
             output(reference_value["fontWeight"])
         elif "lineHeight" in reference_value:
-            output(f"{reference_value['lineHeight']['value']} {reference_value['lineHeight']['unit']}")
+            output(
+                f"{reference_value['lineHeight']['value']} {reference_value['lineHeight']['unit']}"
+            )
         elif "fontTracking" in reference_value:
-            output(f"{reference_value['fontTracking']['value']} {reference_value['fontTracking']['unit']}")
+            output(
+                f"{reference_value['fontTracking']['value']} {reference_value['fontTracking']['unit']}"
+            )
         elif "fontSize" in reference_value:
-            output(f"{reference_value['fontSize']['value']} {reference_value['fontSize']['unit']}")
+            output(
+                f"{reference_value['fontSize']['value']} {reference_value['fontSize']['unit']}"
+            )
         elif "type" in reference_value:
             output(reference_value["type"])
             break
         elif "fontNames" in reference_value:
             output(reference_value["fontNames"]["values"])
         elif "elevation" in reference_value:
-            output(f"{reference_value['elevation'].get('value', 0)} {reference_value['elevation']['unit']}")
+            output(
+                f"{reference_value['elevation'].get('value', 0)} {reference_value['elevation']['unit']}"
+            )
         else:
             raise RuntimeError("unexpected reference value", reference_value)
         reference_tree = (
