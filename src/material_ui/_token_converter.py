@@ -39,20 +39,10 @@ async def fetch_token_tables(no_cache: bool = False) -> list[dict]:
     return ret_val
 
 
-asyncio.run(fetch_token_tables())
-
-
 CONTEXT_MATCH_TERMS = {"light", "3p", "dynamic"}
 
-with open(Path(__file__).parent / "TOKEN_TABLE_2.json") as f:
-    token_table = json.load(f)
 
-values = token_table["system"]["values"]
-tokens = token_table["system"]["tokens"]
-contextual_reference_trees = token_table["system"]["contextualReferenceTrees"]
-
-
-def _get_tree_context_score(tree: dict, terms: set[str]) -> float:
+def _get_tree_context_score(token_table: dict, tree: dict, terms: set[str]) -> float:
     """Returns score of a tree based on context tags.
 
     Raises:
@@ -60,13 +50,13 @@ def _get_tree_context_score(tree: dict, terms: set[str]) -> float:
     """
     if "contextTags" not in tree:
         raise RuntimeError("Tree does not have a context defined")
-    resolved_tags = map(_resolve_context_tag, tree["contextTags"])
+    resolved_tags = map(partial(_resolve_context_tag, token_table), tree["contextTags"])
     tree_tag_names = {tag["tagName"] for tag in resolved_tags}
     difference = tree_tag_names.difference(terms)
     return len(terms) - len(difference)
 
 
-def _resolve_context_tag(name: str) -> dict | None:
+def _resolve_context_tag(token_table: dict, name: str) -> dict | None:
     return next(
         (
             context_tag
@@ -77,7 +67,9 @@ def _resolve_context_tag(name: str) -> dict | None:
     )
 
 
-def _find_matching_context_tree(trees: list[dict], terms: set[str]) -> dict:
+def _find_matching_context_tree(
+    token_table: dict, trees: list[dict], terms: set[str]
+) -> dict:
     """Find the contextual reference tree matching a given context.
 
     Args:
@@ -90,74 +82,90 @@ def _find_matching_context_tree(trees: list[dict], terms: set[str]) -> dict:
     """
     if trees and all("contextTags" not in x for x in trees):
         return trees[0]  # no contexts defined - return first one
-    score_fn = partial(_get_tree_context_score, terms=terms)
+    score_fn = partial(_get_tree_context_score, token_table, terms=terms)
     return next(iter(sorted(trees, key=score_fn, reverse=True)), None)
 
 
-for token in tokens:
-    name = token["name"]
-    token_name = token.get("tokenName")
-    if name not in contextual_reference_trees:
-        continue
-    print(token_name)
-    contextual_reference_tree = contextual_reference_trees[name][
-        "contextualReferenceTree"
-    ]
-    tree = _find_matching_context_tree(contextual_reference_tree, CONTEXT_MATCH_TERMS)
-    indent = 1
+def main() -> None:
+    token_tables = asyncio.run(fetch_token_tables())
+    for token_table in token_tables:
+        values = token_table["system"]["values"]
+        tokens = token_table["system"]["tokens"]
+        contextual_reference_trees = token_table["system"]["contextualReferenceTrees"]
+        for token in tokens:
+            name = token["name"]
+            token_name = token.get("tokenName")
+            if name not in contextual_reference_trees:
+                continue
+            print(token_name)
+            contextual_reference_tree = contextual_reference_trees[name][
+                "contextualReferenceTree"
+            ]
+            tree = _find_matching_context_tree(
+                token_table, contextual_reference_tree, CONTEXT_MATCH_TERMS
+            )
+            indent = 1
 
-    def output(value):
-        print("  " * indent + str(value))
+            def output(value):
+                print("  " * indent + str(value))
 
-    reference_tree = tree["referenceTree"]
-    while reference_tree:
-        reference_value = next(
-            v for v in values if v["name"] == reference_tree["value"]["name"]
-        )
-        if "tokenName" in reference_value:
-            output(reference_value["tokenName"])
-        elif "color" in reference_value:
-            color_str = "#" + "".join(
-                "%02x" % int(reference_value.get("color").get(c, 0) * 255)
-                for c in ["red", "green", "blue"]
-            )
-            if reference_value["color"]["alpha"] != 1:
-                color_str += "%02x" % int(255 * reference_tree["value"]["alpha"])
-            output(color_str)
-        elif "length" in reference_value:
-            output(
-                f"{reference_value['length']['value']} {reference_value['length']['unit']}"
-            )
-        elif "opacity" in reference_value:
-            output(reference_value["opacity"])
-        elif "shape" in reference_value:
-            output(reference_value["shape"]["family"])
-        elif "fontWeight" in reference_value:
-            output(reference_value["fontWeight"])
-        elif "lineHeight" in reference_value:
-            output(
-                f"{reference_value['lineHeight']['value']} {reference_value['lineHeight']['unit']}"
-            )
-        elif "fontTracking" in reference_value:
-            output(
-                f"{reference_value['fontTracking']['value']} {reference_value['fontTracking']['unit']}"
-            )
-        elif "fontSize" in reference_value:
-            output(
-                f"{reference_value['fontSize']['value']} {reference_value['fontSize']['unit']}"
-            )
-        elif "type" in reference_value:
-            output(reference_value["type"])
-            break
-        elif "fontNames" in reference_value:
-            output(reference_value["fontNames"]["values"])
-        elif "elevation" in reference_value:
-            output(
-                f"{reference_value['elevation'].get('value', 0)} {reference_value['elevation']['unit']}"
-            )
-        else:
-            raise RuntimeError("unexpected reference value", reference_value)
-        reference_tree = (
-            reference_tree["childNodes"][0] if "childNodes" in reference_tree else None
-        )
-        indent += 1
+            reference_tree = tree["referenceTree"]
+            while reference_tree:
+                reference_value = next(
+                    v for v in values if v["name"] == reference_tree["value"]["name"]
+                )
+                if "tokenName" in reference_value:
+                    output(reference_value["tokenName"])
+                elif "color" in reference_value:
+                    color_str = "#" + "".join(
+                        "%02x" % int(reference_value.get("color").get(c, 0) * 255)
+                        for c in ["red", "green", "blue"]
+                    )
+                    if reference_value["color"]["alpha"] != 1:
+                        color_str += "%02x" % int(
+                            255 * reference_tree["value"]["alpha"]
+                        )
+                    output(color_str)
+                elif "length" in reference_value:
+                    output(
+                        f"{reference_value['length'].get('value', 0)} {reference_value['length']['unit']}"
+                    )
+                elif "opacity" in reference_value:
+                    output(reference_value["opacity"])
+                elif "shape" in reference_value:
+                    output(reference_value["shape"]["family"])
+                elif "fontWeight" in reference_value:
+                    output(reference_value["fontWeight"])
+                elif "lineHeight" in reference_value:
+                    output(
+                        f"{reference_value['lineHeight']['value']} {reference_value['lineHeight']['unit']}"
+                    )
+                elif "fontTracking" in reference_value:
+                    output(
+                        f"{reference_value['fontTracking'].get('value', 0)} {reference_value['fontTracking']['unit']}"
+                    )
+                elif "fontSize" in reference_value:
+                    output(
+                        f"{reference_value['fontSize']['value']} {reference_value['fontSize']['unit']}"
+                    )
+                elif "type" in reference_value:
+                    output(reference_value["type"])
+                    break
+                elif "fontNames" in reference_value:
+                    output(reference_value["fontNames"]["values"])
+                elif "elevation" in reference_value:
+                    output(
+                        f"{reference_value['elevation'].get('value', 0)} {reference_value['elevation']['unit']}"
+                    )
+                else:
+                    raise RuntimeError("unexpected reference value", reference_value)
+                reference_tree = (
+                    reference_tree["childNodes"][0]
+                    if "childNodes" in reference_tree
+                    else None
+                )
+                indent += 1
+
+
+if __name__ == "__main__":
+    main()
