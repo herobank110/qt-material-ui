@@ -251,8 +251,8 @@ def parse_token_value(value: dict) -> TokenValue | None:
     raise RuntimeError("unexpected reference value", value)
 
 
-def group_tokens_by_component(tokens: ParsedTokens) -> dict[str, ParsedTokens]:
-    """Get the component groups from the tokens.
+def group_tokens_by_output_files(tokens: ParsedTokens) -> dict[str, ParsedTokens]:
+    """Get the groups by first 3 parts from the tokens.
 
     Args:
         tokens: The parsed tokens.
@@ -262,7 +262,7 @@ def group_tokens_by_component(tokens: ParsedTokens) -> dict[str, ParsedTokens]:
     """
     ret_val = defaultdict(list)
     for token in tokens:
-        match = re.search(r"^(md\.comp\..+?)\.", token.name)
+        match = re.search(r"^(md\.(comp|sys|ref)\..+?)\.", token.name)
         if match:
             group_name = match.group(1)
             ret_val[group_name].append(token)
@@ -283,15 +283,15 @@ to_python_name = partial(re.sub, r"[-\.]", "_")
 def to_var_line(token: ParsedToken) -> str:
     """Code generation for the token."""
     if isinstance(token.value, QColor):
-        value = re.search("(QColor.*$", repr(token.value))[1]
+        value = re.search("(QColor.*)#", repr(token.value))[1]
     else:
         value = repr(token.value)
     return f"{to_python_name(token.name)} = {value}\n"
 
 
-def generate_component_py_files(tokens: ParsedTokens) -> None:
-    """Generate the Python files for the md.comp.* tokens."""
-    component_groups = group_tokens_by_component(tokens)
+def generate_py_files(tokens: ParsedTokens) -> None:
+    """Generate the Python files for the tokens."""
+    component_groups = group_tokens_by_output_files(tokens)
     for group_name, tokens in component_groups.items():
         with open(TOKENS_OUT_PATH / f"{to_python_name(group_name)}.py", "w") as f:
             f.write(
@@ -317,7 +317,7 @@ def main() -> None:
     # with open(token_cache_path, "w") as f:
     #     json.dump(tokens, f, indent=2)
 
-    generate_component_py_files(tokens)
+    generate_py_files(tokens)
 
 
 if __name__ == "__main__":
