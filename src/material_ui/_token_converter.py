@@ -143,7 +143,7 @@ def parse_tokens(
     # A specific context.
     for token_table in token_tables:
         ret_val = merge_parsed_tokens(
-            ret_val, parse_tokens_in_table(context_terms, token_table)
+            ret_val, parse_tokens_in_table(token_table, context_terms)
         )
     return ret_val
 
