@@ -219,7 +219,9 @@ def parse_token_value(value: dict) -> TokenValue | None:
             value["color"].get("alpha", 1.0),
         )
     elif "length" in value:
-        return f"{value['length'].get('value', 0)} {value['length']['unit']}"
+        # Don't output units for now...
+        assert value["length"]["unit"] == "DIPS"
+        return value["length"].get("value", 0)
     elif "opacity" in value:
         return value["opacity"]
     elif "shape" in value:
@@ -227,21 +229,24 @@ def parse_token_value(value: dict) -> TokenValue | None:
     elif "fontWeight" in value:
         return value["fontWeight"]
     elif "lineHeight" in value:
-        return f"{value['lineHeight']['value']} {value['lineHeight']['unit']}"
+        assert value["lineHeight"]["unit"] == "DIPS"
+        return value["lineHeight"]["value"]
     elif "fontTracking" in value:
-        return (
-            f"{value['fontTracking'].get('value', 0)} {value['fontTracking']['unit']}"
-        )
+        assert value["fontTracking"]["unit"] == "DIPS"
+        return value["fontTracking"].get("value", 0)
     elif "fontSize" in value:
-        return f"{value['fontSize']['value']} {value['fontSize']['unit']}"
+        assert value["fontSize"]["unit"] == "DIPS"
+        return value["fontSize"]["value"]
     elif "type" in value:
         # Type isn't very useful as it seems to just be a
         # combination of the other font properties.
         return None
     elif "fontNames" in value:
-        return value["fontNames"]["values"]
+        # Just take the first font.
+        return value["fontNames"]["values"][0]
     elif "elevation" in value:
-        return f"{value['elevation'].get('value', 0)} {value['elevation']['unit']}"
+        assert value["elevation"]["unit"] == "DIPS"
+        return value["elevation"].get("value", 0)
     raise RuntimeError("unexpected reference value", value)
 
 
@@ -311,7 +316,7 @@ def main() -> None:
     # with open(token_cache_path, "w") as f:
     #     json.dump(tokens, f, indent=2)
 
-    generate_component_py_file(tokens)
+    generate_component_py_files(tokens)
 
 
 if __name__ == "__main__":
