@@ -11,7 +11,7 @@ import httpx
 import asyncio
 from qtpy.QtGui import QColor
 
-from material_ui.tokens._core import Indirection, TokenValue
+from material_ui.tokens._core import TokenValue
 
 
 TOKEN_TABLE_URL_FORMAT = (
