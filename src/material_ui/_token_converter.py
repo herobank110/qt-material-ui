@@ -126,7 +126,6 @@ def parse_tokens(
         contextual_reference_trees = token_table["system"]["contextualReferenceTrees"]
         for token in tokens:
             name = token["name"]
-            token_name = token.get("tokenName")
             if name not in contextual_reference_trees:
                 continue
             contextual_reference_tree = contextual_reference_trees[name][
@@ -136,6 +135,7 @@ def parse_tokens(
                 token_table, contextual_reference_tree, context_terms
             )
             reference_tree = tree["referenceTree"]
+            token_name = token.get("tokenName")
             while reference_tree:
                 reference_value = next(
                     (v for v in values if v["name"] == reference_tree["value"]["name"]),
@@ -147,13 +147,17 @@ def parse_tokens(
                 if token_value is None:
                     break
                 ret_val.append(ParsedToken(name=token_name, value=token_value))
-                reference_tree = (
-                    reference_tree["childNodes"][0]
-                    if "childNodes" in reference_tree
-                    else None
-                )
-                if reference_tree:
-                    token_name = token_value
+                # reference_tree = (
+                #     reference_tree["childNodes"][0]
+                #     if "childNodes" in reference_tree
+                #     else None
+                # )
+                if isinstance(token_value, Indirection):
+                    # Next iteration of while to go deeper.
+                    token_name = token_value.name
+                    reference_tree = reference_tree["childNodes"][0]
+                else:
+                    break
     return ret_val
 
 
