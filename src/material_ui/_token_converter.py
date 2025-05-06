@@ -254,9 +254,6 @@ def parse_token_value(value: dict) -> TokenValue | None:
 def group_tokens_by_output_files(tokens: ParsedTokens) -> dict[str, ParsedTokens]:
     """Get the groups by first 3 parts from the tokens.
 
-    md.ref.* tokens aren't included, as they are completely different
-    and must be manually written up into code.
-
     Args:
         tokens: The parsed tokens.
 
@@ -265,7 +262,7 @@ def group_tokens_by_output_files(tokens: ParsedTokens) -> dict[str, ParsedTokens
     """
     ret_val = defaultdict(list)
     for token in tokens:
-        match = re.search(r"^(md\.(comp|sys)\..+?)\.", token.name)
+        match = re.search(r"^(md\.(comp|sys|ref)\..+?)\.", token.name)
         if match:
             group_name = match.group(1)
             ret_val[group_name].append(token)
@@ -296,6 +293,10 @@ def generate_py_files(tokens: ParsedTokens) -> None:
     """Generate the Python files for the tokens."""
     component_groups = group_tokens_by_output_files(tokens)
     for group_name, tokens in component_groups.items():
+        if group_name == "md.ref.palette":
+            # Skip this as the parsing leaves incomplete tokens. Better
+            # to write this file manually.
+            continue
         with open(TOKENS_OUT_PATH / f"{to_python_name(group_name)}.py", "w") as f:
             f.write(
                 f'"""Design tokens for {group_name}."""\n'
