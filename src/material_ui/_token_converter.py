@@ -11,7 +11,7 @@ import httpx
 import asyncio
 from qtpy.QtGui import QColor
 
-from material_ui.tokens._core import TokenValue
+from material_ui.tokens._core import Indirection, TokenValue
 
 
 TOKEN_TABLE_URL_FORMAT = (
@@ -157,41 +157,52 @@ def parse_tokens(
     return ret_val
 
 
-def parse_token_value(reference_value: dict) -> TokenValue:
-    """Parse a token value."""
-    if "tokenName" in reference_value:
-        return reference_value["tokenName"]
-    elif "color" in reference_value:
-        color_str = "#" + "".join(
-            "%02x" % int(reference_value.get("color").get(c, 0) * 255)
-            for c in ["red", "green", "blue"]
+def parse_token_value(value: dict) -> TokenValue | None:
+    """Parse a token value from the token table.
+
+    Args:
+        value: The token value.
+
+    Returns:
+        The token value if a supported type, otherwise None.
+
+    Raises:
+        RuntimeError: Unexpected type of token.
+    """
+    if "tokenName" in value:
+        return Indirection(name=value["tokenName"])
+    elif "color" in value:
+        return QColor.fromRgbF(
+            value["color"].get("red", 0.0),
+            value["color"].get("green", 0.0),
+            value["color"].get("blue", 0.0),
+            value["color"].get("alpha", 1.0),
         )
-        if reference_value["color"]["alpha"] != 1:
-            color_str += "%02x" % int(255 * reference_value["value"]["alpha"])
-        return color_str
-    elif "length" in reference_value:
-        return f"{reference_value['length'].get('value', 0)} {reference_value['length']['unit']}"
-    elif "opacity" in reference_value:
-        return reference_value["opacity"]
-    elif "shape" in reference_value:
-        return reference_value["shape"]["family"]
-    elif "fontWeight" in reference_value:
-        return reference_value["fontWeight"]
-    elif "lineHeight" in reference_value:
-        return f"{reference_value['lineHeight']['value']} {reference_value['lineHeight']['unit']}"
-    elif "fontTracking" in reference_value:
-        return f"{reference_value['fontTracking'].get('value', 0)} {reference_value['fontTracking']['unit']}"
-    elif "fontSize" in reference_value:
-        return f"{reference_value['fontSize']['value']} {reference_value['fontSize']['unit']}"
-    elif "type" in reference_value:
+    elif "length" in value:
+        return f"{value['length'].get('value', 0)} {value['length']['unit']}"
+    elif "opacity" in value:
+        return value["opacity"]
+    elif "shape" in value:
+        return value["shape"]["family"]
+    elif "fontWeight" in value:
+        return value["fontWeight"]
+    elif "lineHeight" in value:
+        return f"{value['lineHeight']['value']} {value['lineHeight']['unit']}"
+    elif "fontTracking" in value:
+        return (
+            f"{value['fontTracking'].get('value', 0)} {value['fontTracking']['unit']}"
+        )
+    elif "fontSize" in value:
+        return f"{value['fontSize']['value']} {value['fontSize']['unit']}"
+    elif "type" in value:
         # Type isn't very useful as it seems to just be a
         # combination of the other font properties.
         return None
-    elif "fontNames" in reference_value:
-        return reference_value["fontNames"]["values"]
-    elif "elevation" in reference_value:
-        return f"{reference_value['elevation'].get('value', 0)} {reference_value['elevation']['unit']}"
-    raise RuntimeError("unexpected reference value", reference_value)
+    elif "fontNames" in value:
+        return value["fontNames"]["values"]
+    elif "elevation" in value:
+        return f"{value['elevation'].get('value', 0)} {value['elevation']['unit']}"
+    raise RuntimeError("unexpected reference value", value)
 
 
 def group_tokens_by_component(tokens: ParsedTokens) -> dict[str, ParsedTokens]:
