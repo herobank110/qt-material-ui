@@ -236,7 +236,7 @@ def parse_token_value(value: dict) -> TokenValue | None:
         "lineHeight": without_unit("POINTS"),
         "fontTracking": without_unit("POINTS"),
         "fontSize": without_unit("POINTS"),
-        "type": lambda _: None,  # unused
+        "type": lambda _: None,  # unsupported type
         "fontNames": lambda x: x["values"][0],
         "elevation": without_unit("DIPS"),
     }
