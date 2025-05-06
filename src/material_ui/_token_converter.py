@@ -131,7 +131,7 @@ def parse_tokens(
             context_ref_tree = _find_matching_ref_tree(
                 token_table, matched_ref_tree, context_terms
             )["referenceTree"]
-            token_name = token.get("tokenName")
+            token_name = token["tokenName"]
             while True:
                 reference_value = resolve_value(token_table, context_ref_tree)
                 if reference_value is None:
