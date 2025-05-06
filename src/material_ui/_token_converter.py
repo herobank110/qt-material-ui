@@ -254,6 +254,9 @@ def parse_token_value(value: dict) -> TokenValue | None:
 def group_tokens_by_output_files(tokens: ParsedTokens) -> dict[str, ParsedTokens]:
     """Get the groups by first 3 parts from the tokens.
 
+    md.ref.* tokens aren't included, as they are completely different
+    and must be manually written up into code.
+
     Args:
         tokens: The parsed tokens.
 
@@ -262,7 +265,7 @@ def group_tokens_by_output_files(tokens: ParsedTokens) -> dict[str, ParsedTokens
     """
     ret_val = defaultdict(list)
     for token in tokens:
-        match = re.search(r"^(md\.(comp|sys|ref)\..+?)\.", token.name)
+        match = re.search(r"^(md\.(comp|sys)\..+?)\.", token.name)
         if match:
             group_name = match.group(1)
             ret_val[group_name].append(token)
