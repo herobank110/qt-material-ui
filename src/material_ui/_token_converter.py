@@ -178,6 +178,7 @@ def parse_tokens_in_table(token_table: dict, context_terms: set[str]) -> ParsedT
             else:
                 # End of the chain.
                 break
+    return ret_val
 
 
 def resolve_value(token_table: dict, reference_tree: dict) -> dict | None:
