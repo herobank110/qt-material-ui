@@ -103,53 +103,77 @@ class ParsedToken:
 ParsedTokens = list[ParsedToken]
 
 
+def merge_parsed_tokens(list_a: ParsedTokens, list_b: ParsedTokens) -> ParsedTokens:
+    """Update the first list with the second one."""
+    list_b_token_names = {x.name for x in list_b}
+    return list_b + [x for x in list_a if x.name not in list_b_token_names]
+
+
 def parse_tokens(
     token_tables: list[dict], context_terms: set[str] | None = None
 ) -> ParsedTokens:
-    """Parse the token tables into a list of tokens."""
+    """Parse the token tables into a list of tokens.
+
+    Args:
+        token_tables: The token tables to parse.
+        context_terms: The context terms to use. If None, all contexts
+            are merged together, ending with the default context.
+
+    Returns:
+        A list of parsed tokens.
+    """
     ret_val: ParsedTokens = []
 
+    # Recursive entry point to merge all contexts.
     if context_terms is None:
         # Collect all context terms from the token tables. Different
         # contexts will get combined with common keys replaced by the
         # last one.
-        # for context_terms in product(
-        #     ["light", "dark"], ["3p", "1p"], ["dynamic", "non-dynamic"]
-        # ):
-        #     ret_val |= parse_tokens(token_tables, set(context_terms))
-        ret_val = parse_tokens(token_tables, DEFAULT_CONTEXT_TERMS)
+        for context_terms in product(
+            ["light", "dark"], ["3p", "1p"], ["dynamic", "non-dynamic"]
+        ):
+            ret_val = merge_parsed_tokens(
+                ret_val, parse_tokens(token_tables, set(context_terms))
+            )
+        ret_val = merge_parsed_tokens(parse_tokens(token_tables, DEFAULT_CONTEXT_TERMS))
         return ret_val
 
+    # Non recursive part.
     for token_table in token_tables:
-        tokens = token_table["system"]["tokens"]
-        ref_trees = token_table["system"]["contextualReferenceTrees"]
-        for token in tokens:
-            name = token["name"]
-            if name not in ref_trees:
-                continue
-            matched_ref_tree = ref_trees[name]["contextualReferenceTree"]
-            context_ref_tree = _find_matching_ref_tree(
-                token_table, matched_ref_tree, context_terms
-            )["referenceTree"]
-            token_name = token["tokenName"]
-            while True:
-                reference_value = resolve_value(token_table, context_ref_tree)
-                if reference_value is None:
-                    # Unable to resolve value - skip.
-                    break
-                token_value = parse_token_value(reference_value)
-                if token_value is None:
-                    # Reached an unsupported value - skip.
-                    break
-                ret_val.append(ParsedToken(name=token_name, value=token_value))
-                if isinstance(token_value, Indirection):
-                    # Next iteration of while to go deeper.
-                    token_name = token_value.name
-                    context_ref_tree = context_ref_tree["childNodes"][0]
-                else:
-                    # End of the chain.
-                    break
+        ret_val += resolve_tokens(context_terms, token_table)
     return ret_val
+
+
+def resolve_tokens(context_terms, token_table) -> ParsedTokens:
+    ret_val: ParsedTokens = []
+    tokens = token_table["system"]["tokens"]
+    ref_trees = token_table["system"]["contextualReferenceTrees"]
+    for token in tokens:
+        name = token["name"]
+        if name not in ref_trees:
+            continue
+        matched_ref_tree = ref_trees[name]["contextualReferenceTree"]
+        context_ref_tree = _find_matching_ref_tree(
+            token_table, matched_ref_tree, context_terms
+        )["referenceTree"]
+        token_name = token["tokenName"]
+        while True:
+            reference_value = resolve_value(token_table, context_ref_tree)
+            if reference_value is None:
+                # Unable to resolve value - skip.
+                break
+            token_value = parse_token_value(reference_value)
+            if token_value is None:
+                # Reached an unsupported value - skip.
+                break
+            ret_val.append(ParsedToken(name=token_name, value=token_value))
+            if isinstance(token_value, Indirection):
+                # Next iteration of while to go deeper.
+                token_name = token_value.name
+                context_ref_tree = context_ref_tree["childNodes"][0]
+            else:
+                # End of the chain.
+                break
 
 
 def resolve_value(token_table: dict, reference_tree: dict) -> dict | None:
