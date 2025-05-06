@@ -6,7 +6,7 @@
 disabled_handle_elevation = 'md.sys.elevation.level0'
 disabled_handle_opacity = 0.38
 disabled_selected_handle_color = 'md.sys.color.surface'
-disabled_selected_handle_opacity = 1
+disabled_selected_handle_opacity = 1.0
 disabled_selected_icon_color = 'md.sys.color.on-surface'
 disabled_selected_icon_opacity = 0.38
 disabled_selected_track_color = 'md.sys.color.on-surface'

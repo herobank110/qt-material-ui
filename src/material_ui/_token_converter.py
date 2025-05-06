@@ -7,6 +7,7 @@ from pathlib import Path
 
 import re
 import tempfile
+from typing import Callable
 import httpx
 import asyncio
 from qtpy.QtGui import QColor
@@ -208,46 +209,41 @@ def parse_token_value(value: dict) -> TokenValue | None:
     Raises:
         RuntimeError: Unexpected type of token.
     """
-    if "tokenName" in value:
-        # Indirection to another token.
-        return value["tokenName"]
-    elif "color" in value:
-        return QColor.fromRgbF(
-            value["color"].get("red", 0.0),
-            value["color"].get("green", 0.0),
-            value["color"].get("blue", 0.0),
-            value["color"].get("alpha", 1.0),
-        )
-    elif "length" in value:
-        # Don't output units for now...
-        # DIPS as int, PERCENT as float
-        x = value["length"].get("value", 0)
-        return {"PERCENT": x / 100, "DIPS": x}[value["length"]["unit"]]
-    elif "opacity" in value:
-        return value["opacity"]
-    elif "shape" in value:
-        return value["shape"]["family"]
-    elif "fontWeight" in value:
-        return value["fontWeight"]
-    elif "lineHeight" in value:
-        assert value["lineHeight"]["unit"] == "POINTS"
-        return value["lineHeight"]["value"]
-    elif "fontTracking" in value:
-        assert value["fontTracking"]["unit"] == "POINTS"
-        return value["fontTracking"].get("value", 0)
-    elif "fontSize" in value:
-        assert value["fontSize"]["unit"] == "POINTS"
-        return value["fontSize"]["value"]
-    elif "type" in value:
-        # Type isn't very useful as it seems to just be a
-        # combination of the other font properties.
-        return None
-    elif "fontNames" in value:
-        # Just take the first font.
-        return value["fontNames"]["values"][0]
-    elif "elevation" in value:
-        assert value["elevation"]["unit"] == "DIPS"
-        return value["elevation"].get("value", 0)
+
+    def without_unit(unit_name: str) -> Callable[[dict], TokenValue]:
+        def inner(value: dict) -> TokenValue:
+            assert value["unit"] == unit_name
+            return value.get("value", 0)
+
+        return inner
+
+    supported_values_transformations = {
+        "tokenName": str,
+        "color": lambda x: QColor.fromRgbF(
+            x.get("red", 0.0),
+            x.get("green", 0.0),
+            x.get("blue", 0.0),
+            x.get("alpha", 1.0),
+        ),
+        "length": lambda x: {
+            # DIPS as int, PERCENT as float
+            "PERCENT": x.get("value", 0) / 100,
+            "DIPS": x.get("value", 0),
+        }[x["unit"]],
+        "opacity": float,
+        "shape": lambda x: x["family"],
+        "fontWeight": int,
+        "lineHeight": without_unit("POINTS"),
+        "fontTracking": without_unit("POINTS"),
+        "fontSize": without_unit("POINTS"),
+        "type": lambda _: None,  # unused
+        "fontNames": lambda x: x["values"][0],
+        "elevation": without_unit("DIPS"),
+    }
+    for key, transform_fn in supported_values_transformations.items():
+        inner_value = value.get(key)
+        if inner_value is not None:
+            return transform_fn(inner_value)
     raise RuntimeError("unexpected reference value", value)
 
 
