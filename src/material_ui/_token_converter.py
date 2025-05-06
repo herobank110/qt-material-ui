@@ -112,7 +112,7 @@ def merge_parsed_tokens(list_a: ParsedTokens, list_b: ParsedTokens) -> ParsedTok
 def parse_tokens(
     token_tables: list[dict], context_terms: set[str] | None = None
 ) -> ParsedTokens:
-    """Parse the token tables into a list of tokens.
+    """Parse the token tables into a merged list of tokens.
 
     Args:
         token_tables: The token tables to parse.
@@ -135,16 +135,20 @@ def parse_tokens(
             ret_val = merge_parsed_tokens(
                 ret_val, parse_tokens(token_tables, set(context_terms))
             )
-        ret_val = merge_parsed_tokens(parse_tokens(token_tables, DEFAULT_CONTEXT_TERMS))
+        ret_val = merge_parsed_tokens(
+            ret_val, parse_tokens(token_tables, DEFAULT_CONTEXT_TERMS)
+        )
         return ret_val
 
-    # Non recursive part.
+    # A specific context.
     for token_table in token_tables:
-        ret_val += resolve_tokens(context_terms, token_table)
+        ret_val = merge_parsed_tokens(
+            ret_val, parse_tokens_in_table(context_terms, token_table)
+        )
     return ret_val
 
 
-def resolve_tokens(context_terms, token_table) -> ParsedTokens:
+def parse_tokens_in_table(token_table: dict, context_terms: set[str]) -> ParsedTokens:
     ret_val: ParsedTokens = []
     tokens = token_table["system"]["tokens"]
     ref_trees = token_table["system"]["contextualReferenceTrees"]
