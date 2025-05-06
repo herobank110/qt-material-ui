@@ -155,14 +155,16 @@ def parse_tokens_in_table(token_table: dict, context_terms: set[str]) -> ParsedT
     for token in tokens:
         name = token["name"]
         if name not in ref_trees:
+            # Some tokens don't seem to have a reference tree.
             continue
-        matched_ref_tree = ref_trees[name]["contextualReferenceTree"]
-        context_ref_tree = _find_matching_ref_tree(
-            token_table, matched_ref_tree, context_terms
-        )["referenceTree"]
+        named_ref_tree = ref_trees[name]["contextualReferenceTree"]
+        ref_tree = _find_matching_ref_tree(token_table, named_ref_tree, context_terms)[
+            "referenceTree"
+        ]
         token_name = token["tokenName"]
+        # Traverse the recursive tree structure to build a flat list.
         while True:
-            reference_value = resolve_value(token_table, context_ref_tree)
+            reference_value = resolve_value(token_table, ref_tree)
             if reference_value is None:
                 # Unable to resolve value - skip.
                 break
@@ -174,7 +176,7 @@ def parse_tokens_in_table(token_table: dict, context_terms: set[str]) -> ParsedT
             if isinstance(token_value, Indirection):
                 # Next iteration of while to go deeper.
                 token_name = token_value.name
-                context_ref_tree = context_ref_tree["childNodes"][0]
+                ref_tree = ref_tree["childNodes"][0]
             else:
                 # End of the chain.
                 break
