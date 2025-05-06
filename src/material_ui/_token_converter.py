@@ -107,7 +107,7 @@ def parse_tokens(
     token_tables: list[dict], context_terms: set[str] | None = None
 ) -> ParsedTokens:
     """Parse the token tables into a list of tokens."""
-    ret_val: ParsedTokens = {}
+    ret_val: ParsedTokens = []
 
     if context_terms is None:
         # Collect all context terms from the token tables. Different
@@ -143,59 +143,54 @@ def parse_tokens(
                 )
                 if reference_value is None:
                     break
-                if "tokenName" in reference_value:
-                    ret_val[token_name] = reference_value["tokenName"]
-                elif "color" in reference_value:
-                    color_str = "#" + "".join(
-                        "%02x" % int(reference_value.get("color").get(c, 0) * 255)
-                        for c in ["red", "green", "blue"]
-                    )
-                    if reference_value["color"]["alpha"] != 1:
-                        color_str += "%02x" % int(
-                            255 * reference_tree["value"]["alpha"]
-                        )
-                    ret_val[token_name] = color_str
-                elif "length" in reference_value:
-                    ret_val[token_name] = (
-                        f"{reference_value['length'].get('value', 0)} {reference_value['length']['unit']}"
-                    )
-                elif "opacity" in reference_value:
-                    ret_val[token_name] = reference_value["opacity"]
-                elif "shape" in reference_value:
-                    ret_val[token_name] = reference_value["shape"]["family"]
-                elif "fontWeight" in reference_value:
-                    ret_val[token_name] = reference_value["fontWeight"]
-                elif "lineHeight" in reference_value:
-                    ret_val[token_name] = (
-                        f"{reference_value['lineHeight']['value']} {reference_value['lineHeight']['unit']}"
-                    )
-                elif "fontTracking" in reference_value:
-                    ret_val[token_name] = (
-                        f"{reference_value['fontTracking'].get('value', 0)} {reference_value['fontTracking']['unit']}"
-                    )
-                elif "fontSize" in reference_value:
-                    ret_val[token_name] = (
-                        f"{reference_value['fontSize']['value']} {reference_value['fontSize']['unit']}"
-                    )
-                elif "type" in reference_value:
-                    # Type isn't very useful as it seems to just be a
-                    # combination of the other font properties.
+                token_value = parse_token_value(reference_value)
+                if token_value is None:
                     break
-                elif "fontNames" in reference_value:
-                    ret_val[token_name] = reference_value["fontNames"]["values"]
-                elif "elevation" in reference_value:
-                    ret_val[token_name] = (
-                        f"{reference_value['elevation'].get('value', 0)} {reference_value['elevation']['unit']}"
-                    )
-                else:
-                    raise RuntimeError("unexpected reference value", reference_value)
+                ret_val.append(ParsedToken(name=token_name, value=token_value))
                 reference_tree = (
                     reference_tree["childNodes"][0]
                     if "childNodes" in reference_tree
                     else None
                 )
-                token_name = ret_val[token_name]
+                token_name = ret_val[-1].name
     return ret_val
+
+
+def parse_token_value(reference_value: dict) -> TokenValue:
+    """Parse a token value."""
+    if "tokenName" in reference_value:
+        return reference_value["tokenName"]
+    elif "color" in reference_value:
+        color_str = "#" + "".join(
+            "%02x" % int(reference_value.get("color").get(c, 0) * 255)
+            for c in ["red", "green", "blue"]
+        )
+        if reference_value["color"]["alpha"] != 1:
+            color_str += "%02x" % int(255 * reference_value["value"]["alpha"])
+        return color_str
+    elif "length" in reference_value:
+        return f"{reference_value['length'].get('value', 0)} {reference_value['length']['unit']}"
+    elif "opacity" in reference_value:
+        return reference_value["opacity"]
+    elif "shape" in reference_value:
+        return reference_value["shape"]["family"]
+    elif "fontWeight" in reference_value:
+        return reference_value["fontWeight"]
+    elif "lineHeight" in reference_value:
+        return f"{reference_value['lineHeight']['value']} {reference_value['lineHeight']['unit']}"
+    elif "fontTracking" in reference_value:
+        return f"{reference_value['fontTracking'].get('value', 0)} {reference_value['fontTracking']['unit']}"
+    elif "fontSize" in reference_value:
+        return f"{reference_value['fontSize']['value']} {reference_value['fontSize']['unit']}"
+    elif "type" in reference_value:
+        # Type isn't very useful as it seems to just be a
+        # combination of the other font properties.
+        return None
+    elif "fontNames" in reference_value:
+        return reference_value["fontNames"]["values"]
+    elif "elevation" in reference_value:
+        return f"{reference_value['elevation'].get('value', 0)} {reference_value['elevation']['unit']}"
+    raise RuntimeError("unexpected reference value", reference_value)
 
 
 def group_tokens_by_component(tokens: ParsedTokens) -> dict[str, ParsedTokens]:
