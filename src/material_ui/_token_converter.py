@@ -283,7 +283,7 @@ to_python_name = partial(re.sub, r"[-\.]", "_")
 def to_var_line(token: ParsedToken) -> str:
     """Code generation for the token."""
     if isinstance(token.value, QColor):
-        value = re.search("(QColor.*)#", repr(token.value))[1]
+        value = re.search("(QColor.*)$", repr(token.value))[1]
     else:
         value = repr(token.value)
     return f"{to_python_name(token.name)} = {value}\n"
