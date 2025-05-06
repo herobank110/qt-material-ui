@@ -314,13 +314,8 @@ def generate_py_files(tokens: ParsedTokens) -> None:
 def main() -> None:
     token_tables = asyncio.run(fetch_token_tables())
     tokens = parse_tokens(token_tables)
+    # Sort so the files look neater.
     tokens = sorted(tokens, key=lambda x: x.name)
-    # token_cache_path = (
-    #     Path(tempfile.gettempdir()) / "78eb23ae-4a5a-4c98-af82-62405ff0d7fb"
-    # )
-    # with open(token_cache_path, "w") as f:
-    #     json.dump(tokens, f, indent=2)
-
     generate_py_files(tokens)
 
 
