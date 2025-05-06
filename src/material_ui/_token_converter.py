@@ -172,6 +172,11 @@ def parse_tokens_in_table(token_table: dict, context_terms: set[str]) -> ParsedT
             if token_value is None:
                 # Reached an unsupported value - skip.
                 break
+            if any(x.name == token_name for x in ret_val):
+                # Token already added - skip.
+                # If an indirection, children will be the same too.
+                print("a")
+                break
             ret_val.append(ParsedToken(name=token_name, value=token_value))
             if isinstance(token_value, Indirection):
                 # Next iteration of while to go deeper.
@@ -306,7 +311,7 @@ def main() -> None:
     # with open(token_cache_path, "w") as f:
     #     json.dump(tokens, f, indent=2)
 
-    generate_component_py_files(tokens)
+    generate_component_py_file(tokens)
 
 
 if __name__ == "__main__":
