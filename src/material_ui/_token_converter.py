@@ -175,7 +175,6 @@ def parse_tokens_in_table(token_table: dict, context_terms: set[str]) -> ParsedT
             if any(x.name == token_name for x in ret_val):
                 # Token already added - skip.
                 # If an indirection, children will be the same too.
-                print("a")
                 break
             ret_val.append(ParsedToken(name=token_name, value=token_value))
             if isinstance(token_value, Indirection):
@@ -220,8 +219,9 @@ def parse_token_value(value: dict) -> TokenValue | None:
         )
     elif "length" in value:
         # Don't output units for now...
-        assert value["length"]["unit"] == "DIPS"
-        return value["length"].get("value", 0)
+        # DIPS as int, PERCENT as float
+        x = value["length"].get("value", 0)
+        return {"PERCENT": x / 100, "DIPS": x}[value["length"]["unit"]]
     elif "opacity" in value:
         return value["opacity"]
     elif "shape" in value:
@@ -229,13 +229,13 @@ def parse_token_value(value: dict) -> TokenValue | None:
     elif "fontWeight" in value:
         return value["fontWeight"]
     elif "lineHeight" in value:
-        assert value["lineHeight"]["unit"] == "DIPS"
+        assert value["lineHeight"]["unit"] == "POINTS"
         return value["lineHeight"]["value"]
     elif "fontTracking" in value:
-        assert value["fontTracking"]["unit"] == "DIPS"
+        assert value["fontTracking"]["unit"] == "POINTS"
         return value["fontTracking"].get("value", 0)
     elif "fontSize" in value:
-        assert value["fontSize"]["unit"] == "DIPS"
+        assert value["fontSize"]["unit"] == "POINTS"
         return value["fontSize"]["value"]
     elif "type" in value:
         # Type isn't very useful as it seems to just be a
