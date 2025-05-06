@@ -152,7 +152,8 @@ def parse_tokens(
                     if "childNodes" in reference_tree
                     else None
                 )
-                token_name = ret_val[-1].name
+                if reference_tree:
+                    token_name = token_value
     return ret_val
 
 
