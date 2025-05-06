@@ -5,7 +5,7 @@
 
 container_color = 'md.sys.color.surface-container'
 container_elevation = 'md.sys.elevation.level2'
-container_height = '80 DIPS'
+container_height = 80
 container_shape = 'md.sys.shape.corner.none'
 container_surface_tint_layer_color = 'md.sys.color.surface-tint'
-with_fab_container_height = '72 DIPS'
+with_fab_container_height = 72

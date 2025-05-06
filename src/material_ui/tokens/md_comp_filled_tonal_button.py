@@ -5,7 +5,7 @@
 
 container_color = 'md.sys.color.secondary-container'
 container_elevation = 'md.sys.elevation.level0'
-container_height = '40 DIPS'
+container_height = 40
 container_shadow_color = 'md.sys.color.shadow'
 container_shape = 'md.sys.shape.corner.full'
 disabled_container_color = 'md.sys.color.on-surface'
@@ -39,5 +39,5 @@ with_icon_disabled_icon_opacity = 0.38
 with_icon_focus_icon_color = 'md.sys.color.on-secondary-container'
 with_icon_hover_icon_color = 'md.sys.color.on-secondary-container'
 with_icon_icon_color = 'md.sys.color.on-secondary-container'
-with_icon_icon_size = '18 DIPS'
+with_icon_icon_size = 18
 with_icon_pressed_icon_color = 'md.sys.color.on-secondary-container'

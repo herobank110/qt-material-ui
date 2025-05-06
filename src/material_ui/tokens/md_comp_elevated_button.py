@@ -5,7 +5,7 @@
 
 container_color = 'md.sys.color.surface-container-low'
 container_elevation = 'md.sys.elevation.level1'
-container_height = '40 DIPS'
+container_height = 40
 container_shadow_color = 'md.sys.color.shadow'
 container_shape = 'md.sys.shape.corner.full'
 container_surface_tint_layer_color = 'md.sys.color.surface-tint'
@@ -40,5 +40,5 @@ with_icon_disabled_icon_opacity = 0.38
 with_icon_focus_icon_color = 'md.sys.color.primary'
 with_icon_hover_icon_color = 'md.sys.color.primary'
 with_icon_icon_color = 'md.sys.color.primary'
-with_icon_icon_size = '18 DIPS'
+with_icon_icon_size = 18
 with_icon_pressed_icon_color = 'md.sys.color.primary'

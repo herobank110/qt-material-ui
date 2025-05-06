@@ -5,9 +5,9 @@
 
 active_indicator_color = 'md.sys.color.primary'
 active_indicator_shape = 'md.sys.shape.corner.none'
-active_indicator_width = '4 DIPS'
+active_indicator_width = 4
 four_color_active_indicator_four_color = 'md.sys.color.tertiary-container'
 four_color_active_indicator_one_color = 'md.sys.color.primary'
 four_color_active_indicator_three_color = 'md.sys.color.tertiary'
 four_color_active_indicator_two_color = 'md.sys.color.primary-container'
-size = '48 DIPS'
+size = 48

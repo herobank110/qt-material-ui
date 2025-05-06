@@ -28,5 +28,5 @@ with_outline_disabled_outline_opacity = 0.12
 with_outline_focus_outline_color = 'md.sys.color.on-surface'
 with_outline_hover_outline_color = 'md.sys.color.outline'
 with_outline_outline_color = 'md.sys.color.outline'
-with_outline_outline_width = '1 DIPS'
+with_outline_outline_width = 1
 with_outline_pressed_outline_color = 'md.sys.color.outline'
