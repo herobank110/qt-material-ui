@@ -1,14 +1,10 @@
 """Token core."""
 
-from dataclasses import dataclass
 from qtpy.QtGui import QColor
 
 
-@dataclass
-class Indirection:
-    """Token value that is a reference to another token."""
-
-    name: str
+Indirection = str
+"""Token value that is a reference to another token."""
 
 
 TokenValue = Indirection | QColor | float | int

@@ -177,10 +177,10 @@ def parse_tokens_in_table(token_table: dict, context_terms: set[str]) -> ParsedT
                 # If an indirection, children will be the same too.
                 break
             ret_val.append(ParsedToken(name=token_name, value=token_value))
-            if isinstance(token_value, Indirection):
-                # Next iteration of while to go deeper.
-                token_name = token_value.name
+            if "childNodes" in ref_tree:
+                # Next iteration to go deeper.
                 ref_tree = ref_tree["childNodes"][0]
+                token_name = token_value
             else:
                 # End of the chain.
                 break
@@ -209,7 +209,8 @@ def parse_token_value(value: dict) -> TokenValue | None:
         RuntimeError: Unexpected type of token.
     """
     if "tokenName" in value:
-        return Indirection(name=value["tokenName"])
+        # Indirection to another token.
+        return value["tokenName"]
     elif "color" in value:
         return QColor.fromRgbF(
             value["color"].get("red", 0.0),
