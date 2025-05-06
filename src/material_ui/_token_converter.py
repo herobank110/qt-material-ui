@@ -113,11 +113,11 @@ def parse_tokens(
         # Collect all context terms from the token tables. Different
         # contexts will get combined with common keys replaced by the
         # last one.
-        for context_terms in product(
-            ["light", "dark"], ["3p", "1p"], ["dynamic", "non-dynamic"]
-        ):
-            ret_val |= parse_tokens(token_tables, set(context_terms))
-        ret_val |= parse_tokens(token_tables, DEFAULT_CONTEXT_TERMS)
+        # for context_terms in product(
+        #     ["light", "dark"], ["3p", "1p"], ["dynamic", "non-dynamic"]
+        # ):
+        #     ret_val |= parse_tokens(token_tables, set(context_terms))
+        ret_val = parse_tokens(token_tables, DEFAULT_CONTEXT_TERMS)
         return ret_val
 
     for token_table in token_tables:
@@ -252,12 +252,12 @@ def generate_component_py_files(tokens: ParsedTokens) -> None:
 def main() -> None:
     token_tables = asyncio.run(fetch_token_tables())
     tokens = parse_tokens(token_tables)
-    tokens = {x: tokens[x] for x in sorted(tokens.keys())}
-    token_cache_path = (
-        Path(tempfile.gettempdir()) / "78eb23ae-4a5a-4c98-af82-62405ff0d7fb"
-    )
-    with open(token_cache_path, "w") as f:
-        json.dump(tokens, f, indent=2)
+    tokens = sorted(tokens, key=lambda x: x.name)
+    # token_cache_path = (
+    #     Path(tempfile.gettempdir()) / "78eb23ae-4a5a-4c98-af82-62405ff0d7fb"
+    # )
+    # with open(token_cache_path, "w") as f:
+    #     json.dump(tokens, f, indent=2)
 
     generate_component_py_files(tokens)
 
