@@ -13,15 +13,23 @@ TokenValue = Indirection | QColor | float | int
 """Union of all possible token value types."""
 
 
-def resolve_token(token_name: str) -> TokenValue:
+def resolve_token(token: str | TokenValue) -> TokenValue:
     """Resolve a token name to its value.
 
     If there are multiple token indirections, they are recursively
     resolved until a value is obtained.
+
+    Example:
+        from material_ui.tokens import md_comp_elevated_button as tokens
+        value = resolve_token(tokens.container_color)
     """
-    match_result = re.match(r"(md\.(?:ref|comp|sys)\..+?)\.(.*)", token_name)
+    # Because the tokens system stores variables as values or names of
+    # other tokens, first check if the tokens is a value already.
+    if isinstance(token, (float, int, QColor)):
+        return token
+    match_result = re.match(r"(md\.(?:ref|comp|sys)\..+?)\.(.*)", token)
     if match_result is None:
-        raise ValueError(f"Invalid token name: {token_name}")
+        raise ValueError(f"Invalid token name: {token}")
     py_module_name = to_python_name(match_result.group(1))
     var_name = to_python_name(match_result.group(2))
     try:
@@ -32,10 +40,7 @@ def resolve_token(token_name: str) -> TokenValue:
         token_value = getattr(getattr(module.tokens, py_module_name), var_name)
     except AttributeError as e:
         raise AttributeError(f"Token {var_name} not found in {py_module_name}") from e
-    # Resolve indirections
-    if isinstance(token_value, str):
-        return resolve_token(token_value)
-    return token_value
+    return resolve_token(token_value)
 
 
 def override_token(token_name: str, value: TokenValue) -> None:
