@@ -12,7 +12,7 @@ import httpx
 import asyncio
 from qtpy.QtGui import QColor
 
-from material_ui.tokens._core import TokenValue
+from material_ui.tokens._core import TokenValue, to_python_name
 
 
 TOKEN_TABLE_URL_FORMAT = (
@@ -266,14 +266,6 @@ def group_tokens_by_output_files(tokens: ParsedTokens) -> dict[str, ParsedTokens
 
 
 TOKENS_OUT_PATH = Path(__file__).parent / "tokens"
-
-
-to_python_name = partial(re.sub, r"[-\.]", "_")
-"""Convert a token name to a valid Python identifier.
-
-    Eg, md.comp.elevated-button.container-color ->
-    md_comp_elevated_button_container_color
-"""
 
 
 def to_var_line(token: ParsedToken) -> str:

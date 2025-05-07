@@ -1,5 +1,7 @@
 """Token core."""
 
+from functools import partial
+import re
 from qtpy.QtGui import QColor
 
 
@@ -23,3 +25,11 @@ def resolve_token(token_name: str) -> TokenValue:
 def override_token(token_name: str, value: TokenValue) -> None:
     """Override a token value in the global theme."""
     raise NotImplementedError()
+
+
+to_python_name = partial(re.sub, r"[-\.]", "_")
+"""Convert a token name to a valid Python identifier.
+
+    Eg, md.comp.elevated-button.container-color ->
+    md_comp_elevated_button_container_color
+"""
