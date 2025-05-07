@@ -8,8 +8,12 @@ def test_resolve_token_direct_value() -> None:
     assert resolve_token("md.ref.palette.primary40") == QColor("#6750a4")
 
 
-def test_resolve_token_indirection() -> None:
+def test_resolve_token_indirection_1_level() -> None:
     assert resolve_token("md.sys.color.primary") == QColor("#6750a4")
+
+
+def test_resolve_token_indirection_2_levels() -> None:
+    assert resolve_token("md.comp.switch.focus-indicator.thickness") == 3
 
 
 def test_to_python_name() -> None:
