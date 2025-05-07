@@ -24,6 +24,7 @@ keywords = ["qt", "material", "ui", "components", "widgets"]
 dev = [
     "PySide6",
     "httpx",
+    "pytest",
 ]
 
 [project.urls]

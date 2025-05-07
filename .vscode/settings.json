@@ -1,3 +1,4 @@
 {
-  "ruff.configuration": "${workspaceFolder}/pyproject.toml"
+  "ruff.configuration": "${workspaceFolder}/pyproject.toml",
+  "python.testing.pytestEnabled": true
 }
