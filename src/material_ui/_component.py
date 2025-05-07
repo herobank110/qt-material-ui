@@ -272,7 +272,9 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
             # ensures the derived class's constructor is finished first.
             QtCore.QTimer.singleShot(0, func)
 
-    def overlay_widget(self, widget: QtWidgets.QWidget) -> None:
+    def overlay_widget(
+        self, widget: QtWidgets.QWidget, margins: QtCore.QMargins | None = None
+    ) -> None:
         """Overlay a widget on top of this widget.
 
         Ownership will also be set to this widget.
@@ -283,7 +285,7 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
         # TODO: add some other kind of 'overlay' layout similar to graphics anchors?
         layout = QtWidgets.QVBoxLayout(self)
         layout.setSpacing(0)
-        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setContentsMargins(margins or QtCore.QMargins())
         layout.addWidget(widget)
 
     @effect(sx)
