@@ -2,6 +2,11 @@
 
 Material 3 component library for Qt Widgets
 
+[![PyPI](https://img.shields.io/pypi/v/qt-material-ui.svg)](https://pypi.org/project/qt-material-ui/)
+[![Docs](https://readthedocs.org/projects/qt-material-ui/badge/?version=latest)](https://qt-material-ui.readthedocs.io/en/latest/?badge=latest)
+![License](https://img.shields.io/pypi/l/qt-material-ui.svg)
+[![Tests](https://github.com/herobank110/qt-material-ui/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/herobank110/qt-material-ui/actions/workflows/test.yml)
+
 ## Get Started
 
 This library is available on PyPI and can be installed with pip:
