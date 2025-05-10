@@ -265,7 +265,7 @@ def group_tokens_by_output_files(tokens: ParsedTokens) -> dict[str, ParsedTokens
     return ret_val
 
 
-TOKENS_OUT_PATH = Path(__file__).parent / "tokens"
+TOKENS_OUT_PATH = Path(__file__).parent
 
 
 def to_var_line(token: ParsedToken) -> str:
