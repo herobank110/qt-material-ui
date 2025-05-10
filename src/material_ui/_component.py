@@ -24,7 +24,7 @@ class Signal(Generic[Unpack[_Ts]]):
 _T = TypeVar("_T")
 
 
-class Variable(QtCore.QObject, Generic[_T]):
+class State(QtCore.QObject, Generic[_T]):
     """Type safe property wrapper object.
 
     Creates a Qt property with a getter and setter and changed signal.
@@ -82,7 +82,7 @@ class Variable(QtCore.QObject, Generic[_T]):
         animation.setEndValue(value)
         animation.start()
 
-    def bind(self, other: "Variable[_T]") -> None:
+    def bind(self, other: "State[_T]") -> None:
         """Bind this variable to another variable."""
         other.changed.connect(self.set)
         self.set(other.get())  # Set initial state.
@@ -90,7 +90,7 @@ class Variable(QtCore.QObject, Generic[_T]):
 
     def __repr__(self):
         return (
-            f"<Variable '{self.objectName()}' of component '{self.__component_name}' "
+            f"<State '{self.objectName()}' of component '{self.__component_name}' "
             f"(current value: {str(self._value)[:20]})>"
         )
 
@@ -141,14 +141,14 @@ class _ComponentMeta(type(QtCore.QObject)):
 
 
 @dataclass
-class _VariableMarker:
+class _StateMarker:
     """Marker to hold the default value on class variable."""
 
     name: str
     default_value: Any
 
 
-def use_state(default_value: _T) -> Variable[_T]:
+def use_state(default_value: _T) -> State[_T]:
     """Declare a state variable.
 
     This is intended to be used as a class variable. The default value
@@ -157,22 +157,22 @@ def use_state(default_value: _T) -> Variable[_T]:
     """
     # This is the wrong type but assert it so that IDEs give completion
     # based on the expected return type.
-    return _VariableMarker(name="<unset>", default_value=default_value)
+    return _StateMarker(name="<unset>", default_value=default_value)
 
 
-def _find_variable_markers(obj: object) -> list[_VariableMarker]:
+def _find_state_markers(obj: object) -> list[_StateMarker]:
     """Find instances of use_state in the class.
 
     Args:
         obj: The object to search.
 
     Returns:
-        Dictionary of variable name and variable marker.
+        List of state markers.
     """
-    ret_val: list[_VariableMarker] = []
+    ret_val: list[_StateMarker] = []
     for name in dir(obj):
         value = getattr(obj, name)
-        if isinstance(value, _VariableMarker):
+        if isinstance(value, _StateMarker):
             value.name = name  # Set the name now we have access to it.
             ret_val.append(value)
     return ret_val
@@ -183,13 +183,13 @@ class _EffectMarker:
     """Marker to hold the dependencies of an effect."""
 
     name: str
-    dependencies: list[_VariableMarker]
+    dependencies: list[_StateMarker]
 
 
 _EFFECT_MARKER_KEY = "__effect_marker__"
 
 
-def effect(*dependencies: Variable[Any]):
+def effect(*dependencies: State[Any]):
     """Decorator to mark a method as an effect.
 
     Args:
@@ -240,16 +240,16 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
     def __init__(self) -> None:
         super().__init__()
 
-        self.__instantiate_variables()
+        self.__instantiate_state_variables()
         self.__bind_effects()
 
         # Make qt stylesheets work properly!
         self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
 
-    def __instantiate_variables(self) -> None:
-        """Create Variable instances from class variables."""
-        for marker in _find_variable_markers(self):
-            variable = Variable(marker.default_value, marker.name, type(self).__name__)
+    def __instantiate_state_variables(self) -> None:
+        """Create State instances from class variables."""
+        for marker in _find_state_markers(self):
+            variable = State(marker.default_value, marker.name, type(self).__name__)
             variable.setParent(self)
             setattr(self, marker.name, variable)
 
@@ -261,9 +261,9 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
             for dependency in effect_marker.dependencies:
                 # Find the corresponding variable object.
                 variable = getattr(self, dependency.name, None)
-                if not isinstance(variable, Variable):
+                if not isinstance(variable, State):
                     raise RuntimeError(
-                        f"Effect dependencies can only be Variables, found "
+                        f"Effect dependencies can only be States, found "
                         f"{type(variable).__name__} for '{dependency.name}' "
                         f"on effect '{effect_marker.name}'"
                     )
