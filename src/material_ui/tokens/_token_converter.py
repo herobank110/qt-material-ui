@@ -49,7 +49,7 @@ async def fetch_token_tables(no_cache: bool = False) -> list[dict]:
 DEFAULT_CONTEXT_TERMS = {"light", "3p", "dynamic"}
 
 
-def _get_tree_context_score(token_table: dict, tree: dict, terms: set[str]) -> float:
+def get_tree_context_score(token_table: dict, tree: dict, terms: set[str]) -> float:
     """Returns score of a tree based on context tags.
 
     Raises:
@@ -57,13 +57,13 @@ def _get_tree_context_score(token_table: dict, tree: dict, terms: set[str]) -> f
     """
     if "contextTags" not in tree:
         raise RuntimeError("Tree does not have a context defined")
-    resolved_tags = map(partial(_resolve_context_tag, token_table), tree["contextTags"])
+    resolved_tags = map(partial(resolve_context_tag, token_table), tree["contextTags"])
     tree_tag_names = {tag["tagName"] for tag in resolved_tags}
     difference = tree_tag_names.difference(terms)
     return len(terms) - len(difference)
 
 
-def _resolve_context_tag(token_table: dict, name: str) -> dict | None:
+def resolve_context_tag(token_table: dict, name: str) -> dict | None:
     return next(
         (
             context_tag
@@ -74,7 +74,7 @@ def _resolve_context_tag(token_table: dict, name: str) -> dict | None:
     )
 
 
-def _find_matching_ref_tree(
+def find_matching_ref_tree(
     token_table: dict, trees: list[dict], terms: set[str]
 ) -> dict:
     """Find the contextual reference tree matching a given context.
@@ -89,7 +89,7 @@ def _find_matching_ref_tree(
     """
     if trees and all("contextTags" not in x for x in trees):
         return trees[0]  # no contexts defined - return first one
-    score_fn = partial(_get_tree_context_score, token_table, terms=terms)
+    score_fn = partial(get_tree_context_score, token_table, terms=terms)
     return next(iter(sorted(trees, key=score_fn, reverse=True)), None)
 
 
@@ -159,7 +159,7 @@ def parse_tokens_in_table(token_table: dict, context_terms: set[str]) -> ParsedT
             # Some tokens don't seem to have a reference tree.
             continue
         named_ref_tree = ref_trees[name]["contextualReferenceTree"]
-        ref_tree = _find_matching_ref_tree(token_table, named_ref_tree, context_terms)[
+        ref_tree = find_matching_ref_tree(token_table, named_ref_tree, context_terms)[
             "referenceTree"
         ]
         token_name = token["tokenName"]
