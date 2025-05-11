@@ -5,6 +5,8 @@ from typing import Any, Callable, Generic, TypeVar, get_args
 from typing_extensions import TypeVarTuple, Unpack
 from qtpy import QtCore, QtWidgets
 
+from material_ui._utils import convert_sx_to_qss
+
 
 _Ts = TypeVarTuple("_Ts")
 
@@ -223,16 +225,6 @@ def _find_effect_markers(obj: object) -> list[_EffectMarker]:
     return ret_val
 
 
-_COMPONENT_STYLESHEET_RESET = {
-    "background-color": "transparent",
-    "border-radius": "0px",
-    "border": "none",
-    "margin": "0px",
-    "padding": "0px",
-}
-"""Prevent Qt's unexpected behavior from inheriting parent's style."""
-
-
 class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
     """Base class for all widgets."""
 
@@ -292,6 +284,5 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
     @effect(sx)
     def _apply_sx(self):
         """Apply the sx property to the widget."""
-        sx = _COMPONENT_STYLESHEET_RESET.copy()
-        sx.update(self.sx.get())
-        self.setStyleSheet(";".join(map(":".join, sx.items())))
+        qss = convert_sx_to_qss(self.sx.get())
+        self.setStyleSheet(qss)
