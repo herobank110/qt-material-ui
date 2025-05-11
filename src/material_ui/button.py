@@ -16,7 +16,7 @@ ButtonVariant = Literal[
 ]
 
 
-class Button(Component):
+class ElevatedButton(Component):
     """Buttons let people take action and make choices with one tap."""
 
     text = use_state("")

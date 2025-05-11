@@ -1,7 +1,7 @@
 """Quick overview of some of the available components."""
 
 from qtpy import QtWidgets
-from material_ui import Button, Typography
+from material_ui import ElevatedButton, Typography
 
 
 def main() -> None:
@@ -25,7 +25,7 @@ def main() -> None:
     )
     vbox.addWidget(description_label)
 
-    click_me_button = Button(
+    click_me_button = ElevatedButton(
         text="Click me",
         variant="filled",
     )

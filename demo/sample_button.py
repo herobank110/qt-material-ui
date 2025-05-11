@@ -1,7 +1,7 @@
 """Sample of using the buttons."""
 
 from qtpy import QtCore, QtWidgets
-from material_ui.button import Button
+from material_ui.button import ElevatedButton
 from material_ui.layout_basics import Stack
 
 
@@ -17,12 +17,12 @@ def main() -> None:
 
     for variant in [
         "elevated",
-        "filled",
-        "filled-tonal",
-        "outlined",
-        "text",
+        # "filled",
+        # "filled-tonal",
+        # "outlined",
+        # "text",
     ]:
-        btn = Button()
+        btn = ElevatedButton()
         btn.text.set("Click me")
         btn.variant.set(variant)
         window.add_widget(btn)
