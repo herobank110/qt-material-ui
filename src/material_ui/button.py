@@ -49,7 +49,6 @@ class ElevatedButton(Component):
         shadow_color = resolve_token(elevated_tokens.container_shadow_color)
         shadow_color.setAlphaF(0.3)
         container_drop_shadow = QtWidgets.QGraphicsDropShadowEffect(
-            parent=self._container,
             blurRadius=resolve_token(elevated_tokens.container_elevation),
             color=shadow_color,
             offset=QtCore.QPointF(1, 1),
