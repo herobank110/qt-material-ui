@@ -1,7 +1,7 @@
 """Tests for material_ui.tokens._core.py."""
 
 import pytest
-from material_ui.tokens._core import TokenValueWrapper, resolve_token, to_python_name
+from material_ui.tokens._core import DesignToken, resolve_token, to_python_name
 from material_ui.tokens import md_ref_palette, md_sys_color, md_comp_switch
 from qtpy.QtGui import QColor
 
@@ -20,7 +20,7 @@ def test_resolve_token_indirection_2_levels() -> None:
 
 def test_resolve_token_invalid_indirection() -> None:
     with pytest.raises(ValueError):
-        resolve_token(TokenValueWrapper("aksdhalf  flkjah lkjashd a"))
+        resolve_token(DesignToken("aksdhalf  flkjah lkjashd a"))
 
 
 def test_to_python_name() -> None:

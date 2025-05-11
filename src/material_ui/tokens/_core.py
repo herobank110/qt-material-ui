@@ -15,23 +15,23 @@ TokenValue = QColor | float | int
 
 
 @dataclass
-class TokenValueWrapper:
+class DesignToken:
     """Token runtime value wrapper type."""
 
     value: Indirection | TokenValue
 
 
-def define_token(value: TokenValue) -> TokenValueWrapper:
+def define_token(value: TokenValue) -> DesignToken:
     """Factory function for defining a token.
 
     Mainly for internal use.
     """
     # TODO: add to token registry, check stack for module and var name?
     #   or use instance checking operator `is`?
-    return TokenValueWrapper(value)
+    return DesignToken(value)
 
 
-def resolve_token(token: TokenValueWrapper) -> TokenValue:
+def resolve_token(token: DesignToken) -> TokenValue:
     """Resolve a token name to its value.
 
     If there are multiple token indirections, they are recursively
