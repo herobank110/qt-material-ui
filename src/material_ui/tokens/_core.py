@@ -1,5 +1,6 @@
 """Token core."""
 
+from dataclasses import dataclass
 from functools import partial
 import re
 from qtpy.QtGui import QColor
@@ -11,6 +12,23 @@ Indirection = str
 
 TokenValue = Indirection | QColor | float | int
 """Union of all possible token value types."""
+
+
+@dataclass
+class TokenValueWrapper:
+    """Token runtime value wrapper type."""
+
+    value: TokenValue
+
+
+def define_token(value: TokenValue) -> TokenValueWrapper:
+    """Factory function for defining a token.
+
+    Mainly for internal use.
+    """
+    # TODO: add to token registry, check stack for module and var name?
+    #   or use instance checking operator `is`?
+    return TokenValueWrapper(value)
 
 
 def resolve_token(token: str | TokenValue) -> TokenValue:
