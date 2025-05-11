@@ -1,7 +1,7 @@
 """Tests for material_ui.tokens._core.py."""
 
 import pytest
-from material_ui.tokens._core import DesignToken, resolve_token, to_python_name
+from material_ui.tokens._utils import DesignToken, resolve_token, to_python_name
 from material_ui.tokens import md_ref_palette, md_sys_color, md_comp_switch
 from qtpy.QtGui import QColor
 

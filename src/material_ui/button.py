@@ -1,7 +1,7 @@
 from typing import Literal, cast
 from material_ui.tokens import md_comp_elevated_button as elevated_tokens
 from material_ui._component import Component, use_state
-from material_ui.tokens._core import resolve_token
+from material_ui.tokens._utils import resolve_token
 from material_ui.typography import Typography
 from qtpy import QtCore
 

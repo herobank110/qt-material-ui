@@ -1,7 +1,7 @@
 """Design tokens for md.ref.palette."""
 
 from qtpy.QtGui import QColor
-from material_ui.tokens._core import define_token as _define_token
+from material_ui.tokens._utils import define_token as _define_token
 
 
 black = _define_token(QColor("#000000"))
