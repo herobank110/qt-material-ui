@@ -10,7 +10,7 @@ Indirection = str
 """Token value that is a reference to another token."""
 
 
-TokenValue = Indirection | QColor | float | int
+TokenValue = QColor | float | int
 """Union of all possible token value types."""
 
 
@@ -18,7 +18,7 @@ TokenValue = Indirection | QColor | float | int
 class TokenValueWrapper:
     """Token runtime value wrapper type."""
 
-    value: TokenValue
+    value: Indirection | TokenValue
 
 
 def define_token(value: TokenValue) -> TokenValueWrapper:
@@ -31,7 +31,7 @@ def define_token(value: TokenValue) -> TokenValueWrapper:
     return TokenValueWrapper(value)
 
 
-def resolve_token(token: str | TokenValue) -> TokenValue:
+def resolve_token(token: TokenValueWrapper) -> TokenValue:
     """Resolve a token name to its value.
 
     If there are multiple token indirections, they are recursively
@@ -43,11 +43,11 @@ def resolve_token(token: str | TokenValue) -> TokenValue:
     """
     # Because the tokens system stores variables as values or names of
     # other tokens, first check if the tokens is a value already.
-    if isinstance(token, (float, int, QColor)):
-        return token
-    match_result = re.match(r"(md\.(?:ref|comp|sys)\..+?)\.(.*)", token)
+    if isinstance(token.value, TokenValue):
+        return token.value
+    match_result = re.match(r"(md\.(?:ref|comp|sys)\..+?)\.(.*)", token.value)
     if match_result is None:
-        raise ValueError(f"Invalid token name: {token}")
+        raise ValueError(f"Invalid token name: {token.value}")
     py_module_name = to_python_name(match_result.group(1))
     var_name = to_python_name(match_result.group(2))
     try:
@@ -58,6 +58,8 @@ def resolve_token(token: str | TokenValue) -> TokenValue:
         token_value = getattr(getattr(module.tokens, py_module_name), var_name)
     except AttributeError as e:
         raise AttributeError(f"Token {var_name} not found in {py_module_name}") from e
+    if isinstance(token_value, TokenValue):
+        return token_value
     return resolve_token(token_value)
 
 

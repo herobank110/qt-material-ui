@@ -2,19 +2,20 @@
 
 import pytest
 from material_ui.tokens._core import resolve_token, to_python_name
+from material_ui.tokens import md_ref_palette, md_sys_color, md_comp_switch
 from qtpy.QtGui import QColor
 
 
 def test_resolve_token_direct_value() -> None:
-    assert resolve_token("md.ref.palette.primary40") == QColor("#6750a4")
+    assert resolve_token(md_ref_palette.primary40) == QColor("#6750a4")
 
 
 def test_resolve_token_indirection_1_level() -> None:
-    assert resolve_token("md.sys.color.primary") == QColor("#6750a4")
+    assert resolve_token(md_sys_color.primary) == QColor("#6750a4")
 
 
 def test_resolve_token_indirection_2_levels() -> None:
-    assert resolve_token("md.comp.switch.focus-indicator.thickness") == 3
+    assert resolve_token(md_comp_switch.focus_indicator_thickness) == 3
 
 
 def test_resolve_token_invalid_token() -> None:
