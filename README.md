@@ -6,6 +6,7 @@ Material 3 component library for Qt Widgets
 [![Docs](https://readthedocs.org/projects/qt-material-ui/badge/?version=latest)](https://qt-material-ui.readthedocs.io/en/latest/?badge=latest)
 ![License](https://img.shields.io/pypi/l/qt-material-ui.svg)
 [![Tests](https://github.com/herobank110/qt-material-ui/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/herobank110/qt-material-ui/actions/workflows/test.yml)
+[![codecov](https://codecov.io/github/herobank110/qt-material-ui/graph/badge.svg?token=OF1WOOAZ6U)](https://codecov.io/github/herobank110/qt-material-ui)
 
 ## Get Started
 
