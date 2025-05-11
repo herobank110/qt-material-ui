@@ -2,8 +2,8 @@
 
 [![PyPI - Version](https://img.shields.io/pypi/v/qt-material-ui?logo=python&logoColor=%23ccc)](https://pypi.org/project/qt-material-ui/)
 [![Tests](https://img.shields.io/github/actions/workflow/status/herobank110/qt-material-ui/test.yml?logo=github&label=tests&logoColor=%23ccc)](https://github.com/herobank110/qt-material-ui/actions/workflows/test.yml)
-[![Read the Docs](https://img.shields.io/readthedocs/qt-material-ui?logo=readthedocs)](https://qt-material-ui.readthedocs.io/en/latest)
 [![codecov](https://codecov.io/github/herobank110/qt-material-ui/graph/badge.svg?token=OF1WOOAZ6U)](https://codecov.io/github/herobank110/qt-material-ui)
+[![Read the Docs](https://img.shields.io/readthedocs/qt-material-ui?logo=readthedocs)](https://qt-material-ui.readthedocs.io/en/latest)
 ![License](https://img.shields.io/pypi/l/qt-material-ui.svg)
 
 Material 3 component library for Qt Widgets
