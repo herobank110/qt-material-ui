@@ -3,7 +3,7 @@
 from material_ui.tokens._utils import DesignToken
 
 
-class ElevationEffect:
+class DropShadow:
     def __init__(self, color: DesignToken) -> None:
         shadow_color = resolve_token(tokens.container_shadow_color)
         shadow_color.setAlphaF(0.3)

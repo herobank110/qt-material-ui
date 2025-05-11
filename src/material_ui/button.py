@@ -1,5 +1,5 @@
 from typing import Literal, cast
-from material_ui._lab import ElevationEffect
+from material_ui._lab import DropShadow
 from material_ui.shape import Shape
 from material_ui.tokens import md_comp_elevated_button as tokens
 from material_ui._component import Component, effect, use_state
@@ -57,18 +57,24 @@ class ElevatedButton(Component):
             {
                 "background-color": tokens.container_color,
                 "padding": "8px 16px",
+                "elevation": lambda: (
+                    tokens.hover_container_elevation
+                    if self.hovered
+                    else tokens.container_elevation
+                ),
             }
         )
         self._container.setParent(self)
         self._container.move(5, 5)
         self._container.resize(self.size().shrunkBy(QtCore.QMargins(5, 5, 5, 5)))
-        container_drop_shadow = ElevationEffect()
+        container_drop_shadow = DropShadow()
         container_drop_shadow.color = tokens.container_shadow_color
         container_drop_shadow.elevation = lambda: (
             tokens.hover_container_elevation
             if self.hovered
             else tokens.container_elevation
         )
+        self._container.setGraphicsEffect(container_drop_shadow)
 
         self._label = Typography()
         self._label.text.bind(self.text)
