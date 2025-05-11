@@ -11,7 +11,7 @@ Indirection = str
 
 
 TokenValue = QColor | float | int
-"""Union of all possible token value types."""
+"""Union of underlying token value types (excluding Indirections)."""
 
 
 @dataclass
