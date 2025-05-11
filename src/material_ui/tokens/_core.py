@@ -58,8 +58,6 @@ def resolve_token(token: TokenValueWrapper) -> TokenValue:
         token_value = getattr(getattr(module.tokens, py_module_name), var_name)
     except AttributeError as e:
         raise AttributeError(f"Token {var_name} not found in {py_module_name}") from e
-    if isinstance(token_value, TokenValue):
-        return token_value
     return resolve_token(token_value)
 
 
