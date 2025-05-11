@@ -4,7 +4,15 @@ from qtpy.QtGui import QColor
 from material_ui.tokens import DesignToken, resolve_token
 
 
-_COMPONENT_STYLESHEET_RESET = {
+StyleDictValue = str | QColor | DesignToken
+"""Union of values that can be used in a style dictionary."""
+
+# TODO: use a typed dict for completion on keys and type checking on values
+StyleDict = dict[str, StyleDictValue]
+"""Dictionary of styles."""
+
+
+_COMPONENT_STYLESHEET_RESET: StyleDict = {
     "background-color": "transparent",
     "border-radius": "0px",
     "border": "none",
@@ -14,7 +22,7 @@ _COMPONENT_STYLESHEET_RESET = {
 """Prevent Qt's unexpected behavior from inheriting parent's style."""
 
 
-def convert_sx_to_qss(sx: dict[str, str]) -> str:
+def convert_sx_to_qss(sx: StyleDict) -> str:
     """Convert a style dictionary to a Qt Style Sheet string.
 
     Args:
@@ -27,7 +35,7 @@ def convert_sx_to_qss(sx: dict[str, str]) -> str:
     return ";".join(f"{key}:{_stringify_sx_value(value)}" for key, value in sx.items())
 
 
-def _stringify_sx_value(value: str | QColor | DesignToken) -> str:
+def _stringify_sx_value(value: StyleDictValue) -> str:
     """Convert a value to a string.
 
     Design tokens are resolved to the underlying values.
