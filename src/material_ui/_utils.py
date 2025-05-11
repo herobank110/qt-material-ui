@@ -4,7 +4,7 @@ from qtpy.QtGui import QColor
 from material_ui.tokens import DesignToken, resolve_token
 
 
-StyleDictValue = str | QColor | DesignToken
+StyleDictValue = str | int | QColor | DesignToken
 """Union of values that can be used in a style dictionary."""
 
 # TODO: use a typed dict for completion on keys and type checking on values
@@ -52,4 +52,6 @@ def _stringify_sx_value(value: StyleDictValue) -> str:
     # Then convert the special values to strings.
     if isinstance(value, QColor):
         return f"rgba({value.red()},{value.green()},{value.blue()},{value.alpha()})"
+    elif isinstance(value, int):
+        return f"{value}px"
     return value

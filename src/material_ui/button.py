@@ -1,4 +1,5 @@
 from typing import Literal, cast
+from material_ui.shape import Shape
 from material_ui.tokens import md_comp_elevated_button as elevated_tokens
 from material_ui._component import Component, use_state
 from material_ui.typography import Typography
@@ -25,14 +26,31 @@ class Button(Component):
 
         self.sx.set(
             {
-                "background-color": elevated_tokens.container_color,
-                "border-radius": "8px",
+        #         "background-color": elevated_tokens.container_color,
+        #         "border-radius": "8px",
                 "padding": "8px 16px",
-                "border": "none",
+        #         "border": "none",
             }
         )
+        self.setFixedHeight(40)
+
+        self._container = Shape()
+        self._container.corner_shape.set("full")
+        self._container.sx.set({
+            "background-color": elevated_tokens.container_color,
+            "padding": "8px 16px",
+        })
+        self._container.setParent(self)
+        self._container.resize(self.size())
+        # self._container.resize(80, 40)
+        # self.overlay_widget(self._container)
 
         self._label = Typography()
         self._label.text.bind(self.text)
+        self._label.sx.set({
+            "color": elevated_tokens.label_text_color,
+            "font-size": elevated_tokens.label_text_size,
+            "font-weight": elevated_tokens.label_text_weight,
+        })
         margins = QtCore.QMargins(24, 0, 24, 0)
         self.overlay_widget(self._label, margins)
