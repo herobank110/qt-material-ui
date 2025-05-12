@@ -3,6 +3,7 @@
 from material_ui.tokens import DesignToken, resolve_token
 from qtpy.QtWidgets import QGraphicsDropShadowEffect
 from qtpy.QtGui import QColor
+from qtpy.QtCore import QPropertyAnimation, QEasingCurve, QPoint
 from material_ui.tokens import md_sys_elevation, md_sys_color
 
 
@@ -32,9 +33,39 @@ class DropShadow(QGraphicsDropShadowEffect):
         if self._elevation == value:
             return
         self._elevation = value
+        self._apply_elevation()
 
-        self.setBlurRadius(resolve_token(self._elevation))
-        self.setOffset(0, resolve_token(self._elevation) / 2)
+    def _apply_elevation(self) -> None:
+        self.setBlurRadius(self._get_computed_blur_radius())
+        self.setOffset(self._get_computed_offset())
+
+    def _get_computed_blur_radius(self):
+        return resolve_token(self._elevation)
+
+    def _get_computed_offset(self):
+        return QPoint(0, resolve_token(self._elevation) / 2)
+
+    def animate_elevation_to(self, value: DesignToken) -> None:
+        """Animate the elevation to a new value."""
+        self.elevation = value
+
+        blur_radius_animation = QPropertyAnimation()
+        blur_radius_animation.setParent(self)
+        blur_radius_animation.setTargetObject(self)
+        blur_radius_animation.setPropertyName(b"blurRadius")
+        blur_radius_animation.setEndValue(self._get_computed_blur_radius())
+        blur_radius_animation.setDuration(280)
+        blur_radius_animation.setEasingCurve(QEasingCurve.OutCubic)
+        blur_radius_animation.start()
+
+        offset_animation = QPropertyAnimation()
+        offset_animation.setParent(self)
+        offset_animation.setTargetObject(self)
+        offset_animation.setPropertyName(b"offset")
+        offset_animation.setEndValue(self._get_computed_offset())
+        offset_animation.setDuration(280)
+        offset_animation.setEasingCurve(QEasingCurve.OutCubic)
+        offset_animation.start()
 
     @property
     def shadow_color(self) -> DesignToken:
