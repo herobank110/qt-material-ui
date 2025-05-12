@@ -58,7 +58,7 @@ class DropShadow(QGraphicsDropShadowEffect):
 
     def animate_elevation_to(self, value: DesignToken) -> None:
         """Animate the elevation to a new value."""
-        self.elevation = value
+        self._elevation = value
 
         blur_radius_animation = QPropertyAnimation()
         blur_radius_animation.setParent(self)
