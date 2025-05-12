@@ -17,6 +17,10 @@ from material_ui.tokens import (
 from qtpy.QtGui import QColor
 
 
+def test_DesignToken_hash_color() -> None:
+    assert hash(md_ref_palette.primary40) == hash(md_ref_palette.primary40)
+
+
 def test_resolve_token_direct_value() -> None:
     assert resolve_token(md_ref_palette.primary40) == QColor("#6750a4")
 

@@ -24,7 +24,8 @@ class DesignToken:
     def __hash__(self):
         # Allow the token to be used as a dictionary key.
         # TODO: fix it to use @dataclass(unsafe_hash=True) instead
-        return hash(self.value)
+        # QColor isn't hashable, so convert to string
+        return hash(repr(self.value))
 
 
 def define_token(value: TokenValue) -> DesignToken:
