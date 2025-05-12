@@ -5,6 +5,7 @@ from qtpy.QtWidgets import QGraphicsDropShadowEffect
 from qtpy.QtGui import QColor
 from qtpy.QtCore import QPropertyAnimation, QEasingCurve, QPoint
 from material_ui.tokens import md_sys_elevation, md_sys_color
+from material_ui.tokens._utils import find_root_token
 
 
 class DropShadow(QGraphicsDropShadowEffect):
@@ -53,7 +54,7 @@ class DropShadow(QGraphicsDropShadowEffect):
             # md_sys_elevation.level5: QPoint(0, 4),
         }
 
-        return _ELEVATION_OFFSET_MAP[self._elevation]
+        return _ELEVATION_OFFSET_MAP[find_root_token(self._elevation)]
 
     def animate_elevation_to(self, value: DesignToken) -> None:
         """Animate the elevation to a new value."""
