@@ -2,7 +2,7 @@ from typing import Literal, cast
 from material_ui._lab import DropShadow
 from material_ui.shape import Shape
 from material_ui.tokens import md_comp_elevated_button as tokens
-from material_ui._component import Component, effect, use_state
+from material_ui._component import Component, Signal, effect, use_state
 from material_ui.tokens._utils import resolve_token
 from material_ui.typography import Typography
 from qtpy import QtCore, QtGui, QtWidgets
@@ -22,6 +22,8 @@ _TOUCH_AREA_Y_PADDING = 8
 
 class ElevatedButton(Component):
     """Buttons let people take action and make choices with one tap."""
+
+    clicked: Signal
 
     text = use_state("")
     variant = use_state(cast(ButtonVariant, "elevated"))
@@ -49,28 +51,13 @@ class ElevatedButton(Component):
                 "margin": f"{_TOUCH_AREA_Y_PADDING}px 0px",
             }
         )
-        self.setFixedSize(100, 60)
+        # self.setFixedSize(100, 60)
 
         self._container = Shape()
         self._container.corner_shape.set("full")
-        self._container.sx.set(
-            {
-                "background-color": tokens.container_color,
-                # "padding": "8px 16px",
-                # "elevation": lambda: (
-                #     tokens.hover_container_elevation
-                #     if self.hovered
-                #     else tokens.container_elevation
-                # ),
-            }
-        )
+        self._container.sx.set({"background-color": tokens.container_color})
         self._container.setParent(self)
         self._container.move(0, _TOUCH_AREA_Y_PADDING)
-        self._container.resize(
-            self.size().shrunkBy(
-                QtCore.QMargins(0, _TOUCH_AREA_Y_PADDING, 0, _TOUCH_AREA_Y_PADDING)
-            )
-        )
         self._drop_shadow = DropShadow()
         self._drop_shadow.color = tokens.container_shadow_color
         self._drop_shadow.elevation = tokens.container_elevation
@@ -91,11 +78,30 @@ class ElevatedButton(Component):
                 "font-weight": tokens.label_text_weight,
             }
         )
-        margins = QtCore.QMargins(24, 0, 24, 0)
-        self.overlay_widget(self._label, margins)
+        self._label.setParent(self)
+        # margins = QtCore.QMargins(24, 0, 24, 0)
+        # self.overlay_widget(self._label, margins)
+
+    def sizeHint(self) -> QtCore.QSize:
+        base_height = resolve_token(tokens.container_height)
+        y = base_height + _TOUCH_AREA_Y_PADDING * 2
+
+        x = self._label.sizeHint().width() + 24 * 2
+
+        return QtCore.QSize(x, y)
+
+    def resizeEvent(self, event):
+        print("resizeEvent", event.size())
+        container_size = event.size().shrunkBy(
+            QtCore.QMargins(0, _TOUCH_AREA_Y_PADDING, 0, _TOUCH_AREA_Y_PADDING)
+        )
+        self._container.resize(container_size)
+        self._label.move(24, _TOUCH_AREA_Y_PADDING)
+        self._label.resize(container_size.shrunkBy(QtCore.QMargins(24, 0, 24, 0)))
+        return super().resizeEvent(event)
 
     @effect(hovered)
-    def _on_hover(self) -> None:
+    def _update_drop_shadow_elevation(self) -> None:
         self._drop_shadow.elevation = (
             tokens.hover_container_elevation
             if self.hovered.get()
@@ -111,7 +117,7 @@ class ElevatedButton(Component):
         self.pressed.set(False)
         mouse_inside = self.rect().contains(event.pos())
         if event.button() == QtCore.Qt.LeftButton and mouse_inside:
-            self.change_requested.emit(not self.selected.get())
+            self.clicked.emit()
         return super().mouseReleaseEvent(event)
 
     def enterEvent(self, event: QtGui.QEnterEvent) -> None:  # noqa: N802
