@@ -14,7 +14,9 @@ TokenValue = QColor | float | int
 """Union of underlying token value types (excluding Indirections)."""
 
 
-@dataclass
+# The unsafe hash is for use the token as keys for dicts. This is
+# sometimes useful for config mappings.
+@dataclass(unsafe_hash=True)
 class DesignToken:
     """Token runtime value wrapper type."""
 

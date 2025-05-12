@@ -43,7 +43,17 @@ class DropShadow(QGraphicsDropShadowEffect):
         return resolve_token(self._elevation)
 
     def _get_computed_offset(self):
-        return QPoint(0, resolve_token(self._elevation) / 2)
+        _ELEVATION_OFFSET_MAP = {
+            md_sys_elevation.level0: QPoint(0, 0),
+            md_sys_elevation.level1: QPoint(0, 1),
+            md_sys_elevation.level2: QPoint(0, 1),
+            md_sys_elevation.level3: QPoint(0, 1),
+            md_sys_elevation.level4: QPoint(0, 2),
+            # TODO: implement token generator overrides for missing tokens
+            # md_sys_elevation.level5: QPoint(0, 4),
+        }
+
+        return _ELEVATION_OFFSET_MAP[self._elevation]
 
     def animate_elevation_to(self, value: DesignToken) -> None:
         """Animate the elevation to a new value."""
