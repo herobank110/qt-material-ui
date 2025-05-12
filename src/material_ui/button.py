@@ -17,6 +17,9 @@ ButtonVariant = Literal[
 ]
 
 
+_TOUCH_AREA_Y_PADDING = 8
+
+
 class ElevatedButton(Component):
     """Buttons let people take action and make choices with one tap."""
 
@@ -43,38 +46,41 @@ class ElevatedButton(Component):
 
         self.sx.set(
             {
-                #         "background-color": elevated_tokens.container_color,
-                #         "border-radius": "8px",
-                "padding": "8px 16px",
-                #         "border": "none",
+                "margin": f"{_TOUCH_AREA_Y_PADDING}px 0px",
             }
         )
-        self.setFixedSize(100, 50)
+        self.setFixedSize(100, 60)
 
         self._container = Shape()
         self._container.corner_shape.set("full")
         self._container.sx.set(
             {
                 "background-color": tokens.container_color,
-                "padding": "8px 16px",
-                "elevation": lambda: (
-                    tokens.hover_container_elevation
-                    if self.hovered
-                    else tokens.container_elevation
-                ),
+                # "padding": "8px 16px",
+                # "elevation": lambda: (
+                #     tokens.hover_container_elevation
+                #     if self.hovered
+                #     else tokens.container_elevation
+                # ),
             }
         )
         self._container.setParent(self)
-        self._container.move(5, 5)
-        self._container.resize(self.size().shrunkBy(QtCore.QMargins(5, 5, 5, 5)))
-        container_drop_shadow = DropShadow()
-        container_drop_shadow.color = tokens.container_shadow_color
-        container_drop_shadow.elevation = lambda: (
-            tokens.hover_container_elevation
-            if self.hovered
-            else tokens.container_elevation
+        self._container.move(0, _TOUCH_AREA_Y_PADDING)
+        self._container.resize(
+            self.size().shrunkBy(
+                QtCore.QMargins(0, _TOUCH_AREA_Y_PADDING, 0, _TOUCH_AREA_Y_PADDING)
+            )
         )
-        self._container.setGraphicsEffect(container_drop_shadow)
+        self._drop_shadow = DropShadow()
+        self._drop_shadow.color = tokens.container_shadow_color
+        self._drop_shadow.elevation = tokens.container_elevation
+        # container_drop_shadow.elevation = lambda: (
+        #     tokens.hover_container_elevation
+        #     if self.hovered
+        #     else tokens.container_elevation
+        # )
+        # self._container.setGraphicsEffect(container_drop_shadow)
+        self.setGraphicsEffect(self._drop_shadow)
 
         self._label = Typography()
         self._label.text.bind(self.text)
@@ -87,3 +93,31 @@ class ElevatedButton(Component):
         )
         margins = QtCore.QMargins(24, 0, 24, 0)
         self.overlay_widget(self._label, margins)
+
+    @effect(hovered)
+    def _on_hover(self) -> None:
+        self._drop_shadow.elevation = (
+            tokens.hover_container_elevation
+            if self.hovered.get()
+            else tokens.container_elevation
+        )
+
+    def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
+        if event.button() == QtCore.Qt.LeftButton:
+            self.pressed.set(True)
+        return super().mousePressEvent(event)
+
+    def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
+        self.pressed.set(False)
+        mouse_inside = self.rect().contains(event.pos())
+        if event.button() == QtCore.Qt.LeftButton and mouse_inside:
+            self.change_requested.emit(not self.selected.get())
+        return super().mouseReleaseEvent(event)
+
+    def enterEvent(self, event: QtGui.QEnterEvent) -> None:  # noqa: N802
+        self.hovered.set(True)
+        return super().enterEvent(event)
+
+    def leaveEvent(self, event: QtCore.QEvent) -> None:  # noqa: N802
+        self.hovered.set(False)
+        return super().leaveEvent(event)
