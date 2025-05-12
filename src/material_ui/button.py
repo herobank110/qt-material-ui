@@ -31,18 +31,6 @@ class ElevatedButton(Component):
     hovered = use_state(False)
     pressed = use_state(False)
 
-    # elevation = use_state(
-    #     lambda self: elevated_tokens.hover_container_elevation if self.hovered else 0
-    # )
-
-    # _elevation = use_state(tokens.container_elevation)
-
-    # @effect(hovered)
-    # def elevation(self):
-    #     if self.hovered:
-    #         return tokens.hover_container_elevation
-    #     return tokens.container_elevation
-
     def __init__(self) -> None:
         super().__init__()
 
@@ -51,7 +39,6 @@ class ElevatedButton(Component):
                 "margin": f"{_TOUCH_AREA_Y_PADDING}px 0px",
             }
         )
-        # self.setFixedSize(100, 60)
 
         self._container = Shape()
         self._container.corner_shape.set("full")
@@ -61,12 +48,6 @@ class ElevatedButton(Component):
         self._drop_shadow = DropShadow()
         self._drop_shadow.color = tokens.container_shadow_color
         self._drop_shadow.elevation = tokens.container_elevation
-        # container_drop_shadow.elevation = lambda: (
-        #     tokens.hover_container_elevation
-        #     if self.hovered
-        #     else tokens.container_elevation
-        # )
-        # self._container.setGraphicsEffect(container_drop_shadow)
         self.setGraphicsEffect(self._drop_shadow)
 
         self._label = Typography()
@@ -79,25 +60,21 @@ class ElevatedButton(Component):
             }
         )
         self._label.setParent(self)
-        # margins = QtCore.QMargins(24, 0, 24, 0)
-        # self.overlay_widget(self._label, margins)
 
     def sizeHint(self) -> QtCore.QSize:
+        width = self._label.sizeHint().width() + 24 * 2
         base_height = resolve_token(tokens.container_height)
-        y = base_height + _TOUCH_AREA_Y_PADDING * 2
+        height = base_height + _TOUCH_AREA_Y_PADDING * 2
+        return QtCore.QSize(width, height)
 
-        x = self._label.sizeHint().width() + 24 * 2
-
-        return QtCore.QSize(x, y)
-
-    def resizeEvent(self, event):
+    def resizeEvent(self, event) -> None:
+        super().resizeEvent(event)
         container_size = event.size().shrunkBy(
             QtCore.QMargins(0, _TOUCH_AREA_Y_PADDING, 0, _TOUCH_AREA_Y_PADDING)
         )
         self._container.resize(container_size)
         self._label.move(24, _TOUCH_AREA_Y_PADDING)
         self._label.resize(container_size.shrunkBy(QtCore.QMargins(24, 0, 24, 0)))
-        return super().resizeEvent(event)
 
     @effect(hovered)
     def _update_drop_shadow_elevation(self) -> None:
