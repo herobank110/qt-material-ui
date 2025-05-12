@@ -17,8 +17,22 @@ from material_ui.tokens import (
 from qtpy.QtGui import QColor
 
 
-def test_DesignToken_hash_color() -> None:
+def test_DesignToken_hash_basic_tests() -> None:
+    assert hash(md_sys_color.primary) != hash(md_ref_palette.primary40)
     assert hash(md_ref_palette.primary40) == hash(md_ref_palette.primary40)
+    assert hash(md_ref_palette.primary40) != hash(md_ref_palette.primary30)
+
+
+@pytest.mark.parametrize(
+    "a, b",
+    [
+        (md_comp_switch.handle_elevation, md_sys_elevation.level1),
+    ],
+)
+def test_DesignToken_hash_root_tokens_match(a, b) -> None:
+    # Check the hash matches after resolving the indirection.
+    assert hash(a) != hash(b)
+    assert hash(find_root_token(a)) == hash(b)
 
 
 def test_resolve_token_direct_value() -> None:
