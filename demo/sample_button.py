@@ -23,7 +23,7 @@ def main() -> None:
         # "text",
     ]:
         btn = ElevatedButton()
-        btn.text.set("Click me")
+        btn.text.set(variant.title())
         btn.variant.set(variant)
         window.add_widget(btn)
 
