@@ -3,9 +3,28 @@
 from material_ui.tokens import DesignToken, resolve_token
 from qtpy.QtWidgets import QGraphicsDropShadowEffect
 from qtpy.QtGui import QColor
-from qtpy.QtCore import QPropertyAnimation, QEasingCurve, QPoint
+from qtpy.QtCore import QPropertyAnimation, QEasingCurve, QPointF
 from material_ui.tokens import md_sys_elevation, md_sys_color
 from material_ui.tokens._utils import find_root_token
+
+_ELEVATION_BLUR_RADIUS_MAP: dict[DesignToken, int] = {
+    md_sys_elevation.level0: 0,
+    md_sys_elevation.level1: 3,
+    md_sys_elevation.level2: 6,
+    md_sys_elevation.level3: 8,
+    md_sys_elevation.level4: 10,
+    # TODO: implement token generator overrides for missing tokens
+    # md_sys_elevation.level5: 4,
+}
+
+_ELEVATION_OFFSET_MAP: dict[DesignToken, QPointF] = {
+    md_sys_elevation.level0: QPointF(0.0, 0.0),
+    md_sys_elevation.level1: QPointF(0.0, 1.0),
+    md_sys_elevation.level2: QPointF(0.0, 2.0),
+    md_sys_elevation.level3: QPointF(0.0, 4.0),
+    md_sys_elevation.level4: QPointF(0.0, 6.0),
+    # md_sys_elevation.level5: QPoint(0, 4),
+}
 
 
 class DropShadow(QGraphicsDropShadowEffect):
@@ -40,20 +59,10 @@ class DropShadow(QGraphicsDropShadowEffect):
         self.setBlurRadius(self._get_computed_blur_radius())
         self.setOffset(self._get_computed_offset())
 
-    def _get_computed_blur_radius(self):
-        return resolve_token(self._elevation)
+    def _get_computed_blur_radius(self) -> int:
+        return _ELEVATION_BLUR_RADIUS_MAP[find_root_token(self._elevation)]
 
-    def _get_computed_offset(self):
-        _ELEVATION_OFFSET_MAP = {
-            md_sys_elevation.level0: QPoint(0, 0),
-            md_sys_elevation.level1: QPoint(0, 1),
-            md_sys_elevation.level2: QPoint(0, 1),
-            md_sys_elevation.level3: QPoint(0, 1),
-            md_sys_elevation.level4: QPoint(0, 2),
-            # TODO: implement token generator overrides for missing tokens
-            # md_sys_elevation.level5: QPoint(0, 4),
-        }
-
+    def _get_computed_offset(self) -> QPointF:
         return _ELEVATION_OFFSET_MAP[find_root_token(self._elevation)]
 
     def animate_elevation_to(self, value: DesignToken) -> None:
