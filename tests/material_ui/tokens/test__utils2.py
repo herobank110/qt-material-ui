@@ -23,16 +23,16 @@ def test_DesignToken_hash_basic_tests() -> None:
     assert hash(md_ref_palette.primary40) != hash(md_ref_palette.primary30)
 
 
-@pytest.mark.parametrize(
-    "a, b",
-    [
-        (md_comp_switch.handle_elevation, md_sys_elevation.level1),
-    ],
-)
-def test_DesignToken_hash_root_tokens_match(a, b) -> None:
+def test_DesignToken_hash_root_tokens_match() -> None:
     # Check the hash matches after resolving the indirection.
-    assert hash(a) != hash(b)
-    assert hash(find_root_token(a)) == hash(b)
+    assert hash(md_sys_elevation.level1) != hash(md_comp_switch.handle_elevation)
+    assert hash(md_sys_elevation.level1) == hash(
+        find_root_token(md_comp_switch.handle_elevation)
+    )
+    # The main use case is for using tokens as keys in a dict.
+    config = {md_sys_elevation.level1: "foo"}
+    result = config[find_root_token(md_comp_switch.handle_elevation)]
+    assert result == "foo"
 
 
 def test_resolve_token_direct_value() -> None:
