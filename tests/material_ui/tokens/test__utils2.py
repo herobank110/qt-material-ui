@@ -1,0 +1,55 @@
+"""Tests for material_ui.tokens._utils.py."""
+
+import pytest
+from material_ui.tokens._utils import (
+    DesignToken,
+    _resolve_indirection,
+    resolve_token,
+    to_python_name,
+    find_root_token,
+)
+from material_ui.tokens import (
+    md_ref_palette,
+    md_sys_color,
+    md_comp_switch,
+    md_sys_elevation,
+)
+from qtpy.QtGui import QColor
+
+
+def test_resolve_token_direct_value() -> None:
+    assert resolve_token(md_ref_palette.primary40) == QColor("#6750a4")
+
+
+def test_resolve_token_indirection_1_level() -> None:
+    assert resolve_token(md_sys_color.primary) == QColor("#6750a4")
+
+
+def test_resolve_token_indirection_2_levels() -> None:
+    assert resolve_token(md_comp_switch.focus_indicator_thickness) == 3
+
+
+def test_resolve_token_invalid_indirection() -> None:
+    with pytest.raises(ValueError):
+        resolve_token(DesignToken("invalid_name"))
+
+
+def test__resolve_indirection_invalid_module() -> None:
+    assert _resolve_indirection("invalid_name") is None
+
+
+def test__resolve_indirection_valid_module_invalid_name() -> None:
+    assert _resolve_indirection("md.sys.color.invalid_name") is None
+
+
+def test_find_root_token_itself() -> None:
+    assert find_root_token(md_ref_palette.error10) == md_ref_palette.error10
+
+
+def test_find_root_token_indirection() -> None:
+    assert find_root_token(md_comp_switch.handle_elevation) == md_sys_elevation.level1
+
+
+def test_to_python_name() -> None:
+    result = to_python_name("md.comp.elevated-button.container-color")
+    assert result == "md_comp_elevated_button_container_color"
