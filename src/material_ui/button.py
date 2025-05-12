@@ -91,7 +91,6 @@ class ElevatedButton(Component):
         return QtCore.QSize(x, y)
 
     def resizeEvent(self, event):
-        print("resizeEvent", event.size())
         container_size = event.size().shrunkBy(
             QtCore.QMargins(0, _TOUCH_AREA_Y_PADDING, 0, _TOUCH_AREA_Y_PADDING)
         )
