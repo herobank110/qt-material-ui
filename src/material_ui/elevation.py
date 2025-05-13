@@ -1,6 +1,6 @@
 """A 'hidden' component that provides drop shadow."""
 
-from qtpy.QtCore import QPointF
+from qtpy.QtCore import QPointF, Qt
 from qtpy.QtGui import QColor
 from qtpy.QtWidgets import QGraphicsDropShadowEffect
 from material_ui._component import Component, effect, use_state
@@ -27,13 +27,6 @@ _ELEVATION_KEY_BLUR_RADIUS_MAP: dict[DesignToken, int] = {
     md_sys_elevation.level4: 3,
     # md_sys_elevation.level5: 4,
 }
-
-# // level0: box-shadow: 0px 0px 0px 0px;
-# // level1: box-shadow: 0px 1px 3px 1px;
-# // level2: box-shadow: 0px 2px 6px 2px;
-# // level3: box-shadow: 0px 4px 8px 3px;
-# // level4: box-shadow: 0px 6px 10px 4px;
-# // level5: box-shadow: 0px 8px 12px 6px;
 
 _ELEVATION_AMBIENT_OFFSET_MAP: dict[DesignToken, QPointF] = {
     md_sys_elevation.level0: QPointF(0.0, 0.0),
@@ -64,6 +57,15 @@ class Elevation(Component):
     def __init__(self) -> None:
         super().__init__()
 
+        # self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
+        # self.sx.set({"background-color": "black"})
+        # _key_shadow = QGraphicsDropShadowEffect()
+        # _key_shadow.setParent(self)
+        # _key_shadow.setBlurRadius(3)
+        # _key_shadow.setOffset(0, 1)
+        # _key_shadow.setColor(QColor("rgba(0,0,0,255)"))
+        # self.setGraphicsEffect(_key_shadow)
+
         self._key_shape = Shape()
         self._key_shape.setParent(self)
         self._key_shape.corner_shape.bind(self.corner_shape)
@@ -76,6 +78,7 @@ class Elevation(Component):
         self._ambient_shape.corner_shape.bind(self.corner_shape)
         self._ambient_shape._size.bind(self._size)
         self._ambient_shadow = QGraphicsDropShadowEffect()
+        self._ambient_shadow.setParent(self._ambient_shape)
         self._ambient_shape.setGraphicsEffect(self._ambient_shadow)
 
     @effect(shadow_color)
@@ -94,3 +97,16 @@ class Elevation(Component):
         ambient_color = QColor(color)
         ambient_color.setAlphaF(0.15)
         self._ambient_shadow.setColor(color)
+
+    @effect(elevation)
+    def _apply_elevation(self):
+        """Apply elevation."""
+        elevation = self.elevation.get()
+        print(f"elevation: {elevation}")
+
+        self._key_shadow.setBlurRadius(_ELEVATION_KEY_BLUR_RADIUS_MAP[elevation])
+        self._key_shadow.setOffset(_ELEVATION_KEY_OFFSET_MAP[elevation])
+        self._ambient_shadow.setBlurRadius(
+            _ELEVATION_AMBIENT_BLUR_RADIUS_MAP[elevation]
+        )
+        self._ambient_shadow.setOffset(_ELEVATION_AMBIENT_OFFSET_MAP[elevation])

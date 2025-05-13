@@ -12,7 +12,7 @@ def main() -> None:
 
     window = Stack()
     window.alignment.set(QtCore.Qt.AlignCenter)
-    window.gap.set(30)
+    window.gap.set(20)
     window.sx.set({"background-color": "white"})
     window.resize(300, 300)
 
