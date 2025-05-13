@@ -107,3 +107,26 @@ class DropShadow(QGraphicsDropShadowEffect):
             )
         resolved_color.setAlphaF(0.3)
         self.setColor(resolved_color)
+
+
+# Testing for a multi shadow effect based on CSS
+# also focus indicator outside widget bounds?
+
+# class MyGraphicsEffect(QGraphicsEffect):
+#     """Testing Effect."""
+
+#     def boundingRectFor(self, rect: QRectF) -> QRectF:
+#         """Override the bounding rectangle to add extra padding."""
+#         return rect.adjusted(-2, -2, 2, 2)
+
+#     def draw(self, painter: QPainter) -> None:
+#         """Override the draw method to add custom drawing."""
+#         # painter.setBrush(QColor(255, 0, 0, 50))
+#         # painter.drawRect(self.boundingRect().adjusted(-1, -1, 0, 0))
+#         # from qtpy.QtGui import QTransform
+#         # painter.setTransform(QTransform())
+#         # painter.begin()
+#         painter.save()
+#         self.drawSource(painter)
+#         painter.restore()
+#         # painter.end()
