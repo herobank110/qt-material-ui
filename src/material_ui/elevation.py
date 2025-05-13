@@ -1,8 +1,8 @@
 """A 'hidden' component that provides drop shadow."""
 
-from qtpy.QtCore import QPointF, Qt
-from qtpy.QtGui import QColor
-from qtpy.QtWidgets import QGraphicsDropShadowEffect
+from qtpy.QtCore import QPointF, Qt, QRectF
+from qtpy.QtGui import QColor, QPainter
+from qtpy.QtWidgets import QGraphicsDropShadowEffect, QGraphicsEffect
 from material_ui._component import Component, effect, use_state
 from material_ui.shape import Shape
 from material_ui.tokens import md_sys_elevation, md_sys_color, md_sys_shape
@@ -47,6 +47,28 @@ _ELEVATION_AMBIENT_BLUR_RADIUS_MAP: dict[DesignToken, int] = {
 }
 
 
+class MyGraphicsEffect(QGraphicsEffect):
+    """Testing Effect."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._x = 0
+
+    def boundingRectFor(self, rect: QRectF) -> QRectF:
+        """Override the bounding rectangle to add extra padding."""
+        return rect.adjusted(-5, -5, 5, 5)
+
+    def draw(self, painter: QPainter) -> None:
+        """Override the draw method to add custom drawing."""
+        painter.setBrush(QColor(255, 0, self._x * 80, 50))
+        painter.setClipRect(self.sourceBoundingRect(), Qt.ClipOperation.ReplaceClip)
+        # painter.drawRect(self.boundingRect().adjusted(-1, -1, 1, 1))
+
+    def test(self):
+        self._x = 2
+        self.update()
+
+
 class Elevation(Component):
     """Elevation (aka drop shadow)."""
 
@@ -57,17 +79,28 @@ class Elevation(Component):
     def __init__(self) -> None:
         super().__init__()
 
+        self.sx.set({"background-color": "black"})
+
+        f = MyGraphicsEffect()
+        f.setParent(self)
+        self.setGraphicsEffect(f)
+        from qtpy.QtCore import QTimer
+
+        QTimer.singleShot(100, lambda: f.test())
+
         # self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
         # self.sx.set({"background-color": "black"})
         # _key_shadow = QGraphicsDropShadowEffect()
         # _key_shadow.setParent(self)
-        # _key_shadow.setBlurRadius(3)
-        # _key_shadow.setOffset(0, 1)
-        # _key_shadow.setColor(QColor("rgba(0,0,0,255)"))
+        # _key_shadow.setBlurRadius(10)
+        # _key_shadow.setOffset(5, 3)
+        # _key_shadow.setColor(QColor("rgba(244,255,255,80)"))
         # self.setGraphicsEffect(_key_shadow)
 
         self._key_shape = Shape()
         self._key_shape.setParent(self)
+        # Needs a background color for the Qt's drop shadow to work.
+        self._key_shape.sx.set({"background-color": "red"})
         self._key_shape.corner_shape.bind(self.corner_shape)
         self._key_shape._size.bind(self._size)
         self._key_shadow = QGraphicsDropShadowEffect()
@@ -75,6 +108,7 @@ class Elevation(Component):
 
         self._ambient_shape = Shape()
         self._ambient_shape.setParent(self)
+        self._ambient_shape.sx.set({"background-color": "green"})
         self._ambient_shape.corner_shape.bind(self.corner_shape)
         self._ambient_shape._size.bind(self._size)
         self._ambient_shadow = QGraphicsDropShadowEffect()
