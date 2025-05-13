@@ -52,12 +52,12 @@ class MyGraphicsEffect(QGraphicsEffect):
 
     def boundingRectFor(self, rect: QRectF) -> QRectF:
         """Override the bounding rectangle to add extra padding."""
-        return rect.adjusted(-5, -5, 5, 5)
+        return rect.adjusted(-2, -2, 2, 2)
 
     def draw(self, painter: QPainter) -> None:
         """Override the draw method to add custom drawing."""
         painter.setBrush(QColor(255, 0, 0, 50))
-        painter.drawRect(self.boundingRect().adjusted(-1, -1, 1, 1))
+        painter.drawRect(self.boundingRect().adjusted(-1, -1, 0, 0))
         self.drawSource(painter)
 
 
@@ -70,6 +70,7 @@ class Elevation(Component):
 
     def __init__(self) -> None:
         super().__init__()
+        self.sx.set({"background-color": "green"})
 
         f = MyGraphicsEffect()
         f.setParent(self)
