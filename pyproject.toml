@@ -15,19 +15,12 @@ dependencies = [
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
-classifiers = [
-    "Development Status :: 4 - Beta",
-]
+classifiers = ["Development Status :: 4 - Beta"]
 keywords = ["qt", "material", "ui", "components", "widgets"]
 
 
 [project.optional-dependencies]
-dev = [
-    "PySide6",
-    "httpx",
-    "pytest",
-    "pytest-cov",
-]
+dev = ["PySide6", "httpx", "pytest", "pytest-cov"]
 
 [project.urls]
 Repository = "https://github.com/herobank110/qt-material-ui"
@@ -89,3 +82,13 @@ quote-style = "double"
 indent-style = "space"
 skip-magic-trailing-comma = false
 docstring-code-format = true
+
+[tool.coverage.run]
+# Omit these from coverage since they are just generated files with a
+# big list of constants. Some of these modules are used in the
+# appropriate unit tests for the core token functionality.
+omit = [
+    "src/material_ui/tokens/md_comp_*",
+    "src/material_ui/tokens/md_sys_*",
+    "src/material_ui/tokens/md_ref_*",
+]
