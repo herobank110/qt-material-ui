@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from typing import Any, Callable, Generic, TypeVar, get_args
 from typing_extensions import TypeVarTuple, Unpack
-from qtpy import QtCore, QtWidgets
+from qtpy import QtCore, QtWidgets, QtGui
 
 from material_ui._utils import convert_sx_to_qss
 
@@ -192,7 +192,7 @@ class _EffectMarker:
 _EFFECT_MARKER_KEY = "__effect_marker__"
 
 
-def effect(*dependencies: State[Any]):
+def effect(*dependencies: State[Any]) -> Callable[[Callable], Callable]:
     """Decorator to mark a method as an effect.
 
     Args:
@@ -230,6 +230,9 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
 
     sx = use_state({})
 
+    _size = use_state(QtCore.QSize())
+    """Internal state for Qt `size` property."""
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -252,8 +255,12 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
             # Get the function object from the class.
             func = getattr(self, effect_marker.name)
             for dependency in effect_marker.dependencies:
-                # Find the corresponding variable object.
-                variable = getattr(self, dependency.name, None)
+                # Special handling for Qt built in properties.
+                if dependency is QtWidgets.QWidget.size:
+                    variable = self._size
+                else:
+                    # Find the corresponding variable object.
+                    variable = getattr(self, dependency.name, None)
                 if not isinstance(variable, State):
                     raise RuntimeError(
                         f"Effect dependencies can only be States, found "
@@ -286,3 +293,12 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
         """Apply the sx property to the widget."""
         qss = convert_sx_to_qss(self.sx.get())
         self.setStyleSheet(qss)
+
+    def resizeEvent(self, event: QtGui.QResizeEvent) -> None:
+        super().resizeEvent(event)
+        self._size.set(self.size())
+
+    @effect(_size)
+    def _apply_size(self):
+        """Apply the size property to the widget."""
+        self.resize(self._size.get())

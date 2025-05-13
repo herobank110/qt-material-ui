@@ -25,6 +25,7 @@ def main() -> None:
     ]
     for level in levels:
         comp = Elevation()
+        comp.setFixedSize(50, 50)
         comp.elevation.set(level)
         window.add_widget(comp)
 
