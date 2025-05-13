@@ -6,7 +6,7 @@ from qtpy.QtWidgets import QGraphicsDropShadowEffect, QGraphicsEffect
 from material_ui._component import Component, effect, use_state
 from material_ui.shape import Shape
 from material_ui.tokens import md_sys_elevation, md_sys_color, md_sys_shape
-from material_ui.tokens._utils import DesignToken, resolve_token
+from material_ui.tokens._utils import DesignToken, find_root_token, resolve_token
 
 # TODO: implement token generator overrides for missing tokens for level5
 
@@ -69,9 +69,15 @@ class Elevation(Component):
     @effect(corner_shape, Component.size)
     def _apply_corner_shape(self):
         """Apply corner shape."""
-        shape = resolve_token(self.corner_shape.get())
-        print(shape)
-
+        # TODO: move to common place?
+        shape = find_root_token(self.corner_shape.get())
+        if shape is md_sys_shape.corner_none:
+            new_radius = 0
+        elif shape is md_sys_shape.corner_full:
+            new_radius = min(self.width(), self.height()) // 2
+        else:
+            raise RuntimeError("unsupported corner shape", shape)
+        self.sx.set(lambda prev: prev | {"border-radius": new_radius})
 
     @effect(shadow_color)
     def _apply_shadow_colors(self):

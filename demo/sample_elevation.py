@@ -2,19 +2,20 @@
 
 from qtpy import QtCore, QtWidgets
 from material_ui.elevation import Elevation
-from material_ui.layout_basics import Stack
+from material_ui.layout_basics import Row
 from material_ui.tokens import md_sys_elevation
+from material_ui.typography import Typography
 
 
 def main() -> None:
     """Main function."""
     app = QtWidgets.QApplication()
 
-    window = Stack()
+    window = Row()
     window.alignment.set(QtCore.Qt.AlignCenter)
     window.gap.set(20)
     window.sx.set({"background-color": "white"})
-    window.resize(300, 300)
+    window.resize(400, 200)
 
     levels = [
         md_sys_elevation.level0,
@@ -23,10 +24,16 @@ def main() -> None:
         md_sys_elevation.level3,
         md_sys_elevation.level4,
     ]
-    for level in levels:
+    for i, level in enumerate(levels):
         comp = Elevation()
         comp.setFixedSize(50, 50)
         comp.elevation.set(level)
+
+        label = Typography()
+        label.text.set(str(i))
+        label.setParent(comp)
+        label.move(5, 5)
+
         window.add_widget(comp)
 
     window.show()
