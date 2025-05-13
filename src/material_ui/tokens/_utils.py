@@ -71,13 +71,32 @@ def find_root_token(token: DesignToken) -> DesignToken:
     """
     # Because the tokens system stores variables as values or names of
     # other tokens, first check if the tokens is a value already.
-    if isinstance(token.value, TokenValue):
+    if not _is_indirection(token):
         return token
     indirection = _resolve_indirection(token.value)
     if not indirection:
         raise ValueError(f"Unable to resolve token indirection: {token.value}")
     # Continue recursively to check until a value is obtained.
     return find_root_token(indirection)
+
+
+_KNOWN_STR_ENUMS = {
+    "SHAPE_FAMILY_CIRCULAR",
+    "SHAPE_FAMILY_ROUNDED_CORNERS",
+}
+
+
+def _is_indirection(token: DesignToken) -> bool:
+    """Check if the token is an indirection.
+
+    Args:
+        token: The token to check.
+
+    Returns:
+        True if the token is an indirection, False if a value.
+    """
+    is_value_type = isinstance(token.value, TokenValue)
+    return not is_value_type and token.value not in _KNOWN_STR_ENUMS
 
 
 def _resolve_indirection(value: Indirection) -> DesignToken | None:

@@ -4,6 +4,7 @@ import pytest
 from material_ui.tokens._utils import (
     DesignToken,
     _resolve_indirection,
+    _is_indirection,
     resolve_token,
     to_python_name,
     find_root_token,
@@ -13,6 +14,7 @@ from material_ui.tokens import (
     md_sys_color,
     md_comp_switch,
     md_sys_elevation,
+    md_sys_shape,
 )
 from qtpy.QtGui import QColor
 
@@ -66,6 +68,12 @@ def test_find_root_token_itself() -> None:
 
 def test_find_root_token_indirection() -> None:
     assert find_root_token(md_comp_switch.handle_elevation) == md_sys_elevation.level1
+
+
+def test__is_indirection_str_enum() -> None:
+    # TODO: remove this and use properly typed DesignTokens instead of
+    #   str for Indirections
+    assert not _is_indirection(md_sys_shape.corner_full)
 
 
 def test_to_python_name() -> None:
