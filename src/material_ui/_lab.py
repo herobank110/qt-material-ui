@@ -74,8 +74,8 @@ class DropShadow(QGraphicsDropShadowEffect):
         blur_radius_animation.setTargetObject(self)
         blur_radius_animation.setPropertyName(b"blurRadius")
         blur_radius_animation.setEndValue(self._get_computed_blur_radius())
-        blur_radius_animation.setDuration(280)
-        blur_radius_animation.setEasingCurve(QEasingCurve.OutCubic)
+        blur_radius_animation.setDuration(180)
+        # blur_radius_animation.setEasingCurve(QEasingCurve.InCubic)
         blur_radius_animation.start()
 
         offset_animation = QPropertyAnimation()
@@ -83,8 +83,8 @@ class DropShadow(QGraphicsDropShadowEffect):
         offset_animation.setTargetObject(self)
         offset_animation.setPropertyName(b"offset")
         offset_animation.setEndValue(self._get_computed_offset())
-        offset_animation.setDuration(280)
-        offset_animation.setEasingCurve(QEasingCurve.OutCubic)
+        offset_animation.setDuration(180)
+        # offset_animation.setEasingCurve(QEasingCurve.InCubic)
         offset_animation.start()
 
     @property
