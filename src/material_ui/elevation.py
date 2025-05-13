@@ -58,12 +58,20 @@ class Elevation(Component):
         super().__init__()
 
         # Have to set a background for Qt's DropShadow to work...!
+        # TODO: remove once using custom graphics effect
         self.sx.set({"background-color": "white"})
 
         # TODO: also add key shadow
         self._ambient_shadow = QGraphicsDropShadowEffect()
         self._ambient_shadow.setParent(self)
         self.setGraphicsEffect(self._ambient_shadow)
+
+    @effect(corner_shape, Component.size)
+    def _apply_corner_shape(self):
+        """Apply corner shape."""
+        shape = resolve_token(self.corner_shape.get())
+        print(shape)
+
 
     @effect(shadow_color)
     def _apply_shadow_colors(self):
@@ -74,13 +82,10 @@ class Elevation(Component):
                 f"invalid shadow_color token: expected QColor, got {type(color).__name__}"
             )
 
-        # key_color = QColor(color)
-        # key_color.setAlphaF(0.3)
-        # self._key_shadow.setColor(key_color)
-
         ambient_color = QColor(color)
-        ambient_color.setAlphaF(0.15)
-        self._ambient_shadow.setColor(color)
+        # TODO: once using multi shadow, alpha values are: key=0.3, ambient=0.15
+        ambient_color.setAlphaF(0.35)
+        self._ambient_shadow.setColor(ambient_color)
 
     @effect(elevation)
     def _apply_elevation(self):
