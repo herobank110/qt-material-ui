@@ -1,4 +1,4 @@
-"""Elevated Button - internal implementation."""
+"""Elevated Button."""
 
 from material_ui._button_base import ButtonBase
 from material_ui._component import effect

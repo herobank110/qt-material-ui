@@ -6,6 +6,8 @@ from material_ui.tokens import md_comp_filled_button as tokens
 
 
 class FilledButton(ButtonBase):
+    """FilledButton."""
+
     def __init__(self):
         super().__init__()
         self._drop_shadow.color = tokens.container_shadow_color
