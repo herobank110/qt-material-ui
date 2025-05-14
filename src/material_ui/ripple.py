@@ -21,27 +21,26 @@ class Ripple(Shape):
     _draw_origin = use_state(QPointF(0, 0))
     _scale = use_state(0.0)
 
-    @effect(ripple_origin, color, opacity)
-    def _animate_ripple(self) -> None:
+    @effect(_opacity_value, _draw_origin, _scale)
+    def _update_widget(self) -> None:
         # Tell Qt to call paintEvent.
         self.update()
 
     @effect(ripple_origin)
-    def _ripple_effect(self) -> None:
+    def _animate_ripple_values(self) -> None:
         origin = self.ripple_origin.get()
         if origin is None:
             # Fade out the ripple when the origin is reset. I.e., when
             # the button is released.
-            self._opacity_value.animate_to(0.0, 400, QEasingCurve.OutCubic)
+            self._opacity_value.animate_to(0.0, 800, QEasingCurve.OutCubic)
             return
         self._draw_origin = origin
         self._opacity_value.animate_to(
             resolve_token(self.opacity.get()), 100, QEasingCurve.OutCubic
         )
         self._scale.set(3.0)
-        print(self.size())
-        ripple_total_scale = max(self.width(), self.height()) * 2.2
-        self._scale.animate_to(ripple_total_scale, 1000, QEasingCurve.OutCubic)
+        ripple_total_scale = max(self.width(), self.height()) * 2
+        self._scale.animate_to(ripple_total_scale, 1200, QEasingCurve.OutCubic)
 
     def paintEvent(self, event: QPaintEvent) -> None:  # noqa: N802
         super().paintEvent(event)
@@ -60,4 +59,3 @@ class Ripple(Shape):
         painter.drawEllipse(
             self._draw_origin.get(), self._scale.get(), self._scale.get()
         )
-        print(f"{self._scale.get()}\r", end="")
