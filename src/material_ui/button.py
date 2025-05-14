@@ -57,7 +57,6 @@ class ElevatedButton(Component):
         self._ripple.color = tokens.pressed_state_layer_color
         self._ripple.corner_shape.set("full")
         self._ripple.move(0, _TOUCH_AREA_Y_PADDING)
-        self._ripple._size.bind(self._size)
 
         self._label = Typography()
         self._label.text.bind(self.text)
@@ -82,6 +81,7 @@ class ElevatedButton(Component):
             QtCore.QMargins(0, _TOUCH_AREA_Y_PADDING, 0, _TOUCH_AREA_Y_PADDING)
         )
         self._container.resize(container_size)
+        self._ripple.resize(container_size)
         self._label.move(24, _TOUCH_AREA_Y_PADDING)
         self._label.resize(container_size.shrunkBy(QtCore.QMargins(24, 0, 24, 0)))
 

@@ -29,7 +29,8 @@ class Ripple(Shape):
         super().paintEvent(event)
         painter = QPainter(self)
         clip_path = QPainterPath()
-        clip_path.addRoundedRect(self.rect(), 8, 8)
+        half_size = min(self.width(), self.height()) // 2
+        clip_path.addRoundedRect(self.rect(), half_size, half_size)
         painter.setClipPath(clip_path)
         painter.setPen(Qt.NoPen)
         color = QColor(resolve_token(self.color.get()))
