@@ -98,6 +98,7 @@ class ElevatedButton(Component):
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
         if event.button() == QtCore.Qt.LeftButton:
             self.pressed.set(True)
+            self._ripple.ripple_origin = event.position()
         return super().mousePressEvent(event)
 
     def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
