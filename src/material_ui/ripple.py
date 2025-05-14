@@ -1,7 +1,7 @@
 """Ripple (for pressing)."""
 
 from typing import cast
-from material_ui._component import Component, effect, use_state
+from material_ui._component import effect, use_state
 from material_ui.shape import Shape
 from material_ui.tokens import md_sys_color, md_sys_state
 from qtpy.QtCore import QPointF, Qt, QEasingCurve
