@@ -3,7 +3,7 @@
 from material_ui.tokens import DesignToken, resolve_token
 from qtpy.QtWidgets import QGraphicsDropShadowEffect
 from qtpy.QtGui import QColor
-from qtpy.QtCore import QPropertyAnimation, QEasingCurve, QPointF
+from qtpy.QtCore import QPropertyAnimation, QPointF
 from material_ui.tokens import md_sys_elevation, md_sys_color
 from material_ui.tokens._utils import find_root_token
 
