@@ -1,4 +1,4 @@
-from typing import Literal, cast
+from typing import Literal
 from material_ui._lab import DropShadow
 from material_ui.ripple import Ripple
 from material_ui.shape import Shape
@@ -43,6 +43,7 @@ class ElevatedButton(Component):
 
         self._drop_shadow = DropShadow()
         self._drop_shadow.color = tokens.container_shadow_color
+        self._drop_shadow.elevation = tokens.container_elevation
         self.setGraphicsEffect(self._drop_shadow)
 
         self._container = Shape()
