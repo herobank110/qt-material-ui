@@ -88,11 +88,11 @@ class ElevatedButton(Component):
     @effect(hovered, pressed)
     def _update_drop_shadow_elevation(self) -> None:
         self._drop_shadow.animate_elevation_to(
-            tokens.pressed_container_elevation
-            if self.pressed.get()
-            else tokens.hover_container_elevation
-            if self.hovered.get()
-            else tokens.container_elevation
+            {
+                True: tokens.container_elevation,
+                self.hovered.get(): tokens.hover_container_elevation,
+                self.pressed.get(): tokens.pressed_container_elevation,
+            }[True]
         )
 
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
