@@ -18,11 +18,8 @@ class Ripple(Shape):
     opacity = use_state(md_sys_state.pressed_state_layer_opacity)
 
     _opacity_value = use_state(0.0)
-    _ripple_scale = use_state(0.0)
-
-    def __init__(self) -> None:
-        super().__init__()
-        # self.ripple_origin.changed.connect(lambda: self.update())
+    _draw_origin = use_state(QPointF(0, 0))
+    _scale = use_state(0.0)
 
     @effect(ripple_origin, color, opacity)
     def _animate_ripple(self) -> None:
@@ -31,17 +28,20 @@ class Ripple(Shape):
 
     @effect(ripple_origin)
     def _ripple_effect(self) -> None:
-        if self.ripple_origin.get() is None:
+        origin = self.ripple_origin.get()
+        if origin is None:
             # Fade out the ripple when the origin is reset. I.e., when
             # the button is released.
-            self._opacity_value.animate_to(0.0, 200, QEasingCurve.OutCubic)
+            self._opacity_value.animate_to(0.0, 400, QEasingCurve.OutCubic)
             return
+        self._draw_origin = origin
         self._opacity_value.animate_to(
             resolve_token(self.opacity.get()), 100, QEasingCurve.OutCubic
         )
-        self._ripple_scale.set(5.0)
-        ripple_total_scale = max(self.width(), self.height())
-        self._ripple_scale.animate_to(ripple_total_scale, 200, QEasingCurve.OutCubic)
+        self._scale.set(3.0)
+        print(self.size())
+        ripple_total_scale = max(self.width(), self.height()) * 2.2
+        self._scale.animate_to(ripple_total_scale, 1000, QEasingCurve.OutCubic)
 
     def paintEvent(self, event: QPaintEvent) -> None:  # noqa: N802
         super().paintEvent(event)
@@ -57,5 +57,7 @@ class Ripple(Shape):
         color = QColor(resolve_token(self.color.get()))
         color.setAlphaF(self._opacity_value.get())
         painter.setBrush(color)
-        origin = self.ripple_origin.get() or QPointF(0, 0) # Full rect...
-        painter.drawEllipse(origin, self._ripple_scale.get(), self._ripple_scale.get())
+        painter.drawEllipse(
+            self._draw_origin.get(), self._scale.get(), self._scale.get()
+        )
+        print(f"{self._scale.get()}\r", end="")
