@@ -13,6 +13,12 @@ class FilledButton(ButtonBase):
         self._drop_shadow.color = tokens.container_shadow_color
         self._drop_shadow.elevation = tokens.container_elevation
         self._container.sx = {"background-color": tokens.container_color}
+        self._ripple.color = tokens.pressed_state_layer_color
+        self._label.sx = {
+            "color": tokens.label_text_color,
+            "font-size": tokens.label_text_size,
+            "font-weight": tokens.label_text_weight,
+        }
 
     @effect(ButtonBase.hovered, ButtonBase.pressed)
     def _update_drop_shadow_elevation(self) -> None:

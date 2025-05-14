@@ -2,18 +2,18 @@
 
 from qtpy import QtCore, QtWidgets
 from material_ui.buttons import ElevatedButton, FilledButton
-from material_ui.layout_basics import Stack
+from material_ui.layout_basics import Row
 
 
 def main() -> None:
     """Main function."""
     app = QtWidgets.QApplication()
 
-    window = Stack()
+    window = Row()
     window.alignment = QtCore.Qt.AlignCenter
     window.gap = 30
     window.sx = {"background-color": "white"}
-    window.resize(300, 300)
+    window.resize(400, 200)
 
     for variant, klass in {
         "Elevated": ElevatedButton,

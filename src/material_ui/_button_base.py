@@ -55,7 +55,6 @@ class ButtonBase(Component):
 
         self._ripple = Ripple()
         self._ripple.setParent(self._container)
-        self._ripple.color = tokens.pressed_state_layer_color
         self._ripple.corner_shape = "full"
 
         container_layout = QHBoxLayout(self._container)
@@ -65,11 +64,6 @@ class ButtonBase(Component):
         self._label = Typography()
         self._label.text.bind(self.text)
         self._label.alignment = Qt.AlignmentFlag.AlignCenter
-        self._label.sx = {
-            "color": tokens.label_text_color,
-            "font-size": tokens.label_text_size,
-            "font-weight": tokens.label_text_weight,
-        }
         container_layout.addWidget(self._label)
 
     def sizeHint(self) -> QSize:
