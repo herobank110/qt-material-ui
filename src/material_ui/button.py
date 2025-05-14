@@ -87,9 +87,10 @@ class ElevatedButton(Component):
             .grownBy(_TOUCH_AREA_MARGINS)
         )
 
-    def resizeEvent(self, event) -> None:
-        super().resizeEvent(event)
-        container_size = event.size().shrunkBy(_TOUCH_AREA_MARGINS)
+    @effect(Component.size)
+    def _apply_element_sizes(self) -> None:
+        # Since Qt has no 'overlay' layout, manually set these sizes.
+        container_size = self.size().shrunkBy(_TOUCH_AREA_MARGINS)
         self._container.resize(container_size)
         self._state_layer.resize(container_size)
         self._ripple.resize(container_size)
