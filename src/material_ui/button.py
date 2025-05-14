@@ -6,8 +6,8 @@ from material_ui.tokens import md_comp_elevated_button as tokens
 from material_ui._component import Component, Signal, effect, use_state
 from material_ui.tokens._utils import resolve_token
 from material_ui.typography import Typography
-from qtpy import QtCore, QtGui
-from qtpy.QtCore import QSize, QMargins
+from qtpy.QtCore import QSize, QMargins, Qt
+from qtpy.QtGui import QEnterEvent, QEvent, QMouseEvent, QColor
 from qtpy.QtWidgets import QHBoxLayout
 
 
@@ -68,7 +68,7 @@ class ElevatedButton(Component):
 
         self._label = Typography()
         self._label.text.bind(self.text)
-        self._label.alignment = QtCore.Qt.AlignmentFlag.AlignCenter
+        self._label.alignment = Qt.AlignmentFlag.AlignCenter
         self._label.sx = {
             "color": tokens.label_text_color,
             "font-size": tokens.label_text_size,
@@ -76,7 +76,7 @@ class ElevatedButton(Component):
         }
         container_layout.addWidget(self._label)
 
-    def sizeHint(self) -> QtCore.QSize:
+    def sizeHint(self) -> QSize:
         return (
             self._container.sizeHint()
             # For some reason, setting the fixedHeight on the container
@@ -105,29 +105,29 @@ class ElevatedButton(Component):
 
     @effect(hovered)
     def _update_state_layer(self) -> None:
-        color = QtGui.QColor(resolve_token(tokens.hover_state_layer_color))
+        color = QColor(resolve_token(tokens.hover_state_layer_color))
         hover_opacity = resolve_token(tokens.hover_state_layer_opacity)
         color.setAlphaF(hover_opacity if self.hovered.get() else 0.0)
         self._state_layer.sx.set(lambda prev: prev | {"background-color": color})
 
-    def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
-        if event.button() == QtCore.Qt.LeftButton:
+    def mousePressEvent(self, event: QMouseEvent) -> None:  # noqa: N802
+        if event.button() == Qt.LeftButton:
             self.pressed = True
             self._ripple.ripple_origin = event.position()
         return super().mousePressEvent(event)
 
-    def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None:  # noqa: N802
         self.pressed = False
         self._ripple.ripple_origin = None
         mouse_inside = self.rect().contains(event.pos())
-        if event.button() == QtCore.Qt.LeftButton and mouse_inside:
+        if event.button() == Qt.LeftButton and mouse_inside:
             self.clicked.emit()
         return super().mouseReleaseEvent(event)
 
-    def enterEvent(self, event: QtGui.QEnterEvent) -> None:  # noqa: N802
+    def enterEvent(self, event: QEnterEvent) -> None:  # noqa: N802
         self.hovered = True
         return super().enterEvent(event)
 
-    def leaveEvent(self, event: QtCore.QEvent) -> None:  # noqa: N802
+    def leaveEvent(self, event: QEvent) -> None:  # noqa: N802
         self.hovered = False
         return super().leaveEvent(event)
