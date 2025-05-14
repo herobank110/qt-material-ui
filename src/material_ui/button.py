@@ -30,7 +30,6 @@ class ElevatedButton(Component):
     clicked: Signal
 
     text = use_state("")
-    variant = use_state(cast(ButtonVariant, "elevated"))
 
     hovered = use_state(False)
     pressed = use_state(False)

@@ -23,8 +23,7 @@ def main() -> None:
         # "text",
     ]:
         button = ElevatedButton()
-        button.text.set(variant.title())
-        button.variant.set(variant)
+        button.text = variant.title()
         button.clicked.connect(lambda: print(f"Clicked: {variant.title()}"))
         window.add_widget(button)
 
