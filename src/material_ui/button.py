@@ -6,8 +6,8 @@ from material_ui.tokens import md_comp_elevated_button as tokens
 from material_ui._component import Component, Signal, effect, use_state
 from material_ui.tokens._utils import resolve_token
 from material_ui.typography import Typography
-from qtpy.QtCore import QSize, QMargins, Qt
-from qtpy.QtGui import QEnterEvent, QEvent, QMouseEvent, QColor
+from qtpy.QtCore import QSize, QMargins, Qt, QEvent
+from qtpy.QtGui import QEnterEvent, QMouseEvent, QColor
 from qtpy.QtWidgets import QHBoxLayout
 
 
@@ -44,7 +44,6 @@ class ElevatedButton(Component):
 
         self._drop_shadow = DropShadow()
         self._drop_shadow.color = tokens.container_shadow_color
-        self._drop_shadow.elevation = tokens.container_elevation
         self.setGraphicsEffect(self._drop_shadow)
 
         self._container = Shape()

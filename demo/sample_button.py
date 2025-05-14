@@ -22,10 +22,11 @@ def main() -> None:
         # "outlined",
         # "text",
     ]:
-        btn = ElevatedButton()
-        btn.text.set(variant.title())
-        btn.variant.set(variant)
-        window.add_widget(btn)
+        button = ElevatedButton()
+        button.text.set(variant.title())
+        button.variant.set(variant)
+        button.clicked.connect(lambda: print(f"Clicked: {variant.title()}"))
+        window.add_widget(button)
 
     window.show()
     app.exec_()
@@ -33,4 +34,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
