@@ -1,7 +1,12 @@
 """Sample of using the buttons."""
 
 from qtpy import QtCore, QtWidgets
-from material_ui.buttons import ElevatedButton, FilledButton, FilledTonalButton
+from material_ui.buttons import (
+    ElevatedButton,
+    FilledButton,
+    FilledTonalButton,
+    OutlinedButton,
+)
 from material_ui.layout_basics import Row
 
 
@@ -19,7 +24,7 @@ def main() -> None:
         "Elevated": ElevatedButton,
         "Filled": FilledButton,
         "Tonal": FilledTonalButton,
-        # "outlined",
+        "Outlined": OutlinedButton,
         # "text",
     }.items():
         button = klass()
