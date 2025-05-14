@@ -1,6 +1,6 @@
 """Filled button."""
 
-from material_ui._button_base import ButtonBase
+from material_ui.buttons._button_base import ButtonBase
 from material_ui._component import effect
 from material_ui.tokens import md_comp_filled_button as tokens
 

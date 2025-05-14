@@ -1,6 +1,6 @@
 """Outlined Button component."""
 
-from material_ui._button_base import ButtonBase
+from material_ui.buttons._button_base import ButtonBase
 from material_ui.tokens import md_comp_outlined_button as tokens
 
 

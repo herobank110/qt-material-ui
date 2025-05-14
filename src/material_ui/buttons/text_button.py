@@ -1,6 +1,6 @@
 """Text Button component."""
 
-from material_ui._button_base import ButtonBase
+from material_ui.buttons._button_base import ButtonBase
 from material_ui.tokens import md_comp_text_button as tokens
 
 

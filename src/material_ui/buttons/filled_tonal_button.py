@@ -1,12 +1,12 @@
-"""Elevated Button."""
+"""FilledTonalButton component."""
 
-from material_ui._button_base import ButtonBase
+from material_ui.buttons._button_base import ButtonBase
 from material_ui._component import effect
-from material_ui.tokens import md_comp_elevated_button as tokens
+from material_ui.tokens import md_comp_filled_tonal_button as tokens
 
 
-class ElevatedButton(ButtonBase):
-    """ElevatedButton."""
+class FilledTonalButton(ButtonBase):
+    """FilledTonalButton."""
 
     def __init__(self):
         super().__init__()
