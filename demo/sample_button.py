@@ -1,7 +1,7 @@
 """Sample of using the buttons."""
 
 from qtpy import QtCore, QtWidgets
-from material_ui.buttons import ElevatedButton, FilledButton
+from material_ui.buttons import ElevatedButton, FilledButton, FilledTonalButton
 from material_ui.layout_basics import Row
 
 
@@ -13,12 +13,12 @@ def main() -> None:
     window.alignment = QtCore.Qt.AlignCenter
     window.gap = 30
     window.sx = {"background-color": "white"}
-    window.resize(400, 200)
+    window.resize(700, 200)
 
     for variant, klass in {
         "Elevated": ElevatedButton,
         "Filled": FilledButton,
-        # "filled-tonal",
+        "Tonal": FilledTonalButton,
         # "outlined",
         # "text",
     }.items():
