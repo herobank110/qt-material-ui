@@ -38,11 +38,9 @@ class ElevatedButton(Component):
     def __init__(self) -> None:
         super().__init__()
 
-        self.sx.set(
-            {
-                "margin": f"{_TOUCH_AREA_Y_PADDING}px 0px",
-            }
-        )
+        self.sx = {
+            "margin": f"{_TOUCH_AREA_Y_PADDING}px 0px",
+        }
 
         self._drop_shadow = DropShadow()
         self._drop_shadow.color = tokens.container_shadow_color
@@ -50,19 +48,19 @@ class ElevatedButton(Component):
         self.setGraphicsEffect(self._drop_shadow)
 
         self._container = Shape()
-        self._container.corner_shape.set("full")
-        self._container.sx.set({"background-color": tokens.container_color})
+        self._container.corner_shape = "full"
+        self._container.sx = {"background-color": tokens.container_color}
         self._container.setParent(self)
         self._container.move(0, _TOUCH_AREA_Y_PADDING)
 
         self._state_layer = Shape()
         self._state_layer.setParent(self._container)
-        self._state_layer.corner_shape.set("full")
+        self._state_layer.corner_shape = "full"
 
         self._ripple = Ripple()
         self._ripple.setParent(self._container)
         self._ripple.color = tokens.pressed_state_layer_color
-        self._ripple.corner_shape.set("full")
+        self._ripple.corner_shape = "full"
 
         container_layout = QHBoxLayout(self._container)
         container_layout.setContentsMargins(QMargins(24, 0, 24, 0))
@@ -114,12 +112,12 @@ class ElevatedButton(Component):
 
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
         if event.button() == QtCore.Qt.LeftButton:
-            self.pressed.set(True)
+            self.pressed = True
             self._ripple.ripple_origin = event.position()
         return super().mousePressEvent(event)
 
     def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
-        self.pressed.set(False)
+        self.pressed = False
         self._ripple.ripple_origin = None
         mouse_inside = self.rect().contains(event.pos())
         if event.button() == QtCore.Qt.LeftButton and mouse_inside:
@@ -127,9 +125,9 @@ class ElevatedButton(Component):
         return super().mouseReleaseEvent(event)
 
     def enterEvent(self, event: QtGui.QEnterEvent) -> None:  # noqa: N802
-        self.hovered.set(True)
+        self.hovered = True
         return super().enterEvent(event)
 
     def leaveEvent(self, event: QtCore.QEvent) -> None:  # noqa: N802
-        self.hovered.set(False)
+        self.hovered = False
         return super().leaveEvent(event)
