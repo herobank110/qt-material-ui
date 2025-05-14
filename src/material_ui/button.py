@@ -52,11 +52,14 @@ class ElevatedButton(Component):
         self._container.setParent(self)
         self._container.move(0, _TOUCH_AREA_Y_PADDING)
 
+        self._state_layer = Shape()
+        self._state_layer.setParent(self._container)
+        self._state_layer.corner_shape.set("full")
+
         self._ripple = Ripple()
-        self._ripple.setParent(self)
+        self._ripple.setParent(self._container)
         self._ripple.color = tokens.pressed_state_layer_color
         self._ripple.corner_shape.set("full")
-        self._ripple.move(0, _TOUCH_AREA_Y_PADDING)
 
         self._label = Typography()
         self._label.text.bind(self.text)
@@ -81,6 +84,7 @@ class ElevatedButton(Component):
             QtCore.QMargins(0, _TOUCH_AREA_Y_PADDING, 0, _TOUCH_AREA_Y_PADDING)
         )
         self._container.resize(container_size)
+        self._state_layer.resize(container_size)
         self._ripple.resize(container_size)
         self._label.move(24, _TOUCH_AREA_Y_PADDING)
         self._label.resize(container_size.shrunkBy(QtCore.QMargins(24, 0, 24, 0)))
@@ -94,6 +98,18 @@ class ElevatedButton(Component):
                 self.pressed.get(): tokens.pressed_container_elevation,
             }[True]
         )
+
+    @effect(hovered)
+    def _update_state_layer(self) -> None:
+        color = QtGui.QColor(
+            resolve_token(
+                tokens.hover_state_layer_color
+                if self.hovered.get()
+                else tokens.container_color
+            )
+        )
+        color.setAlphaF(resolve_token(tokens.hover_state_layer_opacity))
+        self._state_layer.sx.set(lambda prev: prev | {"background-color": color})
 
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
         if event.button() == QtCore.Qt.LeftButton:
