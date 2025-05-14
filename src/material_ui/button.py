@@ -5,7 +5,7 @@ from material_ui.tokens import md_comp_elevated_button as tokens
 from material_ui._component import Component, Signal, effect, use_state
 from material_ui.tokens._utils import resolve_token
 from material_ui.typography import Typography
-from qtpy import QtCore, QtGui, QtWidgets
+from qtpy import QtCore, QtGui
 
 
 ButtonVariant = Literal[
