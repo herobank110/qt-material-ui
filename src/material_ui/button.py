@@ -7,7 +7,7 @@ from material_ui._component import Component, Signal, effect, use_state
 from material_ui.tokens._utils import resolve_token
 from material_ui.typography import Typography
 from qtpy import QtCore, QtGui
-from qtpy.QtCore import QMargins
+from qtpy.QtCore import QSize, QMargins
 from qtpy.QtWidgets import QHBoxLayout
 
 
@@ -21,6 +21,7 @@ ButtonVariant = Literal[
 
 
 _TOUCH_AREA_Y_PADDING = 8
+_TOUCH_AREA_MARGINS = QMargins(0, _TOUCH_AREA_Y_PADDING, 0, _TOUCH_AREA_Y_PADDING)
 
 
 class ElevatedButton(Component):
@@ -78,16 +79,17 @@ class ElevatedButton(Component):
         container_layout.addWidget(self._label)
 
     def sizeHint(self) -> QtCore.QSize:
-        width = self._container.sizeHint().width()
-        base_height = resolve_token(tokens.container_height)
-        height = base_height + _TOUCH_AREA_Y_PADDING * 2
-        return QtCore.QSize(width, height)
+        return (
+            self._container.sizeHint()
+            # For some reason, setting the fixedHeight on the container
+            # won't apply to its sizeHint, so set the height here.
+            .expandedTo(QSize(0, resolve_token(tokens.container_height)))
+            .grownBy(_TOUCH_AREA_MARGINS)
+        )
 
     def resizeEvent(self, event) -> None:
         super().resizeEvent(event)
-        container_size = event.size().shrunkBy(
-            QMargins(0, _TOUCH_AREA_Y_PADDING, 0, _TOUCH_AREA_Y_PADDING)
-        )
+        container_size = event.size().shrunkBy(_TOUCH_AREA_MARGINS)
         self._container.resize(container_size)
         self._state_layer.resize(container_size)
         self._ripple.resize(container_size)
