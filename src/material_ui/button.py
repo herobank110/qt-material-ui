@@ -46,19 +46,18 @@ class ElevatedButton(Component):
         self._drop_shadow.elevation = tokens.container_elevation
         self.setGraphicsEffect(self._drop_shadow)
 
+        self._container = Shape()
+        self._container.corner_shape.set("full")
+        self._container.sx.set({"background-color": tokens.container_color})
+        self._container.setParent(self)
+        self._container.move(0, _TOUCH_AREA_Y_PADDING)
+
         self._ripple = Ripple()
         self._ripple.setParent(self)
         self._ripple.color = tokens.pressed_state_layer_color
         self._ripple.corner_shape.set("full")
         self._ripple.move(0, _TOUCH_AREA_Y_PADDING)
         self._ripple._size.bind(self._size)
-        # self._ripple.opacity = tokens.pressed_state_layer_opacity
-
-        self._container = Shape()
-        self._container.corner_shape.set("full")
-        self._container.sx.set({"background-color": tokens.container_color})
-        self._container.setParent(self)
-        self._container.move(0, _TOUCH_AREA_Y_PADDING)
 
         self._label = Typography()
         self._label.text.bind(self.text)
