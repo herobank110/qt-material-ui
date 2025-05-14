@@ -8,21 +8,21 @@
       "name": "Sample - Switch",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/demo/sample_switch.py",
+      "program": "${workspaceFolder}/samples/sample_switch.py",
       "console": "integratedTerminal"
     },
     {
       "name": "Sample - Buttons",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/demo/sample_buttons.py",
+      "program": "${workspaceFolder}/samples/sample_buttons.py",
       "console": "integratedTerminal"
     },
     {
       "name": "Sample - Elevation",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/demo/sample_elevation.py",
+      "program": "${workspaceFolder}/samples/sample_elevation.py",
       "console": "integratedTerminal"
     }
   ]
