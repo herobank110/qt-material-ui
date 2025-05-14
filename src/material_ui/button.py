@@ -76,10 +76,12 @@ class ElevatedButton(Component):
         self._label.move(24, _TOUCH_AREA_Y_PADDING)
         self._label.resize(container_size.shrunkBy(QtCore.QMargins(24, 0, 24, 0)))
 
-    @effect(hovered)
+    @effect(hovered, pressed)
     def _update_drop_shadow_elevation(self) -> None:
         self._drop_shadow.animate_elevation_to(
-            tokens.hover_container_elevation
+            tokens.pressed_container_elevation
+            if self.pressed.get()
+            else tokens.hover_container_elevation
             if self.hovered.get()
             else tokens.container_elevation
         )

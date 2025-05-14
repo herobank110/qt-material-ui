@@ -10,9 +10,9 @@ def main() -> None:
     app = QtWidgets.QApplication()
 
     window = Stack()
-    window.alignment.set(QtCore.Qt.AlignCenter)
-    window.gap.set(30)
-    window.sx.set({"background-color": "white"})
+    window.alignment = QtCore.Qt.AlignCenter
+    window.gap = 30
+    window.sx = {"background-color": "white"}
     window.resize(300, 300)
 
     for variant in [

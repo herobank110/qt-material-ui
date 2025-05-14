@@ -249,6 +249,14 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
             variable.setParent(self)
             setattr(self, marker.name, variable)
 
+    def __setattr__(self, name, value):
+        variable = getattr(self, name, None)
+        if isinstance(variable, State) and not isinstance(value, State):
+            # Shorthand for setting the value of a State variable.
+            variable.set(value)
+            return
+        return super().__setattr__(name, value)
+
     def __bind_effects(self) -> None:
         """Bind effects to the newly created variables."""
         for effect_marker in _find_effect_markers(self):

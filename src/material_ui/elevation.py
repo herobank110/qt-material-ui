@@ -96,7 +96,7 @@ class Elevation(Component):
     @effect(elevation)
     def _apply_elevation(self):
         """Apply elevation."""
-        elevation = self.elevation.get()
+        elevation = find_root_token(self.elevation.get())
         self._ambient_shadow.setBlurRadius(
             _ELEVATION_AMBIENT_BLUR_RADIUS_MAP[elevation]
         )
