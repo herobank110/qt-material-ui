@@ -7,6 +7,8 @@ from material_ui._component import Component, Signal, effect, use_state
 from material_ui.tokens._utils import resolve_token
 from material_ui.typography import Typography
 from qtpy import QtCore, QtGui
+from qtpy.QtCore import QMargins
+from qtpy.QtWidgets import QHBoxLayout
 
 
 ButtonVariant = Literal[
@@ -61,19 +63,22 @@ class ElevatedButton(Component):
         self._ripple.color = tokens.pressed_state_layer_color
         self._ripple.corner_shape.set("full")
 
+        container_layout = QHBoxLayout(self._container)
+        container_layout.setContentsMargins(QMargins(24, 0, 24, 0))
+        container_layout.setSpacing(0)
+
         self._label = Typography()
         self._label.text.bind(self.text)
-        self._label.sx.set(
-            {
-                "color": tokens.label_text_color,
-                "font-size": tokens.label_text_size,
-                "font-weight": tokens.label_text_weight,
-            }
-        )
-        self._label.setParent(self)
+        self._label.alignment = QtCore.Qt.AlignmentFlag.AlignCenter
+        self._label.sx = {
+            "color": tokens.label_text_color,
+            "font-size": tokens.label_text_size,
+            "font-weight": tokens.label_text_weight,
+        }
+        container_layout.addWidget(self._label)
 
     def sizeHint(self) -> QtCore.QSize:
-        width = self._label.sizeHint().width() + 24 * 2
+        width = self._container.sizeHint().width()
         base_height = resolve_token(tokens.container_height)
         height = base_height + _TOUCH_AREA_Y_PADDING * 2
         return QtCore.QSize(width, height)
@@ -81,13 +86,11 @@ class ElevatedButton(Component):
     def resizeEvent(self, event) -> None:
         super().resizeEvent(event)
         container_size = event.size().shrunkBy(
-            QtCore.QMargins(0, _TOUCH_AREA_Y_PADDING, 0, _TOUCH_AREA_Y_PADDING)
+            QMargins(0, _TOUCH_AREA_Y_PADDING, 0, _TOUCH_AREA_Y_PADDING)
         )
         self._container.resize(container_size)
         self._state_layer.resize(container_size)
         self._ripple.resize(container_size)
-        self._label.move(24, _TOUCH_AREA_Y_PADDING)
-        self._label.resize(container_size.shrunkBy(QtCore.QMargins(24, 0, 24, 0)))
 
     @effect(hovered, pressed)
     def _update_drop_shadow_elevation(self) -> None:
@@ -101,14 +104,9 @@ class ElevatedButton(Component):
 
     @effect(hovered)
     def _update_state_layer(self) -> None:
-        color = QtGui.QColor(
-            resolve_token(
-                tokens.hover_state_layer_color
-                if self.hovered.get()
-                else tokens.container_color
-            )
-        )
-        color.setAlphaF(resolve_token(tokens.hover_state_layer_opacity))
+        color = QtGui.QColor(resolve_token(tokens.hover_state_layer_color))
+        hover_opacity = resolve_token(tokens.hover_state_layer_opacity)
+        color.setAlphaF(hover_opacity if self.hovered.get() else 0.0)
         self._state_layer.sx.set(lambda prev: prev | {"background-color": color})
 
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802

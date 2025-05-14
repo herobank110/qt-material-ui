@@ -1,6 +1,7 @@
 """Typography module."""
 
-from material_ui._component import Component, use_state
+from material_ui._component import Component, effect, use_state
+from qtpy.QtCore import Qt
 from qtpy.QtWidgets import QLabel
 from typing import Literal, cast
 
@@ -34,6 +35,7 @@ class Typography(Component):
 
     text = use_state("")
     typescale = use_state(cast(Typescale, "body"))
+    alignment = use_state(cast(Qt.AlignmentFlag, Qt.AlignmentFlag()))
 
     def __init__(
         self, *, text: str | None = None, typescale: Typescale | None = None
@@ -45,12 +47,18 @@ class Typography(Component):
         if typescale is not None:
             self.typescale.set(typescale)
 
-        self.sx.set({
-            "font-size": "14px",
-            "color": "black",
-        })
+        self.sx.set(
+            {
+                "font-size": "14px",
+                "color": "black",
+            }
+        )
 
         self._label = QLabel()
         self._label.setText(self.text.get())
         self.text.changed.connect(self._label.setText)
         self.overlay_widget(self._label)
+
+    @effect(alignment)
+    def _apply_alignment(self) -> None:
+        self._label.setAlignment(self.alignment.get())
