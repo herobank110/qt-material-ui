@@ -18,7 +18,8 @@ export default defineConfig({
             {
                 text: 'Components',
                 items: [
-                    { text: 'Introduction', link: '/components' },
+                    // { text: 'Introduction', link: '/components' },
+                    { text: 'Buttons', link: '/components/buttons' },
                     { text: 'Switch', link: '/components/switch' },
                 ]
             }
