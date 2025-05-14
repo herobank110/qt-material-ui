@@ -6,6 +6,7 @@ from material_ui.buttons import (
     FilledButton,
     FilledTonalButton,
     OutlinedButton,
+    TextButton,
 )
 from material_ui.layout_basics import Row
 
@@ -25,11 +26,11 @@ def main() -> None:
         "Filled": FilledButton,
         "Tonal": FilledTonalButton,
         "Outlined": OutlinedButton,
-        # "text",
+        "Text": TextButton,
     }.items():
         button = klass()
         button.text = variant
-        button.clicked.connect(lambda: print(f"Clicked: {variant}"))
+        button.clicked.connect(lambda variant=variant: print(f"Clicked: {variant}"))
         window.add_widget(button)
 
     window.show()
