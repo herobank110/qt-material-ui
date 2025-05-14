@@ -41,6 +41,7 @@ class DropShadow(QGraphicsDropShadowEffect):
 
         self._elevation = md_sys_elevation.level0
         self._shadow_color = md_sys_color.shadow
+        self._apply_elevation()
 
     @property
     def elevation(self) -> DesignToken:
