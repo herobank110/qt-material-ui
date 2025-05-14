@@ -36,17 +36,14 @@ class Ripple(Shape):
             return
         self._draw_origin = origin
         self._opacity_value.animate_to(
-            resolve_token(self.opacity.get()), 100, QEasingCurve.OutCubic
+            resolve_token(self.opacity.get()), 50, QEasingCurve.OutCubic
         )
-        self._scale.set(3.0)
+        self._scale.set(1.0)
         ripple_total_scale = max(self.width(), self.height()) * 2
         self._scale.animate_to(ripple_total_scale, 1200, QEasingCurve.OutCubic)
 
     def paintEvent(self, event: QPaintEvent) -> None:  # noqa: N802
         super().paintEvent(event)
-        if self.ripple_origin.get() is None and self._opacity_value.get() == 0.0:
-            # Nothing to draw.
-            return
         painter = QPainter(self)
         clip_path = QPainterPath()
         half_size = min(self.width(), self.height()) // 2
