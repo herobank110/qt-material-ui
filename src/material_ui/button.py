@@ -95,6 +95,12 @@ class ElevatedButton(Component):
             }[True]
         )
 
+    # @effect(pressed)
+    # def _animate_ripple_opacity(self) -> None:
+    #     self._ripple.opacity.animate_to(
+    #         tokens.pressed_state_layer_opacity if self.pressed.get() else 0
+    #     )
+
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
         if event.button() == QtCore.Qt.LeftButton:
             self.pressed.set(True)
@@ -103,6 +109,7 @@ class ElevatedButton(Component):
 
     def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
         self.pressed.set(False)
+        self._ripple.ripple_origin = None
         mouse_inside = self.rect().contains(event.pos())
         if event.button() == QtCore.Qt.LeftButton and mouse_inside:
             self.clicked.emit()
