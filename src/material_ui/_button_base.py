@@ -83,16 +83,6 @@ class ButtonBase(Component):
         self._state_layer.resize(container_size)
         self._ripple.resize(container_size)
 
-    @effect(hovered, pressed)
-    def _update_drop_shadow_elevation(self) -> None:
-        self._drop_shadow.animate_elevation_to(
-            {
-                True: tokens.container_elevation,
-                # self.hovered.get(): tokens.hover_container_elevation,
-                # self.pressed.get(): tokens.pressed_container_elevation,
-            }[True]
-        )
-
     @effect(hovered)
     def _update_state_layer(self) -> None:
         color = QColor(resolve_token(tokens.hover_state_layer_color))
