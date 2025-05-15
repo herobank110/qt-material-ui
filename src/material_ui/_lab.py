@@ -23,7 +23,7 @@ _ELEVATION_OFFSET_MAP: dict[DesignToken, QPointF] = {
     md_sys_elevation.level2: QPointF(0.0, 2.0),
     md_sys_elevation.level3: QPointF(0.0, 4.0),
     md_sys_elevation.level4: QPointF(0.0, 6.0),
-    # md_sys_elevation.level5: QPoint(0, 4),
+    # md_sys_elevation.level5: QPointF(0, 4),
 }
 
 
@@ -106,8 +106,9 @@ class DropShadow(QGraphicsDropShadowEffect):
                 f"Unexpected shadow_color token value (expected QColor, got "
                 f"{type(resolved_color).__name__})"
             )
-        resolved_color.setAlphaF(0.3)
+        resolved_color.setAlphaF(0.6)
         self.setColor(resolved_color)
+        # self.setColor(QColor("rgba(0, 244, 0, 70)"))
 
 
 # Testing for a multi shadow effect based on CSS
