@@ -2,6 +2,7 @@
 
 from material_ui._component import Signal, effect, use_state, Component
 from material_ui.layout_basics import Row
+from material_ui.shape import Shape
 from material_ui.tokens import md_comp_filled_text_field as tokens
 from qtpy.QtWidgets import QLineEdit
 from qtpy.QtCore import QSize, QMargins, Qt
@@ -21,10 +22,6 @@ class BaseTextField(Component):
 
     def __init__(self) -> None:
         super().__init__()
-
-        self.sx = {
-            "background-color": tokens.container_color,
-        }
 
         row = Row()
         row.gap = 16
