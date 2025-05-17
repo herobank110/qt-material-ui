@@ -327,7 +327,7 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
         self.focused = False
         return super().focusOutEvent(event)
 
-    def setFocusProxy(self, w: QtWidgets.QWidget | None) -> None:
+    def setFocusProxy(self, w: QtWidgets.QWidget | None) -> None:  # noqa: N802
         # Intercept the focus proxy to listen to focus events correctly,
         # since Qt won't propagate the focus In/Out events to this
         # widget.
@@ -337,7 +337,7 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
 
         return super().setFocusProxy(w)
 
-    def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent) -> bool:
+    def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent) -> bool:  # noqa: N802
         if watched is self.focusProxy():
             # Intercept the focus events from the focus proxy.
             if event.type() == QtCore.QEvent.FocusIn:
