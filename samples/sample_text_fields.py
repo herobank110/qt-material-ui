@@ -1,6 +1,6 @@
 """Sample usage of Text Field components."""
 
-from qtpy.QtCore import QMargins
+from qtpy.QtCore import QMargins, Qt
 from qtpy.QtWidgets import QApplication
 from material_ui.text_fields import FilledTextField, OutlinedTextField
 from material_ui import Component
@@ -32,6 +32,9 @@ class SampleTextFields(Component):
         outlined.value = "Value"
         outlined.changed.connect(outlined.value.set)
         row.add_widget(outlined)
+
+        # Take the initial focus away from the first text field.
+        self.setFocus()
 
     def on_text_changed(self, text: str) -> None:
         print(f"Text changed: {text}")
