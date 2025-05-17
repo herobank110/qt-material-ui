@@ -63,10 +63,12 @@ class BaseTextField(Component):
 
     _label_state = use_state(cast(LabelState, "resting"))
 
-    @effect(value)
+    @effect(value, Component.focused)
     def _update_label_state(self) -> None:
         # TODO: Also floating if focused
-        self._label_state = "floating" if self.value.get() else "resting"
+        self._label_state = (
+            "floating" if self.value.get() or self.focused.get() else "resting"
+        )
 
     _RESTING_LABEL_POS = QPoint()
     _FLOATING_LABEL_POS = QPoint()
