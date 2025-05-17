@@ -59,6 +59,8 @@ class DropShadow(QGraphicsDropShadowEffect):
     def _apply_elevation(self) -> None:
         self.setBlurRadius(self._get_computed_blur_radius())
         self.setOffset(self._get_computed_offset())
+        # self.setBlurRadius(0)
+        # self.setOffset(1, 1)
 
     def _get_computed_blur_radius(self) -> int:
         return _ELEVATION_BLUR_RADIUS_MAP[find_root_token(self._elevation)]
@@ -113,22 +115,54 @@ class DropShadow(QGraphicsDropShadowEffect):
 
 # Testing for a multi shadow effect based on CSS
 # also focus indicator outside widget bounds?
+from qtpy.QtGui import QPainter, QTransform
+from qtpy.QtWidgets import QGraphicsEffect
+from qtpy.QtCore import QRectF
 
-# class MyGraphicsEffect(QGraphicsEffect):
-#     """Testing Effect."""
+X = 2
 
-#     def boundingRectFor(self, rect: QRectF) -> QRectF:
-#         """Override the bounding rectangle to add extra padding."""
-#         return rect.adjusted(-2, -2, 2, 2)
+class MyGraphicsEffect(QGraphicsEffect):
+    """Testing Effect."""
 
-#     def draw(self, painter: QPainter) -> None:
-#         """Override the draw method to add custom drawing."""
-#         # painter.setBrush(QColor(255, 0, 0, 50))
-#         # painter.drawRect(self.boundingRect().adjusted(-1, -1, 0, 0))
-#         # from qtpy.QtGui import QTransform
-#         # painter.setTransform(QTransform())
-#         # painter.begin()
-#         painter.save()
-#         self.drawSource(painter)
-#         painter.restore()
-#         # painter.end()
+    def boundingRectFor(self, rect: QRectF) -> QRectF:
+        """Override the bounding rectangle to add extra padding."""
+        return rect.adjusted(-X, -X, X, X)
+
+    def draw(self, painter: QPainter) -> None:
+        """Override the draw method to add custom drawing."""
+        # return
+        # self.drawSource(painter)
+        # return
+        # if not painter.isActive():
+        #     return
+        #     painter.begin(painter.device())
+        dpr = painter.device().devicePixelRatioF()
+        # painter.save()
+        print(dpr)
+        # painter.scale(1/dpr, 1/dpr)
+        # original_transform = painter.worldTransform()
+        # painter.setWorldTransform(QTransform())
+        painter.setBrush(QColor(255, 0, 0, 50))
+        painter.drawRect(self.boundingRect().adjusted(-X, -X, X, X))
+        # painter.drawRect(self.boundingRect().adjusted(-X*dpr, -X*dpr, X*dpr, X*dpr))
+        # painter.restore()
+        # from qtpy.QtGui import QTransform
+        # painter.setTransform(QTransform())
+        self.drawSource(painter)
+        # painter.setWorldTransform(original_transform)
+
+
+if __name__ == "__main__":
+    from qtpy.QtWidgets import QApplication, QWidget
+
+    app = QApplication()
+    window = QWidget()
+    window.setStyleSheet("background-color:white;")
+    window.resize(200, 200)
+    widget = QWidget(window)
+    widget.setGeometry(50, 50, 100, 100)
+    widget.setStyleSheet("background-color:lightblue;border-radius:10px;")
+    effect = MyGraphicsEffect()
+    widget.setGraphicsEffect(effect)
+    window.show()
+    app.exec_()
