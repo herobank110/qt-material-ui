@@ -21,10 +21,13 @@ keywords = ["qt", "material", "ui", "components", "widgets"]
 
 [project.optional-dependencies]
 dev = [
-    "PySide6",    # 
+    "PySide6",
     "httpx",
     "pytest",
     "pytest-cov",
+    "pytest-asyncio",
+    "pytest-mock",
+    "pytest-qt",
 ]
 
 [project.urls]
