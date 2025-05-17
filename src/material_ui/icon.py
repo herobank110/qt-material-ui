@@ -32,6 +32,7 @@ class Icon(Component):
     icon_name = use_state(cast(IconName, "star"))
     icon_style = use_state(cast(IconStyle, "outlined"))
     color = use_state(md_sys_color.on_surface)
+    filled = use_state(False)
 
     def __init__(self) -> None:
         super().__init__()
@@ -51,13 +52,13 @@ class Icon(Component):
     def _apply_icon_name(self):
         self._label.setText(self.icon_name.get())
 
-    @effect(icon_style)
+    @effect(icon_style, filled)
     def _apply_font(self):
         font = QFont(
             "Material Symbols " + self.icon_style.get().title(),
             pointSize=24,
             weight=400,
         )
-        # font.setVariableAxis(QFont.Tag("FILL"), 1)
+        font.setVariableAxis(QFont.Tag("FILL"), 1 if self.filled.get() else 0)
         # font.setVariableAxis(QFont.Tag("GRAD"), 200)
         self._label.setFont(font)

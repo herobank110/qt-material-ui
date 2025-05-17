@@ -15,7 +15,6 @@ ICONS = ["star", "arrow_drop_down", "more_vert", "check", "close", "add"]
 
 class IconsSample(Component):
     filled = use_state(False)
-    show_borders = use_state(False)
     icon_style = use_state("outlined")
 
     def __init__(self):
@@ -28,8 +27,9 @@ class IconsSample(Component):
         main_row.gap = 20
 
         filters_box = Stack()
+        filters_box.margins = QMargins(10, 10, 10, 10)
         filters_box.sx = {"background-color": md_sys_color.surface_container}
-        filters_box.alignment = Qt.AlignTop | Qt.AlignLeft
+        filters_box.alignment = Qt.AlignTop | Qt.AlignRight
 
         filled_row = Row()
         filled_row.gap = 5
@@ -44,19 +44,6 @@ class IconsSample(Component):
         filled_row.add_widget(filled_switch)
         filters_box.add_widget(filled_row)
 
-        show_borders_row = Row()
-        show_borders_row.gap = 5
-        show_borders_row.alignment = Qt.AlignRight
-        show_borders_label = Typography()
-        show_borders_label.alignment = Qt.AlignCenter
-        show_borders_label.text = "Show Borders"
-        show_borders_row.add_widget(show_borders_label)
-        show_borders_switch = Switch()
-        show_borders_switch.selected.bind(self.show_borders)
-        show_borders_switch.change_requested.connect(self.show_borders.set)
-        show_borders_row.add_widget(show_borders_switch)
-        filters_box.add_widget(show_borders_row)
-
         main_row.add_widget(filters_box)
 
         # TODO: make a grid widget / flex box
@@ -66,24 +53,12 @@ class IconsSample(Component):
         for i, icon_name in enumerate(ICONS):
             icon = Icon()
             icon.icon_name = icon_name
+            icon.filled.bind(self.filled)
             icon_grid_layout.addWidget(icon, i // 3, i % 3)
             self._icons.append(icon)
         main_row.add_widget(icon_grid)
 
         self.overlay_widget(main_row, QMargins(10, 10, 10, 10))
-
-    @effect(filled)
-    def _apply_filled(self) -> None:
-        for icon in self._icons:
-            icon.icon_style = "outlined" if self.filled.get() else "rounded"
-
-    @effect(show_borders)
-    def _apply_icon_borders(self) -> None:
-        for icon in self._icons:
-            icon.sx.set(
-                lambda prev: prev
-                | {"border": "1px solid " + ("black" if self.show_borders.get() else "transparent")}
-            )
 
 
 def main() -> None:
