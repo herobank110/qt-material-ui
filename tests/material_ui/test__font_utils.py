@@ -1,30 +1,22 @@
-from typing import Any
 import pytest
 import httpx
 from pytest_mock import MockerFixture
 from material_ui._font_utils import _get_cache_path_for_url, download_font
 
 _URL = "https://example.com/font.ttf"
-"""Sample URL for font download tests."""
-
-
 _VALID_RESPONSE = httpx.Response(status_code=200, content=b"data")
 _INVALID_RESPONSE = httpx.Response(status_code=500)
 
 
 @pytest.fixture(autouse=True, scope="function")
 def clear_cached_font() -> None:
-    """Delete the cached font file before each test.
-
-    Ideally it should mock the file writing, but they are only small
-    files.
-    """
+    """Delete the cached font file before each test."""
     _get_cache_path_for_url(_URL).unlink(missing_ok=True)
 
 
 @pytest.fixture
 def client() -> httpx.AsyncClient:
-    """Fixture to create an HTTP client for testing."""
+    """Fixture to create a HTTP client for testing."""
     return httpx.AsyncClient()
 
 
