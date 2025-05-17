@@ -5,8 +5,7 @@ from material_ui.shape import Shape
 from material_ui.text_fields._base_text_field import BaseTextField
 from material_ui.tokens import md_comp_filled_text_field as tokens
 from material_ui.layout_basics import Row
-from material_ui.shape import Shape
-from qtpy.QtCore import QSize, QMargins, Qt, QPoint
+from qtpy.QtCore import QMargins, QPoint
 
 
 class FilledTextField(BaseTextField):
@@ -56,7 +55,7 @@ class FilledTextField(BaseTextField):
             "font-family": tokens.input_text_font,
             "font-size": tokens.input_text_size,
             "font-weight": tokens.input_text_weight,
-            "margin-top": "14px"
+            "margin-top": "14px",
         }
         line_edit_wrapper.overlay_widget(self._line_edit)
         row.add_widget(line_edit_wrapper)
