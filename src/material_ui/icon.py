@@ -5,6 +5,7 @@ from material_ui._component import Component, effect, use_state
 from material_ui._font_utils import install_default_fonts
 from material_ui.tokens import md_sys_color
 from qtpy.QtWidgets import QLabel
+from qtpy.QtCore import Qt
 from qtpy.QtGui import QFont
 
 # TODO: add all the icons...?
@@ -40,6 +41,7 @@ class Icon(Component):
 
         self._label = QLabel()
         self.overlay_widget(self._label)
+        self.layout().setAlignment(Qt.AlignCenter)
 
     @effect(color)
     def _apply_color(self) -> None:
