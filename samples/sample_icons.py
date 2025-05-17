@@ -19,7 +19,6 @@ class IconsSample(Component):
 
     def __init__(self):
         super().__init__()
-        # self.resize(700, 400)
 
         # TODO: should it be md_sys_color.background?
         self.sx = {"background-color": md_sys_color.surface}
@@ -68,23 +67,6 @@ class IconsSample(Component):
 def main() -> None:
     """Main function."""
     app = QApplication()
-
-    # window = Stack()
-    # window.alignment = Qt.AlignCenter
-    # window.gap = 30
-    # window.sx = {"background-color": md_sys_color.surface}
-    # window.resize(700, 200)
-
-    # for icon_style in ["outlined", "rounded", "sharp"]:
-    #     row = Row()
-    #     row.gap = 20
-    #     window.add_widget(row)
-    #     for icon_name in ICONS:
-    #         icon = Icon()
-    #         icon.icon_name = icon_name
-    #         icon.icon_style = icon_style
-    #         row.add_widget(icon)
-
     window = IconsSample()
     window.show()
     app.exec_()
