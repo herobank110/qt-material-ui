@@ -80,9 +80,11 @@ def find_root_token(token: DesignToken) -> DesignToken:
     return find_root_token(indirection)
 
 
-_KNOWN_STR_ENUMS = {
+# TODO: make proper indirection class instead of hardcoded string check
+_NOT_INDIRECTION = {
     "SHAPE_FAMILY_CIRCULAR",
     "SHAPE_FAMILY_ROUNDED_CORNERS",
+    "Roboto"
 }
 
 
@@ -96,7 +98,7 @@ def _is_indirection(token: DesignToken) -> bool:
         True if the token is an indirection, False if a value.
     """
     is_value_type = isinstance(token.value, TokenValue)
-    return not is_value_type and token.value not in _KNOWN_STR_ENUMS
+    return not is_value_type and token.value not in _NOT_INDIRECTION
 
 
 def _resolve_indirection(value: Indirection) -> DesignToken | None:
