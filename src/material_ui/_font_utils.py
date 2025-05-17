@@ -1,12 +1,42 @@
 """Utilities for internal default fonts."""
 
+from functools import cache, partial
+import asyncio
 import httpx
 from pathlib import Path
 from tempfile import gettempdir
 from hashlib import md5
+from qtpy.QtGui import QFontDatabase
+
+_FONT_URLS = [
+    "https://raw.githubusercontent.com/google/material-design-icons/refs/heads/master/variablefont/MaterialSymbolsOutlined[FILL,GRAD,opsz,wght].ttf",
+    "https://github.com/google/material-design-icons/raw/refs/heads/master/variablefont/MaterialSymbolsRounded%5BFILL,GRAD,opsz,wght%5D.ttf",
+    "https://github.com/google/material-design-icons/raw/refs/heads/master/variablefont/MaterialSymbolsSharp%5BFILL,GRAD,opsz,wght%5D.ttf",
+    "https://fonts.gstatic.com/s/roboto/v47/KFOmCnqEu92Fr1Me5WZLCzYlKw.ttf",
+]
 
 
-async def download_font(
+@cache
+def install_default_fonts() -> bool:
+    """Apply the material fonts to the QFontDatabase.
+
+    Returns:
+        Whether all fonts were successfully installed.
+    """
+    file_paths = asyncio.run(_download_all_fonts())
+    font_ids = [
+        QFontDatabase.addApplicationFont(str(font_path))
+        for font_path in filter(None, file_paths)
+    ]
+    return all(file_paths) and all(font_id != -1 for font_id in font_ids)
+
+
+async def _download_all_fonts() -> list[Path | None]:
+    async with httpx.AsyncClient() as client:
+        return await asyncio.gather(*map(partial(_download_font, client), _FONT_URLS))
+
+
+async def _download_font(
     client: httpx.AsyncClient, url: str, no_cache: bool = False
 ) -> Path | None:
     """Fetch a font from a URL and save to disk.
