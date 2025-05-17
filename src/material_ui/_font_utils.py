@@ -10,8 +10,8 @@ from qtpy.QtGui import QFontDatabase
 
 _FONT_URLS = [
     "https://raw.githubusercontent.com/google/material-design-icons/refs/heads/master/variablefont/MaterialSymbolsOutlined[FILL,GRAD,opsz,wght].ttf",
-    "https://github.com/google/material-design-icons/raw/refs/heads/master/variablefont/MaterialSymbolsRounded%5BFILL,GRAD,opsz,wght%5D.ttf",
-    "https://github.com/google/material-design-icons/raw/refs/heads/master/variablefont/MaterialSymbolsSharp%5BFILL,GRAD,opsz,wght%5D.ttf",
+    "https://raw.githubusercontent.com/google/material-design-icons/refs/heads/master/variablefont/MaterialSymbolsRounded[FILL,GRAD,opsz,wght].ttf",
+    "https://raw.githubusercontent.com/google/material-design-icons/refs/heads/master/variablefont/MaterialSymbolsSharp[FILL,GRAD,opsz,wght].ttf",
     "https://fonts.gstatic.com/s/roboto/v47/KFOmCnqEu92Fr1Me5WZLCzYlKw.ttf",
 ]
 
