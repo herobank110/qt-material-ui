@@ -24,6 +24,13 @@
       "request": "launch",
       "program": "${workspaceFolder}/samples/sample_elevation.py",
       "console": "integratedTerminal"
+    },
+    {
+      "name": "Sample - Icons",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/samples/sample_icons.py",
+      "console": "integratedTerminal"
     }
   ]
 }
