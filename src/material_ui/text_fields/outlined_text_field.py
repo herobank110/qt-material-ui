@@ -10,3 +10,4 @@ class OutlinedTextField(BaseTextField):
         super().__init__()
         self._floating_label.setParent(self)
         self._resting_label.setParent(self)
+        self._line_edit.setParent(self)

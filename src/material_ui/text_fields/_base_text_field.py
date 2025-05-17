@@ -64,13 +64,13 @@ class BaseTextField(Component):
         # TODO: animate the positions and opacities
         match self._label_state.get():
             case "resting":
-                self._resting_label.setVisible(True)
-                self._floating_label.setVisible(False)
+                self._resting_label.show()
+                self._floating_label.hide()
                 # self._resting_label.move(self._RESTING_LABEL_POS)
                 # self._floating_label.move(self._FLOATING_LABEL_POS)
             case "floating":
-                self._resting_label.setVisible(False)
-                self._floating_label.setVisible(True)
+                self._resting_label.hide()
+                self._floating_label.show()
                 # self._resting_label.move(self._FLOATING_LABEL_POS)
                 # self._floating_label.move(self._RESTING_LABEL_POS)
                 # self._resting_label.move(self._FLOATING_LABEL_POS)
