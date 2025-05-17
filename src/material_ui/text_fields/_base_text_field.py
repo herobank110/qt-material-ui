@@ -1,14 +1,15 @@
 """Base class for Text Field components."""
 
+from typing import Literal, cast
 from material_ui._component import Signal, effect, use_state, Component
-from material_ui.layout_basics import Row
-from material_ui.shape import Shape
 from material_ui.tokens import md_comp_filled_text_field as tokens
 from qtpy.QtWidgets import QLineEdit
-from qtpy.QtCore import QSize, QMargins, Qt
+from qtpy.QtCore import QSize, Qt, QPoint
 
 from material_ui.tokens._utils import resolve_token
 from material_ui.typography import Typography
+
+LabelState = Literal["resting", "floating"]
 
 
 class BaseTextField(Component):
@@ -23,43 +24,54 @@ class BaseTextField(Component):
     def __init__(self) -> None:
         super().__init__()
 
-        row = Row()
-        row.gap = 16
-        row.margins = QMargins(16, 8, 16, 8)
-        self.overlay_widget(row)
+        self._resting_label = Typography()
+        self._resting_label.text.bind(self.label)
+        self._resting_label.setAttribute(
+            Qt.WidgetAttribute.WA_TransparentForMouseEvents
+        )
 
-        self._label = Typography()
-        self._label.text.bind(self.label)
-        self._label.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
-        self._label.setParent(self)
+        self._floating_label = Typography()
+        self._floating_label.text.bind(self.label)
+        self._floating_label.setAttribute(
+            Qt.WidgetAttribute.WA_TransparentForMouseEvents
+        )
 
-        # Use a wrapper to use the sx property, which Qt will propagate
-        # to children by default.
-        line_edit_wrapper = Component()
-        line_edit_wrapper.sx = {
-            "color": tokens.input_text_color,
-            "font-family": tokens.input_text_font,
-            "font-size": tokens.input_text_size,
-            "font-weight": tokens.input_text_weight,
-        }
         self._line_edit = QLineEdit()
-        # Disable Qt's default context menu as style is different.
+        # Disable Qt's default context menu.
         self._line_edit.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
         self._line_edit.textEdited.connect(self.changed.emit)
-        # self._line_edit.setFont()
-        line_edit_wrapper.overlay_widget(self._line_edit)
-        row.add_widget(line_edit_wrapper)
 
     def sizeHint(self) -> QSize:
         return QSize(200, resolve_token(tokens.container_height))
 
     @effect(value)
     def _apply_value(self) -> None:
-        """Apply the value to the line edit."""
         self._line_edit.setText(self.value.get())
         # TODO: ensure cursor position is handled well
-        # self._line_edit.setCursorPosition(len(value))
 
-    # def _on_line_edit_text_edited(self, text: str) -> None:
-    #     """Called when the user entered something."""
-    #     self.changed.emit(text)
+    _label_state = use_state(cast(LabelState, "resting"))
+
+    @effect(value)
+    def _update_label_state(self) -> None:
+        # TODO: Also floating if focused
+        self._label_state = "floating" if self.value.get() else "resting"
+
+    _RESTING_LABEL_POS = QPoint()
+    _FLOATING_LABEL_POS = QPoint()
+
+    @effect(_label_state)
+    def _animate_labels(self) -> None:
+        # TODO: animate the positions and opacities
+        match self._label_state.get():
+            case "resting":
+                self._resting_label.setVisible(True)
+                self._floating_label.setVisible(False)
+                # self._resting_label.move(self._RESTING_LABEL_POS)
+                # self._floating_label.move(self._FLOATING_LABEL_POS)
+            case "floating":
+                self._resting_label.setVisible(False)
+                self._floating_label.setVisible(True)
+                # self._resting_label.move(self._FLOATING_LABEL_POS)
+                # self._floating_label.move(self._RESTING_LABEL_POS)
+                # self._resting_label.move(self._FLOATING_LABEL_POS)
+                # self._floating_label.move(self._RESTING_LABEL_POS)
