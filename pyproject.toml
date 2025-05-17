@@ -20,7 +20,12 @@ keywords = ["qt", "material", "ui", "components", "widgets"]
 
 
 [project.optional-dependencies]
-dev = ["PySide6", "httpx", "pytest", "pytest-cov"]
+dev = [
+    "PySide6",    # 
+    "httpx",
+    "pytest",
+    "pytest-cov",
+]
 
 [project.urls]
 Repository = "https://github.com/herobank110/qt-material-ui"
