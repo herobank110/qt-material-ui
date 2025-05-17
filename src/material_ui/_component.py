@@ -230,6 +230,14 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
 
     sx = use_state({})
 
+    focused = use_state(False)
+    """State version of Qt's `focus` property.
+
+    This is only for reading the focus state and creating dependencies.
+    To set focus, use Qt's built in focus handling functions for more
+    flexibility.
+    """
+
     _size = use_state(QtCore.QSize())
     """Internal state for Qt `size` property."""
 
@@ -310,3 +318,11 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
     def _apply_size(self):
         """Apply the size property to the widget."""
         self.resize(self._size.get())
+
+    def focusInEvent(self, event: QtCore.QFocusEvent) -> None:
+        self.focused = True
+        return super().focusInEvent(event)
+
+    def focusOutEvent(self, event: QtCore.QFocusEvent) -> None:
+        self.focused = False
+        return super().focusOutEvent(event)
