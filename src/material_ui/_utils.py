@@ -12,16 +12,6 @@ StyleDict = dict[str, StyleDictValue]
 """Dictionary of styles."""
 
 
-_COMPONENT_STYLESHEET_RESET: StyleDict = {
-    "background-color": "transparent",
-    "border-radius": "0px",
-    "border": "none",
-    "margin": "0px",
-    "padding": "0px",
-}
-"""Prevent Qt's unexpected behavior from inheriting parent's style."""
-
-
 def convert_sx_to_qss(sx: StyleDict) -> str:
     """Convert a style dictionary to a Qt Style Sheet string.
 
@@ -31,7 +21,6 @@ def convert_sx_to_qss(sx: StyleDict) -> str:
     Returns:
         QSS string.
     """
-    sx = _COMPONENT_STYLESHEET_RESET | sx
     return ";".join(f"{key}:{_stringify_sx_value(value)}" for key, value in sx.items())
 
 
