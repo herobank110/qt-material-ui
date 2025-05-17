@@ -12,8 +12,8 @@ from qtpy.QtCore import QSize, QMargins, Qt, QPoint
 class FilledTextField(BaseTextField):
     """Filled text field component."""
 
-    _RESTING_LABEL_POS = QPoint(0, 16)
-    _FLOATING_LABEL_POS = QPoint(0, 8)
+    _RESTING_LABEL_POS = QPoint(16, 16)
+    _FLOATING_LABEL_POS = QPoint(16, 8)
 
     def __init__(self) -> None:
         super().__init__()
@@ -56,6 +56,7 @@ class FilledTextField(BaseTextField):
             "font-family": tokens.input_text_font,
             "font-size": tokens.input_text_size,
             "font-weight": tokens.input_text_weight,
+            "margin-top": "14px"
         }
         line_edit_wrapper.overlay_widget(self._line_edit)
         row.add_widget(line_edit_wrapper)
