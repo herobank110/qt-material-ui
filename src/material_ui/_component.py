@@ -319,10 +319,10 @@ class Component(QtWidgets.QWidget, metaclass=_ComponentMeta):
         """Apply the size property to the widget."""
         self.resize(self._size.get())
 
-    def focusInEvent(self, event: QtCore.QFocusEvent) -> None:
+    def focusInEvent(self, event: QtGui.QFocusEvent) -> None:
         self.focused = True
         return super().focusInEvent(event)
 
-    def focusOutEvent(self, event: QtCore.QFocusEvent) -> None:
+    def focusOutEvent(self, event: QtGui.QFocusEvent) -> None:
         self.focused = False
         return super().focusOutEvent(event)
