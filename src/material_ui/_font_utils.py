@@ -25,6 +25,7 @@ async def download_font(client: httpx.AsyncClient, url: str) -> Path:
 
     if not file_path.exists():
         resp = await client.get(url)
+        file_path.parent.mkdir(parents=True, exist_ok=True)
         with open(file_path, "wb") as f:
             f.write(resp.content)
 
