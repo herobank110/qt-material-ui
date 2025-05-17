@@ -6,22 +6,23 @@ from tempfile import gettempdir
 from hashlib import md5
 
 
-async def download_font(client: httpx.AsyncClient, url: str) -> Path:
+async def download_font(
+    client: httpx.AsyncClient, url: str, no_cache: bool = False
+) -> Path | None:
     """Fetch a font from a URL and save to disk.
-
-    If the font is already cached from a previous program run, it will be reused.
 
     Args:
         client: The HTTP client to use.
         url: The URL of the font to fetch.
+        no_cache: If True, ignore the cached file.
 
     Returns:
-        Path to the downloaded font file on disk.
+        Path to the downloaded font file on disk, or None if it failed.
     """
 
     file_path = _get_cache_path_for_url(url)
 
-    if not file_path.exists():
+    if no_cache or not file_path.exists():
         resp = await client.get(url)
         if resp.status_code != 200:
             return None

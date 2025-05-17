@@ -48,9 +48,15 @@ async def test_download_font_no_refetch_if_cached(
     assert result1 is not None
     assert mock_get.call_count == 1
 
+    # Already fetched, don't refetch
     result2 = await download_font(client, _URL)
     assert result1 == result2
     assert mock_get.call_count == 1
+
+    # With nocache, it should refetch
+    result3 = await download_font(client, _URL, no_cache=True)
+    assert result1 == result3
+    assert mock_get.call_count == 2
 
 
 def test__get_cache_path_for_url_returns_valid_str() -> None:
