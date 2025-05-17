@@ -1,7 +1,7 @@
 """Internal widgets common functionality and helpers for Qt Widgets."""
 
 from dataclasses import dataclass
-from typing import Any, Callable, Generic, TypeVar, get_args
+from typing import Any, Callable, Generic, TypeVar, cast, get_args
 from typing_extensions import TypeVarTuple, Unpack
 from qtpy.QtCore import (
     QEvent,
@@ -18,7 +18,7 @@ from qtpy.QtCore import (
 from qtpy.QtGui import QFocusEvent, QResizeEvent
 from qtpy.QtWidgets import QWidget, QVBoxLayout
 
-from material_ui._utils import convert_sx_to_qss
+from material_ui._utils import StyleDict, convert_sx_to_qss
 
 
 _Ts = TypeVarTuple("_Ts")
@@ -241,7 +241,7 @@ def _find_effect_markers(obj: object) -> list[_EffectMarker]:
 class Component(QWidget, metaclass=_ComponentMeta):
     """Base class for all widgets."""
 
-    sx = use_state({})
+    sx = use_state(cast(StyleDict, {}))
 
     focused = use_state(False)
     """State version of Qt's `focus` property.
