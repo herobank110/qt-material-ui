@@ -1,13 +1,11 @@
 """Utilities for internal default fonts."""
 
-from functools import cache
 import httpx
 from pathlib import Path
 from tempfile import gettempdir
 from hashlib import md5
 
 
-@cache
 async def download_font(client: httpx.AsyncClient, url: str) -> Path:
     """Fetch a font from a URL and save to disk.
 
@@ -25,6 +23,8 @@ async def download_font(client: httpx.AsyncClient, url: str) -> Path:
 
     if not file_path.exists():
         resp = await client.get(url)
+        if resp.status_code != 200:
+            return None
         file_path.parent.mkdir(parents=True, exist_ok=True)
         with open(file_path, "wb") as f:
             f.write(resp.content)
