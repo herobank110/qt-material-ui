@@ -45,13 +45,13 @@ class BaseTextField(Component):
         # self._line_edit.focusInEvent = self.focusInEvent
         # self._line_edit.focusOutEvent = self.focusOutEvent
 
-    def focusInEvent(self, event):
-        print("focusInEvent")
-        return super().focusInEvent(event)
+    # def focusInEvent(self, event):
+    #     print("focusInEvent")
+    #     return super().focusInEvent(event)
 
-    def focusOutEvent(self, event):
-        print("focusOutEvent")
-        return super().focusOutEvent(event)
+    # def focusOutEvent(self, event):
+    #     print("focusOutEvent")
+    #     return super().focusOutEvent(event)
 
     def sizeHint(self) -> QSize:
         return QSize(200, resolve_token(tokens.container_height))
