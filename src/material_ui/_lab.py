@@ -121,6 +121,7 @@ from qtpy.QtCore import QRectF
 
 X = 2
 
+
 class MyGraphicsEffect(QGraphicsEffect):
     """Testing Effect."""
 
@@ -152,9 +153,10 @@ class MyGraphicsEffect(QGraphicsEffect):
         # painter.setWorldTransform(original_transform)
 
 
-if __name__ == "__main__":
-    from qtpy.QtWidgets import QApplication, QWidget
+from qtpy.QtWidgets import QApplication, QWidget
 
+
+def test_graphics_effect():
     app = QApplication()
     window = QWidget()
     window.setStyleSheet("background-color:white;")
@@ -166,3 +168,46 @@ if __name__ == "__main__":
     widget.setGraphicsEffect(effect)
     window.show()
     app.exec_()
+
+
+def test_icon_font():
+    app = QApplication()
+
+    import httpx
+    import tempfile
+    from pathlib import Path
+
+    font_file = (
+        Path(tempfile.gettempdir()) / "MaterialSymbolsOutlined[FILL,GRAD,opsz,wght].ttf"
+    )
+    if not font_file.exists():
+        resp = httpx.get(
+            "https://raw.githubusercontent.com/google/material-design-icons/refs/heads/master/variablefont/MaterialSymbolsOutlined[FILL,GRAD,opsz,wght].ttf"
+        )
+        with open(font_file, "wb") as f:
+            f.write(resp.content)
+
+    from qtpy.QtGui import QFontDatabase, QFont
+
+    font_id = QFontDatabase.addApplicationFont(str(font_file))
+    family = QFontDatabase.applicationFontFamilies(font_id)
+    print(family)
+    # font = QFontDatabase.font(family[0], "100", 12)
+    font = QFont("Material Symbols Outlined", pointSize=24, weight=400)
+    # font.setVariableAxis(QFont.Tag("FILL"), 1)
+    font.setVariableAxis(QFont.Tag("GRAD"), 200)
+    # font.variableAxisTags()
+    # font.setStyleHint()
+    from qtpy.QtWidgets import QLabel
+    label = QLabel("home")
+    label.setFont(font)
+    # label.font().setStyleStrategy(QFont.PreferAntialias)
+    label.setStyleSheet("background-color:blue;color:green;")
+    label.show()
+
+    app.exec()
+
+
+if __name__ == "__main__":
+    # test_graphics_effect()
+    test_icon_font()
