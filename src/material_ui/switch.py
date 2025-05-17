@@ -103,6 +103,7 @@ class Switch(Component):
         self._handle.setParent(self)
         # TODO: make geometry a property of shape? even though conflict with qt property?
         # self._handle.geometry.bind(self._handle_geometry)
+        self._handle.setGeometry(self._handle_geometry.get())
         self._handle_geometry.changed.connect(self._handle.setGeometry)
 
         # Set the internal selected state but use the change_requested

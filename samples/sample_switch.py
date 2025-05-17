@@ -16,7 +16,7 @@ def main() -> None:
     window.resize(300, 200)
 
     switch = Switch()
-    switch.selected.set(True)
+    # switch.selected.set(True)
     window.add_widget(switch)
 
     switch2 = Switch()
