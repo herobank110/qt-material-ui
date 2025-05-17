@@ -1,6 +1,6 @@
 """Sample usage of Text Field components."""
 
-from qtpy.QtCore import QMargins, Qt
+from qtpy.QtCore import QMargins
 from qtpy.QtWidgets import QApplication
 from material_ui.text_fields import FilledTextField, OutlinedTextField
 from material_ui import Component
