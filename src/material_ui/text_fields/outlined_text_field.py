@@ -8,3 +8,5 @@ class OutlinedTextField(BaseTextField):
 
     def __init__(self) -> None:
         super().__init__()
+        self._floating_label.setParent(self)
+        self._resting_label.setParent(self)
