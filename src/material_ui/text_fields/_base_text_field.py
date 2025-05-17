@@ -65,13 +65,10 @@ class BaseTextField(Component):
         match self._label_state.get():
             case "resting":
                 self._resting_label.show()
+                # Weird Qt behavior - if widget is initially hidden it
+                # has zero size when it is later shown.
+                self._resting_label.resize(self._resting_label.sizeHint())
                 self._floating_label.hide()
-                # self._resting_label.move(self._RESTING_LABEL_POS)
-                # self._floating_label.move(self._FLOATING_LABEL_POS)
             case "floating":
                 self._resting_label.hide()
                 self._floating_label.show()
-                # self._resting_label.move(self._FLOATING_LABEL_POS)
-                # self._floating_label.move(self._RESTING_LABEL_POS)
-                # self._resting_label.move(self._FLOATING_LABEL_POS)
-                # self._floating_label.move(self._RESTING_LABEL_POS)
