@@ -2,7 +2,7 @@
 
 from qtpy.QtWidgets import QApplication, QGridLayout
 from qtpy.QtCore import Qt, QMargins
-from material_ui._component import effect, use_state
+from material_ui._component import use_state
 from material_ui.icon import Icon
 from material_ui.layout_basics import Stack, Row
 from material_ui.switch import Switch
