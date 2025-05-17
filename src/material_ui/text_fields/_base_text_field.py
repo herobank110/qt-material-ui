@@ -40,6 +40,18 @@ class BaseTextField(Component):
         # Disable Qt's default context menu.
         self._line_edit.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
         self._line_edit.textEdited.connect(self.changed.emit)
+        # Focus pass through to the line edit.
+        self.setFocusProxy(self._line_edit)
+        # self._line_edit.focusInEvent = self.focusInEvent
+        # self._line_edit.focusOutEvent = self.focusOutEvent
+
+    def focusInEvent(self, event):
+        print("focusInEvent")
+        return super().focusInEvent(event)
+
+    def focusOutEvent(self, event):
+        print("focusOutEvent")
+        return super().focusOutEvent(event)
 
     def sizeHint(self) -> QSize:
         return QSize(200, resolve_token(tokens.container_height))
