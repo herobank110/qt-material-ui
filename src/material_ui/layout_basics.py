@@ -10,19 +10,21 @@ class Row(Component):
 
     alignment = use_state(cast(QtCore.Qt.AlignmentFlag, QtCore.Qt.AlignmentFlag()))
     gap = use_state(0)
+    margins = use_state(QtCore.QMargins())
 
     def __init__(self) -> None:
         super().__init__()
-        layout = QtWidgets.QHBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(self.gap.get())
-        self.gap.changed.connect(layout.setSpacing)
-        layout.setAlignment(self.alignment.get())
-        self.alignment.changed.connect(layout.setAlignment)
+        self._hbox = QtWidgets.QHBoxLayout(self)
 
     def add_widget(self, widget: QtWidgets.QWidget) -> None:
         """Add a widget to the row."""
         self.layout().addWidget(widget)
+
+    @effect(gap, alignment, margins)
+    def _update_hbox(self) -> None:
+        self._hbox.setSpacing(self.gap.get())
+        self._hbox.setAlignment(self.alignment.get())
+        self._hbox.setContentsMargins(self.margins.get())
 
 
 class Stack(Component):
