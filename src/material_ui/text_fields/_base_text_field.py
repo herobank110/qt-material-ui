@@ -84,3 +84,5 @@ class BaseTextField(Component):
             case "floating":
                 self._resting_label.hide()
                 self._floating_label.show()
+            case _:
+                raise ValueError

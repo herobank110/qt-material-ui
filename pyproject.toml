@@ -49,6 +49,8 @@ select = ["ALL"]
 ignore = [
     "ANN401", # Allow explicit Any.
     "D107",   # Skip docstring for __init__.
+    "TD002",  # Skip author in TODO.
+    "TD003",  # Skip issue link in TODO.
 ]
 fixable = ["ALL"]
 # Allow unused variables when underscore-prefixed.
