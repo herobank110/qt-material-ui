@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DISPLAY: ':99.0'
+      QT_QPA_PLATFORM: 'offscreen'
 
     steps:
       - uses: actions/checkout@v4
