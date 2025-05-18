@@ -455,10 +455,10 @@ class Component(QWidget, metaclass=_ComponentMeta):
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:  # noqa: N802
         if watched is self.focusProxy():
             # Intercept the focus events from the focus proxy.
-            if isinstance(event, QFocusEvent):
-                self.focusInEvent(event)
+            if event.type() == QEvent.Type.FocusIn:
+                self.focusInEvent(cast("QFocusEvent", event))
                 return False  # Focus proxy should handle it too.
-            if isinstance(event, QFocusEvent):
-                self.focusOutEvent(event)
+            if event.type() == QEvent.Type.FocusOut:
+                self.focusOutEvent(cast("QFocusEvent", event))
                 return False  # Focus proxy should handle it too.
         return super().eventFilter(watched, event)
