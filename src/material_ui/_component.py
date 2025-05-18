@@ -24,6 +24,7 @@ from material_ui._utils import StyleDict, convert_sx_to_qss
 _Ts = TypeVarTuple("_Ts")
 
 
+# TODO: should this be a protocol?
 class Signal(Generic[Unpack[_Ts]]):
     """Type safe Qt signal wrapper type.
 
@@ -146,7 +147,7 @@ class _ComponentMeta(type(QObject)):
     def __new__(cls, name: str, bases: tuple, attrs: dict) -> type:
         # Convert Signal annotations to actual Qt Signal objects.
         # Use QVariant to avoid runtime type checking by Qt. Can't
-        # remember exact examples but it can fail for certain types.
+        # remember exact examples but it may fail for certain types.
         attrs.update(
             {
                 key: QtSignal(*["QVariant"] * num_args)
