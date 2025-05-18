@@ -393,7 +393,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
             caller_frame = frame.f_back if frame else None
             other_state = (
                 # Pop so it can't be rebound accidentally.
-                caller_frame.f_locals.pop("__mui_last_accessed_attr__")
+                caller_frame.f_locals.pop("__mui_last_accessed_attr__", None)
                 if caller_frame
                 else None
             )
