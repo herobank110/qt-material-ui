@@ -106,3 +106,8 @@ omit = [
 [tool.pyright]
 include = ["src", "tests"]
 typeCheckingMode = "strict"
+reportUnnecessaryTypeIgnoreComment = true
+executionEnvironments = [
+    # Allow tests to import private functions to test them.
+    { root = "tests", reportPrivateUsage = false }
+]
