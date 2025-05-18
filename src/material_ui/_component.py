@@ -1,5 +1,6 @@
 """Internal widgets common functionality and helpers for Qt Widgets."""
 
+import inspect
 from dataclasses import dataclass
 from functools import partial
 from typing import Any, Callable, Generic, TypeVar, cast, get_args
@@ -270,7 +271,7 @@ class _EffectMarker:
 _EFFECT_MARKER_KEY = "__effect_marker__"
 
 
-EffectFn = Callable[[], None]
+EffectFn = Callable[[Any], None]
 
 
 def effect(*dependencies: Any) -> Callable[[EffectFn], EffectFn]:
@@ -361,15 +362,13 @@ class Component(QWidget, metaclass=_ComponentMeta):
             state.changed.connect(partial(setattr, self, marker.name))
 
     def __getattribute__(self, name: str) -> Any:
+        actual_value = super().__getattribute__(name)
         if name in {
             Component._find_state.__name__,
             Component.findChild.__name__,
         }:
-            # Prevent recursion error.
-            return super().__getattribute__(name)
-        actual_value = super().__getattribute__(name)
-        import inspect
-
+            # Prevent recursion error. These are used below.
+            return actual_value
         frame = inspect.currentframe()
         caller_frame = frame.f_back if frame else None
         state = self._find_state(name)
@@ -379,12 +378,11 @@ class Component(QWidget, metaclass=_ComponentMeta):
         return actual_value
 
     def __setattr__(self, name: str, value: Any) -> None:
-        import inspect
-
         state = self._find_state(name)
         if state:
             # Check if we can bind to another object's state.
-            # TODO: what if there are multiple intermediate stack frames? should it be global?
+            # TODO: what if there are multiple intermediate stack frames?
+            #   should it be global?
             frame = inspect.currentframe()
             caller_frame = frame.f_back if frame else None
             other_state = (
@@ -415,21 +413,19 @@ class Component(QWidget, metaclass=_ComponentMeta):
             func = getattr(self, effect_marker.name)
             for dependency in effect_marker.dependencies:
                 # Special handling for Qt built in properties.
+                # TODO: shadow these with actual states?
                 if dependency is QWidget.size:
-                    variable = self._size
+                    state = self._find_state("_size")
                 else:
                     # Find the corresponding variable object.
-                    variable = getattr(self, dependency.name, None)
-                if not isinstance(variable, State):
-                    raise RuntimeError(
-                        f"Effect dependencies can only be States, found "
-                        f"{type(variable).__name__} for '{dependency.name}' "
-                        f"on effect '{effect_marker.name}'"
-                    )
-                variable.changed.connect(func)
+                    state = self._find_state(dependency.name)
+                if not isinstance(state, State):
+                    msg = f"Invalid dependency for {dependency.name}: '{state}'"
+                    raise TypeError(msg)
+                state.changed.connect(func)
             # Call the function to apply the initial state. The timer
             # ensures the derived class's constructor is finished first.
-            QTimer.singleShot(0, func)
+            QTimer.singleShot(0, func)  # pyright: ignore[reportUnknownMemberType]
 
     def overlay_widget(self, widget: QWidget, margins: QMargins | None = None) -> None:
         """Overlay a widget on top of this widget.
@@ -446,9 +442,9 @@ class Component(QWidget, metaclass=_ComponentMeta):
         layout.addWidget(widget)
 
     @effect(sx)
-    def _apply_sx(self):
+    def _apply_sx(self) -> None:
         """Apply the sx property to the widget."""
-        sx = _COMPONENT_STYLESHEET_RESET | self.sx.get()
+        sx = _COMPONENT_STYLESHEET_RESET | self.sx
         qss = convert_sx_to_qss(sx)
         self.setStyleSheet(qss)
 
@@ -456,10 +452,10 @@ class Component(QWidget, metaclass=_ComponentMeta):
         super().resizeEvent(event)
         self._size.set(self.size())
 
-    @effect(_size)
+    @effect(QWidget.size)
     def _apply_size(self):
         """Apply the size property to the widget."""
-        self.resize(self._size.get())
+        self.resize(self.size())
 
     def focusInEvent(self, event: QFocusEvent) -> None:
         self.focused = True

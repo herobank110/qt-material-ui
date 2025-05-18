@@ -26,22 +26,27 @@ def test_Component_state_bind_on_assignment(qtbot: QtBot):
     assert c2.a == "hi"
 
 
-def test_Component_effect_is_called_on_deps(qtbot: QtBot, mocker: MockerFixture):
+def test_Component_effect_called_initially_and_on_change(
+    qtbot: QtBot, mocker: MockerFixture
+):
     stub = mocker.stub()
 
     class C(Component):
         a = use_state("hello")
 
         @effect(a)
-        def a_effect(self):
+        def an_effect(self):
             stub(self.a)
 
     c = C()
     qtbot.add_widget(c)
+    # Wait for the effect to be called after constructor.
+    qtbot.wait_callback(timeout=0, raising=False).wait()
 
-    assert stub.call_count == 1
-    assert stub.call_args == mocker.call("hello")
+    # Check initial state call.
+    stub.assert_called_once_with("hello")
 
+    # New value assigned - effect should be called again.
     c.a = "hi"
     assert stub.call_count == 2
-    assert stub.call_args == mocker.call("hi")
+    stub.assert_called_with("hi")
