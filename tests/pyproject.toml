@@ -1,0 +1,8 @@
+[tool.ruff]
+extend = "../pyproject.toml"
+
+ignore = [
+    "S101", # Allow assert for pytest conventions.
+    "D103", # Skip docstrings for tests.
+    "PLR2004", # Allow magic constants for expected values.
+]
