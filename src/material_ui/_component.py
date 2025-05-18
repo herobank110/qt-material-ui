@@ -6,9 +6,9 @@ from typing_extensions import TypeVarTuple, Unpack
 from qtpy.QtCore import (
     QEvent,
     QObject,
-    Property,  # type: ignore  # vscode/pyright error
+    Property,  # pyright: ignore
     QTimer,
-    Signal as QtSignal,  # type: ignore  # vscode/pyright error
+    Signal as QtSignal,  # pyright: ignore
     QMargins,
     QSize,
     Qt,
