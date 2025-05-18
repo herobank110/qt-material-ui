@@ -2,7 +2,7 @@ import pytest
 from pytest_mock import MockerFixture
 from pytestqt.qtbot import QtBot
 
-from material_ui._component import Component, effect, use_state
+from material_ui._component import Component, EffectDependencyError, effect, use_state
 
 
 def test_Component_state_bind_on_assignment(qtbot: QtBot):
@@ -53,10 +53,21 @@ def test_Component_effect_called_initially_and_on_change(
     stub.assert_called_with("hi")
 
 
-def test_Component_effect_invalid_dependencies(qtbot: QtBot):
-    with pytest.raises(RuntimeError):
+def test_Component_effect_invalid_dependency_literal():
+    with pytest.raises(EffectDependencyError):
 
         class C(Component):  # pyright: ignore[reportUnusedClass]
             @effect("hi")
+            def my_effect(self) -> None:
+                pass
+
+
+def test_Component_effect_invalid_dependency_static():
+    with pytest.raises(EffectDependencyError):
+
+        class C(Component):  # pyright: ignore[reportUnusedClass]
+            f = "hi"
+
+            @effect(f)
             def my_effect(self) -> None:
                 pass

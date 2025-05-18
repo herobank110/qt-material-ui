@@ -274,6 +274,10 @@ _EFFECT_MARKER_KEY = "__effect_marker__"
 EffectFn = Callable[[Any], None]
 
 
+class EffectDependencyError(RuntimeError):
+    """Raised when the effect dependencies are invalid."""
+
+
 def effect(*dependencies: Any) -> Callable[[EffectFn], EffectFn]:
     """Decorator to mark a method as an effect.
 
@@ -300,7 +304,7 @@ def effect(*dependencies: Any) -> Callable[[EffectFn], EffectFn]:
     for dependency in dependencies_list:
         if not isinstance(dependency, _StateMarker):
             msg = f"Invalid dependency for effect: {dependency} ({type(dependency)})"
-            raise RuntimeError(msg)
+            raise EffectDependencyError(msg)
 
     def decorated(func: EffectFn) -> EffectFn:
         marker = _EffectMarker(name=func.__name__, dependencies=list(dependencies))
@@ -323,8 +327,6 @@ def _find_effect_markers(obj: object) -> list[_EffectMarker]:
     for name in dir(obj):
         value = getattr(obj, name)
         if marker := getattr(value, _EFFECT_MARKER_KEY, None):
-            # if not isinstance(marker, _StateMarker):
-            #     raise RuntimeError(f"Invalid effect dependency: {marker}")
             assert marker.name == name, "Effect name mismatch"
             ret_val.append(marker)
     return ret_val
