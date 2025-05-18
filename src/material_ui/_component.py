@@ -402,8 +402,11 @@ class Component(QWidget, metaclass=_ComponentMeta):
 
     def _find_state(self, name: str) -> State[Any] | None:
         """Find state variable by name."""
-        ret_val = self.findChild(State, name, Qt.FindChildOption.FindDirectChildrenOnly)
-        return cast("State[Any] | None", ret_val)
+        return self.findChild(
+            cast("type[State[Any]]", State),
+            name,
+            Qt.FindChildOption.FindDirectChildrenOnly,
+        )
 
     def __bind_effects(self) -> None:
         """Bind effects to the newly created variables."""
