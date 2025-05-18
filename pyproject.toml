@@ -23,6 +23,8 @@ keywords = ["qt", "material", "ui", "components", "widgets"]
 dev = [
     "PySide6",
     "httpx",
+    "mypy",
+    "ruff",
     "pytest",
     "pytest-cov",
     "pytest-asyncio",
