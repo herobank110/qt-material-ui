@@ -1,25 +1,28 @@
 """Internal widgets common functionality and helpers for Qt Widgets."""
 
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Callable, Generic, TypeVar, cast, get_args
-from typing_extensions import TypeVarTuple, Unpack
+from typing import Any, Generic, TypeVar, cast, get_args
+
 from qtpy.QtCore import (
+    Property,  # pyright: ignore  # noqa: PGH003
+    QEasingCurve,
     QEvent,
-    QObject,
-    Property,  # pyright: ignore
-    QTimer,
-    Signal as QtSignal,  # pyright: ignore
     QMargins,
+    QObject,
+    QPropertyAnimation,
     QSize,
     Qt,
-    QEasingCurve,
-    QPropertyAnimation,
+    QTimer,
+)
+from qtpy.QtCore import (
+    Signal as QtSignal,  # pyright: ignore  # noqa: PGH003
 )
 from qtpy.QtGui import QFocusEvent, QResizeEvent
-from qtpy.QtWidgets import QWidget, QVBoxLayout
+from qtpy.QtWidgets import QVBoxLayout, QWidget
+from typing_extensions import TypeVarTuple, Unpack
 
 from material_ui._utils import StyleDict, convert_sx_to_qss
-
 
 _Ts = TypeVarTuple("_Ts")
 
