@@ -1,10 +1,11 @@
 """Typography module."""
 
-from material_ui._component import Component, effect, use_state
-from qtpy.QtCore import Qt
-from qtpy.QtWidgets import QLabel
 from typing import Literal, cast
 
+from qtpy.QtCore import Qt
+from qtpy.QtWidgets import QLabel
+
+from material_ui._component import Component, effect, use_state
 
 Typescale = Literal[
     "display",
@@ -34,31 +35,34 @@ class Typography(Component):
     """Typography helps make writing legible and beautiful."""
 
     text = use_state("")
-    typescale = use_state(cast(Typescale, "body"))
-    alignment = use_state(cast(Qt.AlignmentFlag, Qt.AlignmentFlag()))
+    typescale = use_state(cast("Typescale", "body"))
+    alignment = use_state(cast("Qt.AlignmentFlag", Qt.AlignmentFlag()))  # type: ignore[call-arg]
 
     def __init__(
-        self, *, text: str | None = None, typescale: Typescale | None = None
+        self,
+        *,
+        text: str | None = None,
+        typescale: Typescale | None = None,
     ) -> None:
         super().__init__()
 
-        if text is not None:
-            self.text.set(text)
-        if typescale is not None:
-            self.typescale.set(typescale)
+        if text:
+            self.text = text
+        if typescale:
+            self.typescale = typescale
 
-        self.sx.set(
-            {
-                "font-size": "14px",
-                "color": "black",
-            }
-        )
+        self.sx = {
+            "font-size": "14px",
+            "color": "black",
+        }
 
         self._label = QLabel()
-        self._label.setText(self.text.get())
-        self.text.changed.connect(self._label.setText)
         self.overlay_widget(self._label)
 
     @effect(alignment)
     def _apply_alignment(self) -> None:
-        self._label.setAlignment(self.alignment.get())
+        self._label.setAlignment(self.alignment)
+
+    @effect(text)
+    def _apply_text(self) -> None:
+        self._label.setText(self.text)

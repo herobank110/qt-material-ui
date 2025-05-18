@@ -1,4 +1,5 @@
 from qtpy import QtCore, QtGui
+
 from material_ui._component import Component, Signal, effect, use_state
 from material_ui.shape import Shape
 
@@ -103,7 +104,7 @@ class Switch(Component):
         self._handle.setParent(self)
         # TODO: make geometry a property of shape? even though conflict with qt property?
         # self._handle.geometry.bind(self._handle_geometry)
-        self._handle.setGeometry(self._handle_geometry.get())
+        self._handle.setGeometry(self._handle_geometry)
         self._handle_geometry.changed.connect(self._handle.setGeometry)
 
         # Set the internal selected state but use the change_requested
@@ -115,13 +116,13 @@ class Switch(Component):
     def _apply_track_color(self):
         self._track.sx.set(
             lambda prev: prev
-            | {"background-color": "#%06x" % self._track_color.get().rgb()}
+            | {"background-color": "#%06x" % self._track_color.rgb()}
         )
 
     @effect(selected, pressed, hovered)
     def _refresh_shapes(self):
         self._track_color.animate_to(
-            _SELECTED_TRACK_COLOR if self.selected.get() else _UNSELECTED_TRACK_COLOR,
+            _SELECTED_TRACK_COLOR if self.selected else _UNSELECTED_TRACK_COLOR,
             # Shorter than the handle geometry animation to draw more
             # attention to the handle.
             duration_ms=70,
@@ -131,18 +132,18 @@ class Switch(Component):
             lambda prev: prev
             | {
                 "border": f"{_TRACK_OUTLINE_WIDTH}px solid {_UNSELECTED_TRACK_OUTLINE_COLOR}"
-                if not self.selected.get()
+                if not self.selected
                 else "none",
             }
         )
 
         self._handle_geometry.animate_to(
             _SELECTED_PRESSED_HANDLE_GEOMETRY
-            if self.selected.get() and self.pressed.get()
+            if self.selected and self.pressed
             else _UNSELECTED_PRESSED_HANDLE_GEOMETRY
-            if self.pressed.get()
+            if self.pressed
             else _SELECTED_HANDLE_GEOMETRY
-            if self.selected.get()
+            if self.selected
             else _UNSELECTED_HANDLE_GEOMETRY,
             duration_ms=100,
             easing=QtCore.QEasingCurve.InOutCubic,
@@ -151,18 +152,18 @@ class Switch(Component):
             lambda prev: prev
             | {
                 "background-color": _SELECTED_HOVER_HANDLE_COLOR
-                if self.selected.get() and self.hovered.get()
+                if self.selected and self.hovered
                 else _SELECTED_HANDLE_COLOR
-                if self.selected.get()
+                if self.selected
                 else _UNSELECTED_HOVER_HANDLE_COLOR
-                if self.hovered.get()
+                if self.hovered
                 else _UNSELECTED_HANDLE_COLOR
             }
         )
 
         self._state_layer.setGeometry(
             _SELECTED_STATE_LAYER_GEOMETRY
-            if self.selected.get()
+            if self.selected
             else _UNSELECTED_STATE_LAYER_GEOMETRY
         )
 
@@ -175,7 +176,7 @@ class Switch(Component):
         self.pressed.set(False)
         mouse_inside = self.rect().contains(event.pos())
         if event.button() == QtCore.Qt.LeftButton and mouse_inside:
-            self.change_requested.emit(not self.selected.get())
+            self.change_requested.emit(not self.selected)
         return super().mouseReleaseEvent(event)
 
     def enterEvent(self, event: QtGui.QEnterEvent) -> None:  # noqa: N802

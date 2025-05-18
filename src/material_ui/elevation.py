@@ -1,11 +1,12 @@
 """A 'hidden' component that provides drop shadow."""
 
-from qtpy.QtCore import QPointF, Qt, QRectF
+from qtpy.QtCore import QPointF, QRectF, Qt
 from qtpy.QtGui import QColor, QPainter
 from qtpy.QtWidgets import QGraphicsDropShadowEffect, QGraphicsEffect
+
 from material_ui._component import Component, effect, use_state
 from material_ui.shape import Shape
-from material_ui.tokens import md_sys_elevation, md_sys_color, md_sys_shape
+from material_ui.tokens import md_sys_color, md_sys_elevation, md_sys_shape
 from material_ui.tokens._utils import DesignToken, find_root_token, resolve_token
 
 # TODO: implement token generator overrides for missing tokens for level5
@@ -70,7 +71,7 @@ class Elevation(Component):
     def _apply_corner_shape(self):
         """Apply corner shape."""
         # TODO: move to common place?
-        shape = find_root_token(self.corner_shape.get())
+        shape = find_root_token(self.corner_shape)
         if shape is md_sys_shape.corner_none:
             new_radius = 0
         elif shape is md_sys_shape.corner_full:
@@ -82,7 +83,7 @@ class Elevation(Component):
     @effect(shadow_color)
     def _apply_shadow_colors(self):
         """Apply shadow colors."""
-        color = resolve_token(self.shadow_color.get())
+        color = resolve_token(self.shadow_color)
         if not isinstance(color, QColor):
             raise RuntimeError(
                 f"invalid shadow_color token: expected QColor, got {type(color).__name__}"
@@ -96,7 +97,7 @@ class Elevation(Component):
     @effect(elevation)
     def _apply_elevation(self):
         """Apply elevation."""
-        elevation = find_root_token(self.elevation.get())
+        elevation = find_root_token(self.elevation)
         self._ambient_shadow.setBlurRadius(
             _ELEVATION_AMBIENT_BLUR_RADIUS_MAP[elevation]
         )

@@ -1,12 +1,13 @@
 """Ripple (for pressing)."""
 
 from typing import cast
+
+from qtpy.QtCore import QEasingCurve, QPointF, Qt
+from qtpy.QtGui import QColor, QPainter, QPainterPath, QPaintEvent
+
 from material_ui._component import effect, use_state
 from material_ui.shape import Shape
 from material_ui.tokens import md_sys_color, md_sys_state
-from qtpy.QtCore import QPointF, Qt, QEasingCurve
-from qtpy.QtGui import QPaintEvent, QPainter, QPainterPath, QColor
-
 from material_ui.tokens._utils import resolve_token
 
 
@@ -28,7 +29,7 @@ class Ripple(Shape):
 
     @effect(ripple_origin)
     def _animate_ripple_values(self) -> None:
-        origin = self.ripple_origin.get()
+        origin = self.ripple_origin
         if origin is None:
             # Fade out the ripple when the origin is reset. I.e., when
             # the button is released.
@@ -36,7 +37,7 @@ class Ripple(Shape):
             return
         self._draw_origin = origin
         self._opacity_value.animate_to(
-            resolve_token(self.opacity.get()), 50, QEasingCurve.OutCubic
+            resolve_token(self.opacity), 50, QEasingCurve.OutCubic
         )
         self._scale.set(1.0)
         ripple_total_scale = max(self.width(), self.height()) * 2
@@ -50,9 +51,9 @@ class Ripple(Shape):
         clip_path.addRoundedRect(self.rect(), half_size, half_size)
         painter.setClipPath(clip_path)
         painter.setPen(Qt.NoPen)
-        color = QColor(resolve_token(self.color.get()))
-        color.setAlphaF(self._opacity_value.get())
+        color = QColor(resolve_token(self.color))
+        color.setAlphaF(self._opacity_value)
         painter.setBrush(color)
         painter.drawEllipse(
-            self._draw_origin.get(), self._scale.get(), self._scale.get()
+            self._draw_origin, self._scale, self._scale
         )

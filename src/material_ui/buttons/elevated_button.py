@@ -1,7 +1,7 @@
 """Elevated Button."""
 
-from material_ui.buttons._button_base import ButtonBase
 from material_ui._component import effect
+from material_ui.buttons._button_base import ButtonBase
 from material_ui.tokens import md_comp_elevated_button as tokens
 
 
@@ -25,7 +25,7 @@ class ElevatedButton(ButtonBase):
         self._drop_shadow.animate_elevation_to(
             {
                 True: tokens.container_elevation,
-                self.hovered.get(): tokens.hover_container_elevation,
-                self.pressed.get(): tokens.pressed_container_elevation,
+                self.hovered: tokens.hover_container_elevation,
+                self.pressed: tokens.pressed_container_elevation,
             }[True]
         )

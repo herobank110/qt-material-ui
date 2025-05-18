@@ -1,18 +1,19 @@
 """Base class for button variants."""
 
+from qtpy.QtCore import QEvent, QMargins, QSize, Qt
+from qtpy.QtGui import QColor, QEnterEvent, QMouseEvent
+from qtpy.QtWidgets import QHBoxLayout
+
+from material_ui._component import Component, Signal, effect, use_state
 from material_ui._lab import DropShadow
 from material_ui.ripple import Ripple
 from material_ui.shape import Shape
+
 # Use the tokens from elevated_button for code completion, but they will
 # get overridden by the subclasses.
 from material_ui.tokens import md_comp_elevated_button as tokens
-from material_ui._component import Component, Signal, effect, use_state
 from material_ui.tokens._utils import resolve_token
 from material_ui.typography import Typography
-from qtpy.QtCore import QSize, QMargins, Qt, QEvent
-from qtpy.QtGui import QEnterEvent, QMouseEvent, QColor
-from qtpy.QtWidgets import QHBoxLayout
-
 
 _TOUCH_AREA_Y_PADDING = 8
 _TOUCH_AREA_MARGINS = QMargins(0, _TOUCH_AREA_Y_PADDING, 0, _TOUCH_AREA_Y_PADDING)
@@ -87,7 +88,7 @@ class ButtonBase(Component):
     def _update_state_layer(self) -> None:
         color = QColor(resolve_token(tokens.hover_state_layer_color))
         hover_opacity = resolve_token(tokens.hover_state_layer_opacity)
-        color.setAlphaF(hover_opacity if self.hovered.get() else 0.0)
+        color.setAlphaF(hover_opacity if self.hovered else 0.0)
         self._state_layer.sx.set(lambda prev: prev | {"background-color": color})
 
     def mousePressEvent(self, event: QMouseEvent) -> None:  # noqa: N802

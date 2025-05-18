@@ -1,8 +1,10 @@
 """Basic shape utility widget."""
 
-from qtpy import QtGui
 from typing import cast
-from material_ui._component import Component, use_state
+
+from qtpy import QtGui
+
+from material_ui._component import Component, effect, use_state
 from material_ui.design_tokens import CornerShape
 
 
@@ -15,10 +17,12 @@ class Shape(Component):
     def __init__(self) -> None:
         super().__init__()
 
-        self.visible.changed.connect(lambda value: self.setVisible(value))
-
-    def resizeEvent(self, event: QtGui.QResizeEvent) -> None:
-        if self.corner_shape.get() == "full":
+    def resizeEvent(self, event: QtGui.QResizeEvent) -> None:  # noqa: N802, D102
+        if self.corner_shape == "full":
             half_width = min(self.width(), self.height()) // 2
             self.sx.set(lambda prev: prev | {"border-radius": f"{half_width}px"})
         return super().resizeEvent(event)
+
+    @effect(visible)
+    def _apply_visible(self) -> None:
+        self.setVisible(self.visible)

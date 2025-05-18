@@ -1,7 +1,7 @@
 """FilledTonalButton component."""
 
-from material_ui.buttons._button_base import ButtonBase
 from material_ui._component import effect
+from material_ui.buttons._button_base import ButtonBase
 from material_ui.tokens import md_comp_filled_tonal_button as tokens
 
 
@@ -26,7 +26,7 @@ class FilledTonalButton(ButtonBase):
         # self._drop_shadow.elevation = (
             {
                 True: tokens.container_elevation,
-                self.hovered.get(): tokens.hover_container_elevation,
-                self.pressed.get(): tokens.pressed_container_elevation,
+                self.hovered: tokens.hover_container_elevation,
+                self.pressed: tokens.pressed_container_elevation,
             }[True]
         )

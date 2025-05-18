@@ -106,7 +106,7 @@ class State(QObject, Generic[_T]):
     def bind(self, other: "State[_T]") -> None:
         """Bind this variable to another variable."""
         other.changed.connect(self.set)
-        self.set(other.get())  # Set initial state.
+        self.set(other)  # Set initial state.
         # TODO: track object deletion
 
     def __repr__(self):

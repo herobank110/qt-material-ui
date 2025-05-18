@@ -2,10 +2,11 @@
 
 from qtpy.QtCore import QMargins
 from qtpy.QtWidgets import QApplication
-from material_ui.text_fields import FilledTextField, OutlinedTextField
+
 from material_ui import Component
-from material_ui.tokens import md_sys_color
 from material_ui.layout_basics import Row
+from material_ui.text_fields import FilledTextField, OutlinedTextField
+from material_ui.tokens import md_sys_color
 
 
 class SampleTextFields(Component):
@@ -24,13 +25,13 @@ class SampleTextFields(Component):
         filled = FilledTextField()
         filled.label = "Label"
         filled.value = "Value"
-        filled.changed.connect(filled.value.set)
+        # filled.changed.connect(filled.value)
         row.add_widget(filled)
 
         outlined = OutlinedTextField()
         outlined.label = "Label"
         outlined.value = "Value"
-        outlined.changed.connect(outlined.value.set)
+        # outlined.changed.connect(outlined.value.set)
         row.add_widget(outlined)
 
         # Take the initial focus away from the first text field.

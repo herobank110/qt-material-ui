@@ -1,11 +1,12 @@
 """Base class for Text Field components."""
 
 from typing import Literal, cast
-from material_ui._component import Signal, effect, use_state, Component
-from material_ui.tokens import md_comp_filled_text_field as tokens
-from qtpy.QtWidgets import QLineEdit
-from qtpy.QtCore import QSize, Qt, QPoint
 
+from qtpy.QtCore import QPoint, QSize, Qt
+from qtpy.QtWidgets import QLineEdit
+
+from material_ui._component import Component, Signal, effect, use_state
+from material_ui.tokens import md_comp_filled_text_field as tokens
 from material_ui.tokens._utils import resolve_token
 from material_ui.typography import Typography
 
@@ -25,15 +26,15 @@ class BaseTextField(Component):
         super().__init__()
 
         self._resting_label = Typography()
-        self._resting_label.text.bind(self.label)
+        self._resting_label.text = self.label
         self._resting_label.setAttribute(
-            Qt.WidgetAttribute.WA_TransparentForMouseEvents
+            Qt.WidgetAttribute.WA_TransparentForMouseEvents,
         )
 
         self._floating_label = Typography()
-        self._floating_label.text.bind(self.label)
+        self._floating_label.text = self.label
         self._floating_label.setAttribute(
-            Qt.WidgetAttribute.WA_TransparentForMouseEvents
+            Qt.WidgetAttribute.WA_TransparentForMouseEvents,
         )
 
         self._line_edit = QLineEdit()
@@ -42,33 +43,24 @@ class BaseTextField(Component):
         self._line_edit.textEdited.connect(self.changed.emit)
         # Focus pass through to the line edit.
         self.setFocusProxy(self._line_edit)
-        # self._line_edit.focusInEvent = self.focusInEvent
-        # self._line_edit.focusOutEvent = self.focusOutEvent
 
-    # def focusInEvent(self, event):
-    #     print("focusInEvent")
-    #     return super().focusInEvent(event)
-
-    # def focusOutEvent(self, event):
-    #     print("focusOutEvent")
-    #     return super().focusOutEvent(event)
-
-    def sizeHint(self) -> QSize:
-        return QSize(200, resolve_token(tokens.container_height))
+    def sizeHint(self) -> QSize:  # noqa: N802
+        height = resolve_token(tokens.container_height)
+        if not isinstance(height, int):
+            msg = "Height must be an integer"
+            raise TypeError(msg)
+        return QSize(200, height)
 
     @effect(value)
     def _apply_value(self) -> None:
-        self._line_edit.setText(self.value.get())
+        self._line_edit.setText(self.value)
         # TODO: ensure cursor position is handled well
 
-    _label_state = use_state(cast(LabelState, "resting"))
+    _label_state = use_state(cast("LabelState", "resting"))
 
     @effect(value, Component.focused)
     def _update_label_state(self) -> None:
-        # TODO: Also floating if focused
-        self._label_state = (
-            "floating" if self.value.get() or self.focused.get() else "resting"
-        )
+        self._label_state = "floating" if self.value or self.focused else "resting"
 
     _RESTING_LABEL_POS = QPoint()
     _FLOATING_LABEL_POS = QPoint()
@@ -76,7 +68,7 @@ class BaseTextField(Component):
     @effect(_label_state)
     def _animate_labels(self) -> None:
         # TODO: animate the positions and opacities
-        match self._label_state.get():
+        match self._label_state:
             case "resting":
                 self._resting_label.show()
                 # Weird Qt behavior - if widget is initially hidden it

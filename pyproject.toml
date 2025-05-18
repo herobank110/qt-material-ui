@@ -48,6 +48,7 @@ indent-width = 4
 select = ["ALL"]
 ignore = [
     "ANN401", # Allow explicit Any.
+    "D107",   # Skip docstring for __init__.
 ]
 fixable = ["ALL"]
 # Allow unused variables when underscore-prefixed.
@@ -57,9 +58,7 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 convention = "google"
 
 [tool.ruff.lint.flake8-boolean-trap]
-extend-allowed-calls = [
-    "material_ui._component.use_state"
-]
+extend-allowed-calls = ["material_ui._component.use_state"]
 
 [tool.ruff.format]
 quote-style = "double"

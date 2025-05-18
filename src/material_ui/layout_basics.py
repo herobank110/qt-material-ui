@@ -1,8 +1,10 @@
 """Components to simplify layout of a few items."""
 
 from typing import cast
-from material_ui._component import Component, effect, use_state
+
 from qtpy import QtCore, QtWidgets
+
+from material_ui._component import Component, effect, use_state
 
 
 class Row(Component):
@@ -22,9 +24,9 @@ class Row(Component):
 
     @effect(gap, alignment, margins)
     def _update_hbox(self) -> None:
-        self._hbox.setSpacing(self.gap.get())
-        self._hbox.setAlignment(self.alignment.get())
-        self._hbox.setContentsMargins(self.margins.get())
+        self._hbox.setSpacing(self.gap)
+        self._hbox.setAlignment(self.alignment)
+        self._hbox.setContentsMargins(self.margins)
 
 
 class Stack(Component):
@@ -58,6 +60,6 @@ class Stack(Component):
 
     @effect(gap, alignment, margins)
     def _update_vbox(self) -> None:
-        self._vbox.setSpacing(self.gap.get())
-        self._vbox.setAlignment(self.alignment.get())
-        self._vbox.setContentsMargins(self.margins.get())
+        self._vbox.setSpacing(self.gap)
+        self._vbox.setAlignment(self.alignment)
+        self._vbox.setContentsMargins(self.margins)
