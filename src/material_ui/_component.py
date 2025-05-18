@@ -216,6 +216,13 @@ def _find_state_markers(obj: object) -> list[_StateMarker]:
 
 _STATE_KEY = "__mui_state__"
 
+_PRIMITIVE_TYPE_MAPPINGS = {
+    int: type("int", (int,), {}),
+    float: type("float", (float,), {}),
+    str: type("str", (str,), {}),
+    bool: type("bool", (bool,), {}),
+}
+
 
 def _inject_state(value: _T, state: State[_T]) -> _T:
     """Inject the state into the value.
@@ -229,8 +236,9 @@ def _inject_state(value: _T, state: State[_T]) -> _T:
     """
     # For primitive types, we can't set custom attributes. Use a derived
     # class instead.
-    if isinstance(value, int):
-        return type("int", (int,), {_STATE_KEY: state})(value)
+    primitive_type_mapping = _PRIMITIVE_TYPE_MAPPINGS.get(type(value))  # pyright: ignore[reportArgumentType]
+    if primitive_type_mapping:
+        value = cast("_T", primitive_type_mapping(value))  # pyright: ignore[reportArgumentType]
     setattr(value, _STATE_KEY, state)
     return value
 
