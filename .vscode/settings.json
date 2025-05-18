@@ -1,5 +1,4 @@
 {
   "ruff.configuration": "${workspaceFolder}/pyproject.toml",
-  "python.testing.pytestEnabled": true,
-  "python.analysis.typeCheckingMode": "strict"
+  "python.testing.pytestEnabled": true
 }

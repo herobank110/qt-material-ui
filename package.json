@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "vitepress": "^1.6.3",
-    "@types/node": "^22.15.2"
+    "@types/node": "^22.15.2",
+    "pyright": "^1.1"
   }
 }
