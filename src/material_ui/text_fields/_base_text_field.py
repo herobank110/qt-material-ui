@@ -25,6 +25,8 @@ class BaseTextField(Component):
     def __init__(self) -> None:
         super().__init__()
 
+        self.setCursor(Qt.CursorShape.IBeamCursor)
+
         self._resting_label = Typography()
         self._resting_label.text = self.label
         self._resting_label.setAttribute(
@@ -44,12 +46,20 @@ class BaseTextField(Component):
         # Focus pass through to the line edit.
         self.setFocusProxy(self._line_edit)
 
+        self.clicked.connect(self._on_clicked)
+
     def sizeHint(self) -> QSize:  # noqa: N802
         height = resolve_token(tokens.container_height)
         if not isinstance(height, int):
             msg = "Height must be an integer"
             raise TypeError(msg)
         return QSize(200, height)
+
+    def _on_clicked(self) -> None:
+        # Focus the itself when clicked.
+        self.setFocus(Qt.FocusReason.MouseFocusReason)
+        # Select all text in the line edit.
+        self._line_edit.setSelection(0, len(self.value))
 
     def _on_line_edit_text_edited(self, text: str) -> None:
         # Set the internal value already for non-controlled text fields.

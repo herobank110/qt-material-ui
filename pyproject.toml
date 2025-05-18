@@ -82,8 +82,13 @@ omit = [
 include = ["src", "tests"]
 typeCheckingMode = "strict"
 reportUnnecessaryTypeIgnoreComment = true
+
 # This seems to be broken with variadic generic types with no arguments.
+# Eg: Signal with no arguments.
 reportMissingTypeArgument = false
+reportArgumentType = false
+reportUnknownMemberType = false
+
 executionEnvironments = [
     # Allow tests to import private functions to test them.
     { root = "tests", reportPrivateUsage = false },
