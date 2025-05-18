@@ -345,8 +345,34 @@ class Component(QWidget, metaclass=_ComponentMeta):
             value = marker.default_value
             setattr(self, marker.name, value)
 
+    def __getattribute__(self, name: str) -> Any:
+        actual_value = super().__getattribute__(name)
+        # # with open("C:/a","a") as f: f.write(f"{type(self).__name__}.__getattr__({name}) -> {actual_value}")
+        import inspect
+        frame = inspect.currentframe()
+        caller_frame = frame.f_back if frame else None
+        is_inside_own_setattr = (
+            caller_frame and
+            caller_frame.f_locals.get("self") is self
+            and caller_frame.f_code.co_name == Component.__setattr__.__name__
+        )
+        if not isinstance(actual_value, _StateMarker) and not is_inside_own_setattr:
+            # frame.f_back.f_locals["__LAST_ACCESSED_ATTRIBUTE__"] = name
+            # print(f"{type(self).__name__}.__getattr__({name}) -> {actual_value}")
+            # A state variable was accessed. Track it for binding.
+            # TODO: implement
+            pass
+        # if isinstance(actual_value)
+        return actual_value
+
     def __setattr__(self, name: str, value: Any) -> None:
+        # This is what causes some extra noise in __getattribute__.
         variable = getattr(self, name, None)
+
+        import inspect
+        frame = inspect.currentframe()
+        a = frame.f_back.f_locals.get("__LAST_ACCESSED_ATTRIBUTE__")
+        self.findChild(State, "_size", Qt.FindChildOption.FindDirectChildrenOnly)
         if isinstance(variable, State) and not isinstance(value, State):
             # Shorthand for setting the value of a State variable.
             variable.set(value)
