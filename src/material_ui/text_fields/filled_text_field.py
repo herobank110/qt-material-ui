@@ -2,7 +2,7 @@
 
 from qtpy.QtCore import QMargins, QPoint
 
-from material_ui._component import Component
+from material_ui._component import Component, effect
 from material_ui.layout_basics import Row
 from material_ui.shape import Shape
 from material_ui.text_fields._base_text_field import BaseTextField
@@ -18,15 +18,15 @@ class FilledTextField(BaseTextField):
     def __init__(self) -> None:
         super().__init__()
 
-        background = Shape()
-        background.corner_shape = tokens.container_shape
-        background.sx = {
+        self._background = Shape()
+        self._background.corner_shape = tokens.container_shape
+        self._background.sx = {
             "background-color": tokens.container_color,
             "height": tokens.container_height,
         }
-        background.setParent(self)
+        self._background.setParent(self)
 
-        self._floating_label.setParent(background)
+        self._floating_label.setParent(self._background)
         self._floating_label.sx = {
             "color": tokens.label_text_color,
             "font-family": tokens.label_text_font,
@@ -34,7 +34,7 @@ class FilledTextField(BaseTextField):
             "font-weight": tokens.label_text_weight,
         }
         self._floating_label.move(self._FLOATING_LABEL_POS)
-        self._resting_label.setParent(background)
+        self._resting_label.setParent(self._background)
         self._resting_label.sx = {
             "color": tokens.label_text_color,
             "font-family": tokens.label_text_font,
@@ -60,3 +60,8 @@ class FilledTextField(BaseTextField):
         }
         line_edit_wrapper.overlay_widget(self._line_edit)
         row.add_widget(line_edit_wrapper)
+
+    @effect(Component.size)
+    def _apply_size(self) -> None:
+        # Set the size of the background to the size of the text field.
+        self._background.resize(self.size())
