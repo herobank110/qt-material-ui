@@ -1,9 +1,10 @@
 """Internal widgets common functionality and helpers for Qt Widgets."""
 
 import inspect
+from collections.abc import Callable
 from dataclasses import dataclass
 from functools import partial
-from typing import Any, Callable, Generic, TypeVar, cast, get_args
+from typing import Any, Generic, TypeVar, cast, get_args
 
 from qtpy.QtCore import (
     Property,  # pyright: ignore  # noqa: PGH003
@@ -54,7 +55,7 @@ class State(QObject, Generic[_T]):
     variables.
     """
 
-    changed: Signal[_T] = QtSignal("QVariant")
+    changed: Signal[_T] = QtSignal("QVariant")  # type: ignore[assignment]
 
     def __init__(self, default_value: _T, name: str, component_name: str) -> None:
         super().__init__()
@@ -63,28 +64,27 @@ class State(QObject, Generic[_T]):
         self._value = default_value
         self._default_value = default_value
 
-    def get(self) -> _T:
+    def get_value(self) -> _T:
         """Get the value of the variable."""
         return self._value
 
-    def set(self, value_or_fn: _T | Callable[[_T], _T]) -> None:
+    def set_value(self, value_or_fn: _T | Callable[[_T], _T]) -> None:
         """Set the value of the variable.
 
         Args:
             value_or_fn: Either a value directly, or a function that
                 takes the current value as input and returns a new one.
         """
-        value: _T = (
-            value_or_fn(self._value)
-            if hasattr(value_or_fn, "__call__")
-            else value_or_fn
-        )
+        value: _T = value_or_fn(self._value) if callable(value_or_fn) else value_or_fn
         if self._value != value:
             self._value = value
             self.changed.emit(value)
 
     def animate_to(
-        self, value: _T, duration_ms: int, easing: QEasingCurve.Type
+        self,
+        value: _T,
+        duration_ms: int,
+        easing: QEasingCurve.Type,
     ) -> None:
         """Transition from current value to a new value.
 
@@ -105,17 +105,17 @@ class State(QObject, Generic[_T]):
 
     def bind(self, other: "State[_T]") -> None:
         """Bind this variable to another variable."""
-        other.changed.connect(self.set)
-        self.set(other.get())  # Set initial state.
+        other.changed.connect(self.set_value)
+        self.set_value(other.get_value())  # Set initial state.
         # TODO: track object deletion
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"<State '{self.objectName()}' of component '{self.__component_name}' "
             f"(current value: {str(self._value)[:20]})>"
         )
 
-    _qt_property = Property("QVariant", get, set)
+    _qt_property = Property("QVariant", get_value, set_value, None, "")  # pyright: ignore[reportArgumentType]
     """This is used by Qt to drive the animation."""
 
     _QT_PROPERTY_NAME = "_qt_property"
@@ -131,7 +131,7 @@ def _find_signal_annotations(attrs: dict[str, Any]) -> dict[str, int]:
     Returns:
         Dictionary of signal name and number of arguments.
     """
-    ret_val = {}
+    ret_val: dict[str, int] = {}
     for key, value in attrs.get("__annotations__", {}).items():
         # Value is a Signal type hint, so need to get the actual type
         # out of it. This is needed for signals with no arguments, since
@@ -145,18 +145,18 @@ def _find_signal_annotations(attrs: dict[str, Any]) -> dict[str, int]:
     return ret_val
 
 
-class _ComponentMeta(type(QObject)):
+class _ComponentMeta(type(QObject)):  # type: ignore[misc]
     """Meta class for all widgets."""
 
-    def __new__(cls, name: str, bases: tuple, attrs: dict) -> type:
+    def __new__(cls, name: str, bases: Any, attrs: Any) -> type:
         # Convert Signal annotations to actual Qt Signal objects.
         # Use QVariant to avoid runtime type checking by Qt. Can't
         # remember exact examples but it may fail for certain types.
         attrs.update(
             {
-                key: QtSignal(*["QVariant"] * num_args)
+                key: QtSignal(*["QVariant"] * num_args)  # pyright: ignore[reportArgumentType]
                 for key, num_args in _find_signal_annotations(attrs).items()
-            }
+            },
         )
         return super().__new__(cls, name, bases, attrs)
 
@@ -214,50 +214,6 @@ def _find_state_markers(obj: object) -> list[_StateMarker]:
             value.name = name  # Set the name now we have access to it.
             ret_val.append(value)
     return ret_val
-
-
-# _STATE_KEY = "__mui_state__"
-
-# _PRIMITIVE_TYPE_MAPPINGS = {
-#     int: type("int", (int,), {}),
-#     float: type("float", (float,), {}),
-#     str: type("str", (str,), {}),
-#     bool: type("bool", (bool,), {}),
-# }
-
-
-# def _inject_state(value: _T, state: State[_T]) -> _T:
-#     """Inject the state into the value.
-
-#     Args:
-#         value: The value to inject into.
-#         state: The state object to inject.
-
-#     Returns:
-#         A new value with injected state.
-#     """
-#     # For primitive types, we can't set custom attributes. Use a derived
-#     # class instead.
-#     primitive_type_mapping = _PRIMITIVE_TYPE_MAPPINGS.get(type(value))  # pyright: ignore[reportArgumentType]
-#     if primitive_type_mapping:
-#         value = cast("_T", primitive_type_mapping(value))  # pyright: ignore[reportArgumentType]
-#     setattr(value, _STATE_KEY, state)
-#     return value
-
-
-# def _extract_state(value: _T) -> State[_T] | None:
-#     """Extract the state from the value.
-
-#     This is used to get the state object from the value created by
-#     use_state.
-
-#     Args:
-#         value: The value to extract from.
-
-#     Returns:
-#         The state object or None if not found.
-#     """
-#     return getattr(value, _STATE_KEY, None)
 
 
 @dataclass
@@ -417,7 +373,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
                 # TODO: additional checks? check id of values? types? code lineno?
                 state.bind(other_state)
             # Shorthand for setting the value of a State variable.
-            state.set(value)
+            state.set_value(value)
         return super().__setattr__(name, value)
 
     def _find_state(self, name: str) -> State[Any] | None:
@@ -451,7 +407,8 @@ class Component(QWidget, metaclass=_ComponentMeta):
         """
         widget.setParent(self)
         if self.layout() is not None:
-            raise NotImplementedError("Multiple overlay widgets not supported yet")
+            msg = "Multiple overlay widgets not supported yet"
+            raise NotImplementedError(msg)
         # TODO: add some other kind of 'overlay' layout similar to graphics anchors?
         layout = QVBoxLayout(self)
         layout.setSpacing(0)
@@ -461,24 +418,24 @@ class Component(QWidget, metaclass=_ComponentMeta):
     @effect(sx)
     def _apply_sx(self) -> None:
         """Apply the sx property to the widget."""
-        sx = _COMPONENT_STYLESHEET_RESET | self.sx
+        sx = {**_COMPONENT_STYLESHEET_RESET, **self.sx}
         qss = convert_sx_to_qss(sx)
         self.setStyleSheet(qss)
 
-    def resizeEvent(self, event: QResizeEvent) -> None:
+    def resizeEvent(self, event: QResizeEvent) -> None:  # noqa: N802
         super().resizeEvent(event)
-        self._size.set(self.size())
+        self._size = self.size()
 
     @effect(QWidget.size)
-    def _apply_size(self):
+    def _apply_size(self) -> None:
         """Apply the size property to the widget."""
         self.resize(self.size())
 
-    def focusInEvent(self, event: QFocusEvent) -> None:
+    def focusInEvent(self, event: QFocusEvent) -> None:  # noqa: N802
         self.focused = True
         return super().focusInEvent(event)
 
-    def focusOutEvent(self, event: QFocusEvent) -> None:
+    def focusOutEvent(self, event: QFocusEvent) -> None:  # noqa: N802
         self.focused = False
         return super().focusOutEvent(event)
 
@@ -499,7 +456,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
             if isinstance(event, QFocusEvent):
                 self.focusInEvent(event)
                 return False  # Focus proxy should handle it too.
-            elif isinstance(event, QFocusEvent):
+            if isinstance(event, QFocusEvent):
                 self.focusOutEvent(event)
                 return False  # Focus proxy should handle it too.
         return super().eventFilter(watched, event)
