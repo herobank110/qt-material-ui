@@ -353,40 +353,19 @@ class Component(QWidget, metaclass=_ComponentMeta):
             # Prevent recursion error.
             return super().__getattribute__(name)
         actual_value = super().__getattribute__(name)
-        # # with open("C:/a","a") as f: f.write(f"{type(self).__name__}.__getattr__({name}) -> {actual_value}")
         import inspect
-
         frame = inspect.currentframe()
         caller_frame = frame.f_back if frame else None
-        # is_inside_own_setattr = (
-        #     caller_frame
-        #     and caller_frame.f_locals.get("self") is self
-        #     and caller_frame.f_code.co_name == Component.__setattr__.__name__
-        # )
         state = self._find_state(name)
-        if (
-            state
-            # and not isinstance(actual_value, _StateMarker)
-            and caller_frame
-            # and not is_inside_own_setattr
-        ):
-            # frame.f_back.f_locals["__LAST_ACCESSED_ATTRIBUTE__"] = name
-            print(f"{id(self)} {type(self).__name__}.__getattr__({name}) -> {actual_value}")
+        if state and caller_frame:
             # A state variable was accessed. Track it for binding.
             caller_frame.f_locals["__mui_last_accessed_attr__"] = state
-        # if isinstance(actual_value)
         return actual_value
 
     def __setattr__(self, name: str, value: Any) -> None:
-        # This is what causes some extra noise in __getattribute__.
-        # variable = getattr(self, name, None)
-
         import inspect
-
         state = self._find_state(name)
         if state:
-            # state = cast("State[Any]", variable)
-
             # Check if we can bind to another object's state.
             # TODO: what if there are multiple intermediate stack frames? should it be global?
             frame = inspect.currentframe()
@@ -398,15 +377,6 @@ class Component(QWidget, metaclass=_ComponentMeta):
                 else None
             )
             if other_state:
-                # # TODO: not self, needs the other object's reference!
-                # other_state = self._find_state(last_accessed_attr_name)
-                #     "State[Any] | None",
-                #     self.findChild(
-                #         State,
-                #         last_accessed_attr_name,
-                #         Qt.FindChildOption.FindDirectChildrenOnly,
-                #     ),
-                # )
                 # TODO: additional checks? check id of values? types? code lineno?
                 state.bind(other_state)
             # Shorthand for setting the value of a State variable.
