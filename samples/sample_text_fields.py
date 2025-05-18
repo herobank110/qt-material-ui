@@ -1,12 +1,11 @@
 """Sample usage of Text Field components."""
 
-from qtpy.QtCore import QMargins
-from qtpy.QtWidgets import QApplication
-
 from material_ui import Component
 from material_ui.layout_basics import Row
 from material_ui.text_fields import FilledTextField, OutlinedTextField
 from material_ui.tokens import md_sys_color
+from qtpy.QtCore import QMargins
+from qtpy.QtWidgets import QApplication
 
 
 class SampleTextFields(Component):

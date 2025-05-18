@@ -40,7 +40,7 @@ class BaseTextField(Component):
         self._line_edit = QLineEdit()
         # Disable Qt's default context menu.
         self._line_edit.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
-        self._line_edit.textEdited.connect(self.changed.emit)
+        self._line_edit.textEdited.connect(self._on_line_edit_text_edited)
         # Focus pass through to the line edit.
         self.setFocusProxy(self._line_edit)
 
@@ -51,6 +51,12 @@ class BaseTextField(Component):
             raise TypeError(msg)
         return QSize(200, height)
 
+    def _on_line_edit_text_edited(self, text: str) -> None:
+        # Set the internal value already for non-controlled text fields.
+        # However the controlled case would also set it again.
+        self.value = text
+        self.changed.emit(text)
+
     @effect(value)
     def _apply_value(self) -> None:
         self._line_edit.setText(self.value)
@@ -60,6 +66,7 @@ class BaseTextField(Component):
 
     @effect(value, Component.focused)
     def _update_label_state(self) -> None:
+        print("_update_label_state", self.value, 'd', self.focused)
         self._label_state = "floating" if self.value or self.focused else "resting"
 
     _RESTING_LABEL_POS = QPoint()
