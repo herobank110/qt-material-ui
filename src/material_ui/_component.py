@@ -369,7 +369,9 @@ class Component(QWidget, metaclass=_ComponentMeta):
                 if caller_frame
                 else None
             )
-            if other_state:
+            # Ensure it's the same value. This isn't always reliable but
+            # should work for now...
+            if other_state and other_state.get_value() is value:
                 # TODO: additional checks? check id of values? types? code lineno?
                 state.bind(other_state)
             # Shorthand for setting the value of a State variable.

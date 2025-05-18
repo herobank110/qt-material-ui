@@ -41,12 +41,6 @@ class ButtonBase(Component):
 
         self._container = Shape()
         self._container.corner_shape = "full"
-        # self._container.sx = {"background-color": tokens.container_color}
-        # self._container.sx = {
-        #     "border-color": tokens.outline_color,
-        #     "border-width": tokens.outline_width,
-        #     "border-style": "solid",
-        # }
         self._container.setParent(self)
         self._container.move(0, _TOUCH_AREA_Y_PADDING)
 
@@ -63,16 +57,19 @@ class ButtonBase(Component):
         container_layout.setSpacing(0)
 
         self._label = Typography()
-        self._label.text.bind(self.text)
+        self._label.text = self.text
         self._label.alignment = Qt.AlignmentFlag.AlignCenter
         container_layout.addWidget(self._label)
 
-    def sizeHint(self) -> QSize:
+    def sizeHint(self) -> QSize:  # noqa: N802
+        height = resolve_token(tokens.container_height)
+        if not isinstance(height, int):
+            raise TypeError
         return (
             self._container.sizeHint()
             # For some reason, setting the fixedHeight on the container
             # won't apply to its sizeHint, so set the height here.
-            .expandedTo(QSize(0, resolve_token(tokens.container_height)))
+            .expandedTo(QSize(0, height))
             .grownBy(_TOUCH_AREA_MARGINS)
         )
 
@@ -88,11 +85,13 @@ class ButtonBase(Component):
     def _update_state_layer(self) -> None:
         color = QColor(resolve_token(tokens.hover_state_layer_color))
         hover_opacity = resolve_token(tokens.hover_state_layer_opacity)
+        if not isinstance(hover_opacity, float):
+            raise TypeError
         color.setAlphaF(hover_opacity if self.hovered else 0.0)
-        self._state_layer.sx.set(lambda prev: prev | {"background-color": color})
+        self._state_layer.sx = {**self._state_layer.sx, "background-color": color}
 
     def mousePressEvent(self, event: QMouseEvent) -> None:  # noqa: N802
-        if event.button() == Qt.LeftButton:
+        if event.button() == Qt.MouseButton.LeftButton:
             self.pressed = True
             self._ripple.ripple_origin = event.position()
         return super().mousePressEvent(event)
@@ -101,7 +100,7 @@ class ButtonBase(Component):
         self.pressed = False
         self._ripple.ripple_origin = None
         mouse_inside = self.rect().contains(event.pos())
-        if event.button() == Qt.LeftButton and mouse_inside:
+        if event.button() == Qt.MouseButton.LeftButton and mouse_inside:
             self.clicked.emit()
         return super().mouseReleaseEvent(event)
 

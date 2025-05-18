@@ -14,7 +14,7 @@ from material_ui.tokens._utils import resolve_token
 class Ripple(Shape):
     """Ripple to overlay on a widget when pressed."""
 
-    ripple_origin = use_state(cast(QPointF | None, None))
+    ripple_origin = use_state(cast("QPointF | None", None))
     color = use_state(md_sys_color.primary)
     opacity = use_state(md_sys_state.pressed_state_layer_opacity)
 
@@ -33,15 +33,19 @@ class Ripple(Shape):
         if origin is None:
             # Fade out the ripple when the origin is reset. I.e., when
             # the button is released.
-            self._opacity_value.animate_to(0.0, 800, QEasingCurve.OutCubic)
+            self._find_state("_opacity_value").animate_to(
+                0.0, 800, QEasingCurve.OutCubic
+            )
             return
-        self._draw_origin = origin
-        self._opacity_value.animate_to(
+        self._draw_origin = QPointF(origin)  # copy not bind
+        self._find_state("_opacity_value").animate_to(
             resolve_token(self.opacity), 50, QEasingCurve.OutCubic
         )
-        self._scale.set(1.0)
+        self._scale = 1.0
         ripple_total_scale = max(self.width(), self.height()) * 2
-        self._scale.animate_to(ripple_total_scale, 1200, QEasingCurve.OutCubic)
+        self._find_state("_scale").animate_to(
+            ripple_total_scale, 1200, QEasingCurve.OutCubic
+        )
 
     def paintEvent(self, event: QPaintEvent) -> None:  # noqa: N802
         super().paintEvent(event)
@@ -50,10 +54,9 @@ class Ripple(Shape):
         half_size = min(self.width(), self.height()) // 2
         clip_path.addRoundedRect(self.rect(), half_size, half_size)
         painter.setClipPath(clip_path)
-        painter.setPen(Qt.NoPen)
+        painter.setPen(Qt.PenStyle.NoPen)
         color = QColor(resolve_token(self.color))
         color.setAlphaF(self._opacity_value)
         painter.setBrush(color)
-        painter.drawEllipse(
-            self._draw_origin, self._scale, self._scale
-        )
+        painter.drawEllipse(self._draw_origin, self._scale, self._scale)
+        painter.end()
