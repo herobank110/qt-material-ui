@@ -358,20 +358,20 @@ class Component(QWidget, metaclass=_ComponentMeta):
 
         frame = inspect.currentframe()
         caller_frame = frame.f_back if frame else None
-        is_inside_own_setattr = (
-            caller_frame
-            and caller_frame.f_locals.get("self") is self
-            and caller_frame.f_code.co_name == Component.__setattr__.__name__
-        )
+        # is_inside_own_setattr = (
+        #     caller_frame
+        #     and caller_frame.f_locals.get("self") is self
+        #     and caller_frame.f_code.co_name == Component.__setattr__.__name__
+        # )
         state = self._find_state(name)
         if (
             state
             # and not isinstance(actual_value, _StateMarker)
             and caller_frame
-            and not is_inside_own_setattr
+            # and not is_inside_own_setattr
         ):
             # frame.f_back.f_locals["__LAST_ACCESSED_ATTRIBUTE__"] = name
-            # print(f"{type(self).__name__}.__getattr__({name}) -> {actual_value}")
+            print(f"{id(self)} {type(self).__name__}.__getattr__({name}) -> {actual_value}")
             # A state variable was accessed. Track it for binding.
             caller_frame.f_locals["__mui_last_accessed_attr__"] = state
         # if isinstance(actual_value)
@@ -379,7 +379,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
 
     def __setattr__(self, name: str, value: Any) -> None:
         # This is what causes some extra noise in __getattribute__.
-        variable = getattr(self, name, None)
+        # variable = getattr(self, name, None)
 
         import inspect
 
