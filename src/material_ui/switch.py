@@ -89,55 +89,55 @@ class Switch(Component):
         self.setFixedSize(_SWITCH_WIDTH, _SWITCH_HEIGHT)
 
         self._track = Shape()
-        self._track.corner_shape.set("full")
+        self._track.corner_shape = "full"
         self._track.setGeometry(_TRACK_GEOMETRY)
         self._track.setParent(self)
 
         self._state_layer = Shape()
-        self._state_layer.sx.set({"background-color": _STATE_LAYER_COLOR})
-        self._state_layer.corner_shape.set("full")
-        self._state_layer.visible.bind(self.hovered)
+        self._state_layer.sx = {"background-color": _STATE_LAYER_COLOR}
+        self._state_layer.corner_shape = "full"
+        self._state_layer.visible = self.hovered
         self._state_layer.setParent(self)
 
         self._handle = Shape()
-        self._handle.corner_shape.set("full")
+        self._handle.corner_shape = "full"
         self._handle.setParent(self)
-        # TODO: make geometry a property of shape? even though conflict with qt property?
-        # self._handle.geometry.bind(self._handle_geometry)
-        self._handle.setGeometry(self._handle_geometry)
-        self._handle_geometry.changed.connect(self._handle.setGeometry)
 
         # Set the internal selected state but use the change_requested
         # signal as source of truth, so using it as a 'controlled' input
         # the parent component can hook into into to set its bound state.
-        self.change_requested.connect(self.selected.set)
+        self.change_requested.connect(self._find_state("selected").set_value)
+
+    @effect(_handle_geometry)
+    def _apply_handle_geometry(self) -> None:
+        # TODO: make geometry a property of shape? even though conflict with qt property?
+        self._handle.setGeometry(self._handle_geometry)
 
     @effect(_track_color)
     def _apply_track_color(self):
-        self._track.sx.set(
-            lambda prev: prev
-            | {"background-color": "#%06x" % self._track_color.rgb()}
-        )
+        self._track.sx = {
+            **self._track.sx,
+            # "background-color": "#%06x" % self._track_color.rgb(),
+            "background-color": self._track_color,
+        }
 
     @effect(selected, pressed, hovered)
     def _refresh_shapes(self):
-        self._track_color.animate_to(
+        self._find_state("_track_color").animate_to(
             _SELECTED_TRACK_COLOR if self.selected else _UNSELECTED_TRACK_COLOR,
             # Shorter than the handle geometry animation to draw more
             # attention to the handle.
             duration_ms=70,
             easing=QtCore.QEasingCurve.InOutCubic,
         )
-        self._track.sx.set(
-            lambda prev: prev
-            | {
-                "border": f"{_TRACK_OUTLINE_WIDTH}px solid {_UNSELECTED_TRACK_OUTLINE_COLOR}"
-                if not self.selected
-                else "none",
-            }
-        )
+        self._track.sx = {
+            **self._track.sx,
+            "border": f"{_TRACK_OUTLINE_WIDTH}px solid {_UNSELECTED_TRACK_OUTLINE_COLOR}"
+            if not self.selected
+            else "none",
+        }
 
-        self._handle_geometry.animate_to(
+        self._find_state("_handle_geometry").animate_to(
             _SELECTED_PRESSED_HANDLE_GEOMETRY
             if self.selected and self.pressed
             else _UNSELECTED_PRESSED_HANDLE_GEOMETRY
@@ -148,18 +148,16 @@ class Switch(Component):
             duration_ms=100,
             easing=QtCore.QEasingCurve.InOutCubic,
         )
-        self._handle.sx.set(
-            lambda prev: prev
-            | {
-                "background-color": _SELECTED_HOVER_HANDLE_COLOR
-                if self.selected and self.hovered
-                else _SELECTED_HANDLE_COLOR
-                if self.selected
-                else _UNSELECTED_HOVER_HANDLE_COLOR
-                if self.hovered
-                else _UNSELECTED_HANDLE_COLOR
-            }
-        )
+        self._handle.sx = {
+            **self._handle.sx,
+            "background-color": _SELECTED_HOVER_HANDLE_COLOR
+            if self.selected and self.hovered
+            else _SELECTED_HANDLE_COLOR
+            if self.selected
+            else _UNSELECTED_HOVER_HANDLE_COLOR
+            if self.hovered
+            else _UNSELECTED_HANDLE_COLOR,
+        }
 
         self._state_layer.setGeometry(
             _SELECTED_STATE_LAYER_GEOMETRY
@@ -169,20 +167,20 @@ class Switch(Component):
 
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
         if event.button() == QtCore.Qt.LeftButton:
-            self.pressed.set(True)
+            self.pressed = True
         return super().mousePressEvent(event)
 
     def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
-        self.pressed.set(False)
+        self.pressed = False
         mouse_inside = self.rect().contains(event.pos())
         if event.button() == QtCore.Qt.LeftButton and mouse_inside:
             self.change_requested.emit(not self.selected)
         return super().mouseReleaseEvent(event)
 
     def enterEvent(self, event: QtGui.QEnterEvent) -> None:  # noqa: N802
-        self.hovered.set(True)
+        self.hovered = True
         return super().enterEvent(event)
 
     def leaveEvent(self, event: QtCore.QEvent) -> None:  # noqa: N802
-        self.hovered.set(False)
+        self.hovered = False
         return super().leaveEvent(event)

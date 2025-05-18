@@ -1,30 +1,47 @@
 """Sample of using the switch."""
 
-from qtpy import QtCore, QtWidgets
+from qtpy import QtWidgets
+from qtpy.QtCore import Qt
+
+from material_ui._component import Component, use_state
 from material_ui.layout_basics import Stack
 from material_ui.switch import Switch
+
+
+class SampleSwitch(Component):
+    """Window with two switches with linked state."""
+
+    selected = use_state(True)
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.resize(300, 200)
+
+        stack = Stack()
+        stack.alignment = Qt.AlignmentFlag.AlignCenter
+        stack.gap = 30
+        stack.sx = {"background-color": "white"}
+        self.overlay_widget(stack)
+
+        switch = Switch()
+        switch.selected = self.selected
+        switch.change_requested.connect(
+            lambda selected: self._find_state("selected").set_value(selected)
+        )
+        stack.add_widget(switch)
+
+        switch2 = Switch()
+        switch2.selected = self.selected
+        switch2.change_requested.connect(
+            lambda selected: self._find_state("selected").set_value(selected)
+        )
+        stack.add_widget(switch2)
 
 
 def main() -> None:
     """Main function."""
     app = QtWidgets.QApplication()
-
-    window = Stack()
-    window.alignment.set(QtCore.Qt.AlignCenter)
-    window.gap.set(30)
-    window.sx.set({"background-color": "white"})
-    window.resize(300, 200)
-
-    switch = Switch()
-    # switch.selected.set(True)
-    window.add_widget(switch)
-
-    switch2 = Switch()
-    switch2.selected.bind(switch.selected)
-    # TODO: avoid 2 way binding, make array of switches!
-    switch2.change_requested.connect(switch.selected.set)
-    window.add_widget(switch2)
-
+    window = SampleSwitch()
     window.show()
     app.exec_()
 
