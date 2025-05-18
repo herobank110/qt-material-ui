@@ -4,7 +4,7 @@ from material_ui._utils import _stringify_sx_value
 
 
 @pytest.mark.parametrize(
-    "value,expected",
+    ("value", "expected"),
     [
         (QColor(255, 0, 0, 255), "rgba(255,0,0,255)"),
         (QColor("#dad666"), "rgba(218,214,102,255)"),

@@ -2,7 +2,9 @@
 extend = "../pyproject.toml"
 
 ignore = [
-    "S101", # Allow assert for pytest conventions.
-    "D103", # Skip docstrings for tests.
+    "S101",    # Allow assert for pytest conventions.
+    "D103",    # Skip docstrings for tests.
     "PLR2004", # Allow magic constants for expected values.
+    "N802",    # Allow test names with a class name.
+    "INP001",  # Skip creating __init__.py files for tests.
 ]
