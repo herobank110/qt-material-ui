@@ -1,8 +1,7 @@
 """Internal widgets common functionality and helpers for Qt Widgets."""
 
-from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Generic, TypeVar, cast, get_args
+from typing import Any, Callable, Generic, TypeVar, cast, get_args
 
 from qtpy.QtCore import (
     Property,  # pyright: ignore  # noqa: PGH003
@@ -215,6 +214,42 @@ def _find_state_markers(obj: object) -> list[_StateMarker]:
     return ret_val
 
 
+_STATE_KEY = "__mui_state__"
+
+
+def _inject_state(value: _T, state: State[_T]) -> _T:
+    """Inject the state into the value.
+
+    Args:
+        value: The value to inject into.
+        state: The state object to inject.
+
+    Returns:
+        A new value with injected state.
+    """
+    # For primitive types, we can't set custom attributes. Use a derived
+    # class instead.
+    if isinstance(value, int):
+        return type("int", (int,), {_STATE_KEY: state})(value)
+    setattr(value, _STATE_KEY, state)
+    return value
+
+
+def _extract_state(value: _T) -> State[_T] | None:
+    """Extract the state from the value.
+
+    This is used to get the state object from the value created by
+    use_state.
+
+    Args:
+        value: The value to extract from.
+
+    Returns:
+        The state object or None if not found.
+    """
+    return getattr(value, _STATE_KEY, None)
+
+
 @dataclass
 class _EffectMarker:
     """Marker to hold the dependencies of an effect."""
@@ -272,7 +307,7 @@ _COMPONENT_STYLESHEET_RESET: StyleDict = {
 class Component(QWidget, metaclass=_ComponentMeta):
     """Base class for all widgets."""
 
-    sx = use_state(cast(StyleDict, {}))
+    sx = use_state(cast("StyleDict", {}))
 
     focused = use_state(False)
     """State version of Qt's `focus` property.
@@ -292,16 +327,18 @@ class Component(QWidget, metaclass=_ComponentMeta):
         self.__bind_effects()
 
         # Make qt stylesheets work properly!
-        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, on=True)
 
     def __instantiate_state_variables(self) -> None:
         """Create State instances from class variables."""
         for marker in _find_state_markers(self):
-            variable = State(marker.default_value, marker.name, type(self).__name__)
-            variable.setParent(self)
-            setattr(self, marker.name, variable)
+            state = State(marker.default_value, marker.name, type(self).__name__)
+            state.setParent(self)
+            value = marker.default_value
+            _inject_state(value, state)
+            setattr(self, marker.name, value)
 
-    def __setattr__(self, name: str, value: Any):
+    def __setattr__(self, name: str, value: Any) -> None:
         variable = getattr(self, name, None)
         if isinstance(variable, State) and not isinstance(value, State):
             # Shorthand for setting the value of a State variable.

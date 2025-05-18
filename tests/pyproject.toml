@@ -7,4 +7,6 @@ ignore = [
     "PLR2004", # Allow magic constants for expected values.
     "N802",    # Allow test names with a class name.
     "INP001",  # Skip creating __init__.py files for tests.
+    "ANN201",  # Skip return type annotation (always -> None)
+    "D100",    # Skip docstrings.
 ]

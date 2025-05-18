@@ -46,14 +46,20 @@ indent-width = 4
 
 [tool.ruff.lint]
 select = ["ALL"]
+ignore = [
+    "ANN401", # Allow explicit Any.
+]
 fixable = ["ALL"]
-unfixable = []
-
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+
+[tool.ruff.lint.flake8-boolean-trap]
+extend-allowed-calls = [
+    "material_ui._component.use_state"
+]
 
 [tool.ruff.format]
 quote-style = "double"
