@@ -291,10 +291,12 @@ def effect(*dependencies: Any) -> Callable[[EffectFn], EffectFn]:
     Returns:
         Decorated method.
     """
+    # Special handling for Qt built in properties.
+    # TODO: shadow these with actual states?
     dependencies_list = [
         x
         if isinstance(x, _StateMarker)
-        else _StateMarker(name="_size", default_value=None)
+        else _StateMarker(name="_size", default_value=QSize())
         if x is QWidget.size
         else x
         for x in dependencies
@@ -307,7 +309,7 @@ def effect(*dependencies: Any) -> Callable[[EffectFn], EffectFn]:
             raise EffectDependencyError(msg)
 
     def decorated(func: EffectFn) -> EffectFn:
-        marker = _EffectMarker(name=func.__name__, dependencies=list(dependencies))
+        marker = _EffectMarker(name=func.__name__, dependencies=dependencies_list)
         setattr(func, _EFFECT_MARKER_KEY, marker)
         return func
 
@@ -327,7 +329,9 @@ def _find_effect_markers(obj: object) -> list[_EffectMarker]:
     for name in dir(obj):
         value = getattr(obj, name)
         if marker := getattr(value, _EFFECT_MARKER_KEY, None):
-            assert marker.name == name, "Effect name mismatch"
+            if marker.name != name:
+                msg = "Effect name mismatch"
+                raise RuntimeError(msg)
             ret_val.append(marker)
     return ret_val
 
@@ -430,13 +434,8 @@ class Component(QWidget, metaclass=_ComponentMeta):
             # Get the function object from the class.
             func = getattr(self, effect_marker.name)
             for dependency in effect_marker.dependencies:
-                # Special handling for Qt built in properties.
-                # TODO: shadow these with actual states?
-                if dependency is QWidget.size:
-                    state = self._find_state("_size")
-                else:
-                    # Find the corresponding variable object.
-                    state = self._find_state(dependency.name)
+                # Find the corresponding variable object.
+                state = self._find_state(dependency.name)
                 if not isinstance(state, State):
                     msg = f"Invalid dependency for {dependency.name}: '{state}'"
                     raise TypeError(msg)
