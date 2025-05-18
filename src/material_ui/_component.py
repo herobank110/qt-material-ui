@@ -6,9 +6,9 @@ from typing_extensions import TypeVarTuple, Unpack
 from qtpy.QtCore import (
     QEvent,
     QObject,
-    Property,
+    Property,  # type: ignore  # vscode/pyright error
     QTimer,
-    Signal as QtSignal,
+    Signal as QtSignal,  # type: ignore  # vscode/pyright error
     QMargins,
     QSize,
     Qt,
@@ -272,7 +272,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
         self.__bind_effects()
 
         # Make qt stylesheets work properly!
-        self.setAttribute(Qt.WA_StyledBackground, True)
+        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
 
     def __instantiate_state_variables(self) -> None:
         """Create State instances from class variables."""
@@ -281,7 +281,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
             variable.setParent(self)
             setattr(self, marker.name, variable)
 
-    def __setattr__(self, name, value):
+    def __setattr__(self, name: str, value: Any):
         variable = getattr(self, name, None)
         if isinstance(variable, State) and not isinstance(value, State):
             # Shorthand for setting the value of a State variable.
