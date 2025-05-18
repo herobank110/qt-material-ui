@@ -358,15 +358,16 @@ class Component(QWidget, metaclass=_ComponentMeta):
             # TODO: edge cases, remove filter from previous focus proxy, unit tests
             w.installEventFilter(self)
 
-        return super().setFocusProxy(w)
+        # Wrong Qt type annotation - should be QWidget | None.
+        return super().setFocusProxy(w)  # type: ignore[arg-type]
 
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:  # noqa: N802
         if watched is self.focusProxy():
             # Intercept the focus events from the focus proxy.
-            if event.type() == QEvent.FocusIn:
+            if isinstance(event, QFocusEvent):
                 self.focusInEvent(event)
                 return False  # Focus proxy should handle it too.
-            elif event.type() == QEvent.FocusOut:
+            elif isinstance(event, QFocusEvent):
                 self.focusOutEvent(event)
                 return False  # Focus proxy should handle it too.
         return super().eventFilter(watched, event)
