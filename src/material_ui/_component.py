@@ -270,19 +270,29 @@ class _EffectMarker:
 _EFFECT_MARKER_KEY = "__effect_marker__"
 
 
-def effect(*dependencies: State[Any]) -> Callable[[Callable], Callable]:
+EffectFn = Callable[[], None]
+
+
+def effect(*dependencies: Any) -> Callable[[EffectFn], EffectFn]:
     """Decorator to mark a method as an effect.
 
+    The function will be called when the dependencies change, and also
+    on the initial state.
+
     Args:
-        dependencies: List of dependencies for the effect.
+        dependencies: List of dependencies for the effect. These must be
+            class variables marked with `use_state`.
+
+    Returns:
+        Decorated method.
     """
 
-    def decorator(func: Callable) -> Callable:
+    def decorated(func: EffectFn) -> EffectFn:
         marker = _EffectMarker(name=func.__name__, dependencies=list(dependencies))
         setattr(func, _EFFECT_MARKER_KEY, marker)
         return func
 
-    return decorator
+    return decorated
 
 
 def _find_effect_markers(obj: object) -> list[_EffectMarker]:
@@ -333,7 +343,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
         super().__init__()
 
         self.__instantiate_state_variables()
-        # self.__bind_effects()
+        self.__bind_effects()
 
         # Make qt stylesheets work properly!
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, on=True)
@@ -343,12 +353,12 @@ class Component(QWidget, metaclass=_ComponentMeta):
         for marker in _find_state_markers(self):
             state = State(marker.default_value, marker.name, type(self).__name__)
             state.setParent(self)
+            value = marker.default_value
+            setattr(self, marker.name, value)
             # Propagate the internal state value to the mem var proxy.
             # This won't cause an infinite loop since the setter checks
             # if the value is different. It will eventually stabilize.
             state.changed.connect(partial(setattr, self, marker.name))
-            value = marker.default_value
-            setattr(self, marker.name, value)
 
     def __getattribute__(self, name: str) -> Any:
         if name in {
@@ -359,6 +369,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
             return super().__getattribute__(name)
         actual_value = super().__getattribute__(name)
         import inspect
+
         frame = inspect.currentframe()
         caller_frame = frame.f_back if frame else None
         state = self._find_state(name)
@@ -369,6 +380,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
 
     def __setattr__(self, name: str, value: Any) -> None:
         import inspect
+
         state = self._find_state(name)
         if state:
             # Check if we can bind to another object's state.
