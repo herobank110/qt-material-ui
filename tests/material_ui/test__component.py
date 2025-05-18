@@ -28,7 +28,8 @@ def test_Component_state_bind_on_assignment(qtbot: QtBot):
 
 
 def test_Component_effect_called_initially_and_on_change(
-    qtbot: QtBot, mocker: MockerFixture
+    qtbot: QtBot,
+    mocker: MockerFixture,
 ):
     stub = mocker.stub()
 
