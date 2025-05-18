@@ -23,7 +23,7 @@ from material_ui._component import Component, use_state
 
 
 class MyComponent(Component):
-    a = use_state("hello")
+    a = use_state("")
 
 
 def test_Component_state_bind_on_assignment(qtbot: QtBot):
