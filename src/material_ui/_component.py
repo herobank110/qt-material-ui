@@ -165,16 +165,33 @@ class _StateMarker:
     default_value: Any
 
 
-def use_state(default_value: _T) -> State[_T]:
+def use_state(default_value: _T) -> _T:
     """Declare a state variable.
 
     This is intended to be used as a class variable. The default value
     will be used by all component instances, referring to the same
     value.
+
+    Example:
+        class MyComponent(Component):
+            my_state = use_state("hello")
+
+    Args:
+        default_value: The default value of the state variable. This
+            also sets the type of the variable, so it may be beneficial
+            to use `cast` to show the full type (eg for optional values
+            with initial state of None).
+
+    Returns:
+        A marker object that will be replaced with the actual state once
+        the object is constructed. The type annotation is intentionally
+        incorrect to aid type annotations on the class variables.
+        However it's only valid to use it in object instances, not as a
+        static variable.
     """
     # This is the wrong type but assert it so that IDEs give completion
     # based on the expected return type.
-    return _StateMarker(name="<unset>", default_value=default_value)
+    return _StateMarker(name="<unset>", default_value=default_value)  # type: ignore[return-value]
 
 
 def _find_state_markers(obj: object) -> list[_StateMarker]:
