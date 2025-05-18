@@ -24,23 +24,18 @@ class SampleTextFields(Component):
         filled = FilledTextField()
         filled.label = "Label"
         filled.value = "Value"
-        # filled.changed.connect(filled.value)
         row.add_widget(filled)
 
         outlined = OutlinedTextField()
         outlined.label = "Label"
         outlined.value = "Value"
-        # outlined.changed.connect(outlined.value.set)
         row.add_widget(outlined)
 
         # Take the initial focus away from the first text field.
         self.setFocus()
 
-    def on_text_changed(self, text: str) -> None:
-        print(f"Text changed: {text}")
 
-
-def main():
+def main() -> None:
     app = QApplication()
     window = SampleTextFields()
     window.show()
