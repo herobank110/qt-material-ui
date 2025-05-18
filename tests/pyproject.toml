@@ -8,5 +8,6 @@ ignore = [
     "N802",    # Allow test names with a class name.
     "INP001",  # Skip creating __init__.py files for tests.
     "ANN201",  # Skip return type annotation (always -> None)
-    "D100",    # Skip docstrings.
+    "D100",    # Skip docstring in module.
+    "D101",    # Skip docstring in class.
 ]

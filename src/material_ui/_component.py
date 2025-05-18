@@ -214,48 +214,48 @@ def _find_state_markers(obj: object) -> list[_StateMarker]:
     return ret_val
 
 
-_STATE_KEY = "__mui_state__"
+# _STATE_KEY = "__mui_state__"
 
-_PRIMITIVE_TYPE_MAPPINGS = {
-    int: type("int", (int,), {}),
-    float: type("float", (float,), {}),
-    str: type("str", (str,), {}),
-    bool: type("bool", (bool,), {}),
-}
-
-
-def _inject_state(value: _T, state: State[_T]) -> _T:
-    """Inject the state into the value.
-
-    Args:
-        value: The value to inject into.
-        state: The state object to inject.
-
-    Returns:
-        A new value with injected state.
-    """
-    # For primitive types, we can't set custom attributes. Use a derived
-    # class instead.
-    primitive_type_mapping = _PRIMITIVE_TYPE_MAPPINGS.get(type(value))  # pyright: ignore[reportArgumentType]
-    if primitive_type_mapping:
-        value = cast("_T", primitive_type_mapping(value))  # pyright: ignore[reportArgumentType]
-    setattr(value, _STATE_KEY, state)
-    return value
+# _PRIMITIVE_TYPE_MAPPINGS = {
+#     int: type("int", (int,), {}),
+#     float: type("float", (float,), {}),
+#     str: type("str", (str,), {}),
+#     bool: type("bool", (bool,), {}),
+# }
 
 
-def _extract_state(value: _T) -> State[_T] | None:
-    """Extract the state from the value.
+# def _inject_state(value: _T, state: State[_T]) -> _T:
+#     """Inject the state into the value.
 
-    This is used to get the state object from the value created by
-    use_state.
+#     Args:
+#         value: The value to inject into.
+#         state: The state object to inject.
 
-    Args:
-        value: The value to extract from.
+#     Returns:
+#         A new value with injected state.
+#     """
+#     # For primitive types, we can't set custom attributes. Use a derived
+#     # class instead.
+#     primitive_type_mapping = _PRIMITIVE_TYPE_MAPPINGS.get(type(value))  # pyright: ignore[reportArgumentType]
+#     if primitive_type_mapping:
+#         value = cast("_T", primitive_type_mapping(value))  # pyright: ignore[reportArgumentType]
+#     setattr(value, _STATE_KEY, state)
+#     return value
 
-    Returns:
-        The state object or None if not found.
-    """
-    return getattr(value, _STATE_KEY, None)
+
+# def _extract_state(value: _T) -> State[_T] | None:
+#     """Extract the state from the value.
+
+#     This is used to get the state object from the value created by
+#     use_state.
+
+#     Args:
+#         value: The value to extract from.
+
+#     Returns:
+#         The state object or None if not found.
+#     """
+#     return getattr(value, _STATE_KEY, None)
 
 
 @dataclass
@@ -332,7 +332,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
         super().__init__()
 
         self.__instantiate_state_variables()
-        self.__bind_effects()
+        # self.__bind_effects()
 
         # Make qt stylesheets work properly!
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, on=True)
@@ -343,7 +343,6 @@ class Component(QWidget, metaclass=_ComponentMeta):
             state = State(marker.default_value, marker.name, type(self).__name__)
             state.setParent(self)
             value = marker.default_value
-            _inject_state(value, state)
             setattr(self, marker.name, value)
 
     def __setattr__(self, name: str, value: Any) -> None:
