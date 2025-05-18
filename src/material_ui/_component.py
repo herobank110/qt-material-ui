@@ -1,6 +1,7 @@
 """Internal widgets common functionality and helpers for Qt Widgets."""
 
 from dataclasses import dataclass
+from functools import partial
 from typing import Any, Callable, Generic, TypeVar, cast, get_args
 
 from qtpy.QtCore import (
@@ -342,6 +343,10 @@ class Component(QWidget, metaclass=_ComponentMeta):
         for marker in _find_state_markers(self):
             state = State(marker.default_value, marker.name, type(self).__name__)
             state.setParent(self)
+            # Propagate the internal state value to the mem var proxy.
+            # This won't cause an infinite loop since the setter checks
+            # if the value is different. It will eventually stabilize.
+            state.changed.connect(partial(setattr, self, marker.name))
             value = marker.default_value
             setattr(self, marker.name, value)
 
