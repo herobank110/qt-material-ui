@@ -1,3 +1,4 @@
+import pytest
 from pytest_mock import MockerFixture
 from pytestqt.qtbot import QtBot
 
@@ -35,7 +36,7 @@ def test_Component_effect_called_initially_and_on_change(
         a = use_state("hello")
 
         @effect(a)
-        def an_effect(self):
+        def my_effect(self):
             stub(self.a)
 
     c = C()
@@ -50,3 +51,12 @@ def test_Component_effect_called_initially_and_on_change(
     c.a = "hi"
     assert stub.call_count == 2
     stub.assert_called_with("hi")
+
+
+def test_Component_effect_invalid_dependencies(qtbot: QtBot):
+    with pytest.raises(RuntimeError):
+
+        class C(Component):  # pyright: ignore[reportUnusedClass]
+            @effect("hi")
+            def my_effect(self) -> None:
+                pass

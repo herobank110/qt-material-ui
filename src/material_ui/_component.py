@@ -287,6 +287,20 @@ def effect(*dependencies: Any) -> Callable[[EffectFn], EffectFn]:
     Returns:
         Decorated method.
     """
+    dependencies_list = [
+        x
+        if isinstance(x, _StateMarker)
+        else _StateMarker(name="_size", default_value=None)
+        if x is QWidget.size
+        else x
+        for x in dependencies
+    ]
+
+    # Validate dependency types.
+    for dependency in dependencies_list:
+        if not isinstance(dependency, _StateMarker):
+            msg = f"Invalid dependency for effect: {dependency} ({type(dependency)})"
+            raise RuntimeError(msg)
 
     def decorated(func: EffectFn) -> EffectFn:
         marker = _EffectMarker(name=func.__name__, dependencies=list(dependencies))
@@ -309,6 +323,8 @@ def _find_effect_markers(obj: object) -> list[_EffectMarker]:
     for name in dir(obj):
         value = getattr(obj, name)
         if marker := getattr(value, _EFFECT_MARKER_KEY, None):
+            # if not isinstance(marker, _StateMarker):
+            #     raise RuntimeError(f"Invalid effect dependency: {marker}")
             assert marker.name == name, "Effect name mismatch"
             ret_val.append(marker)
     return ret_val
