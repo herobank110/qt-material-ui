@@ -12,8 +12,8 @@ from material_ui.tokens import md_comp_filled_text_field as tokens
 class FilledTextField(BaseTextField):
     """Filled text field component."""
 
-    _RESTING_LABEL_POS = QPoint(16, 16)
-    _FLOATING_LABEL_POS = QPoint(16, 8)
+    _RESTING_LABEL_POS = QPoint(16, 18)
+    _FLOATING_LABEL_POS = QPoint(18, 8)
 
     def __init__(self) -> None:
         super().__init__()
