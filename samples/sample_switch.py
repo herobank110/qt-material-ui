@@ -1,11 +1,10 @@
 """Sample of using the switch."""
 
-from qtpy import QtWidgets
-from qtpy.QtCore import Qt
-
 from material_ui._component import Component, use_state
 from material_ui.layout_basics import Stack
 from material_ui.switch import Switch
+from qtpy import QtWidgets
+from qtpy.QtCore import Qt
 
 
 class SampleSwitch(Component):
