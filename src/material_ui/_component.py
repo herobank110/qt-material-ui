@@ -20,7 +20,7 @@ from qtpy.QtCore import (
 from qtpy.QtCore import (
     Signal as QtSignal,  # pyright: ignore  # noqa: PGH003
 )
-from qtpy.QtGui import QFocusEvent, QResizeEvent
+from qtpy.QtGui import QEnterEvent, QFocusEvent, QMouseEvent, QResizeEvent
 from qtpy.QtWidgets import QVBoxLayout, QWidget
 from typing_extensions import TypeVarTuple, Unpack
 
@@ -462,3 +462,28 @@ class Component(QWidget, metaclass=_ComponentMeta):
                 self.focusOutEvent(cast("QFocusEvent", event))
                 return False  # Focus proxy should handle it too.
         return super().eventFilter(watched, event)
+
+    hovered = use_state(False)
+    pressed = use_state(False)
+    clicked: Signal
+
+    def mousePressEvent(self, event: QMouseEvent) -> None:  # noqa: N802
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.pressed = True
+        return super().mousePressEvent(event)
+
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None:  # noqa: N802
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.pressed = False
+            mouse_inside = self.rect().contains(event.pos())
+            if mouse_inside:
+                self.clicked.emit()
+        return super().mouseReleaseEvent(event)
+
+    def enterEvent(self, event: QEnterEvent) -> None:  # noqa: N802
+        self.hovered = True
+        return super().enterEvent(event)
+
+    def leaveEvent(self, event: QEvent) -> None:  # noqa: N802
+        self.hovered = False
+        return super().leaveEvent(event)

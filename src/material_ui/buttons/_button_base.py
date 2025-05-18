@@ -1,7 +1,7 @@
 """Base class for button variants."""
 
-from qtpy.QtCore import QEvent, QMargins, QSize, Qt
-from qtpy.QtGui import QColor, QEnterEvent, QMouseEvent
+from qtpy.QtCore import QMargins, QSize, Qt
+from qtpy.QtGui import QColor, QMouseEvent
 from qtpy.QtWidgets import QHBoxLayout
 
 from material_ui._component import Component, Signal, effect, use_state
@@ -40,17 +40,17 @@ class ButtonBase(Component):
         self.setGraphicsEffect(self._drop_shadow)
 
         self._container = Shape()
-        self._container.corner_shape = "full"
+        self._container.corner_shape = tokens.container_shape
         self._container.setParent(self)
         self._container.move(0, _TOUCH_AREA_Y_PADDING)
 
         self._state_layer = Shape()
         self._state_layer.setParent(self._container)
-        self._state_layer.corner_shape = "full"
+        self._state_layer.corner_shape = tokens.container_shape
 
         self._ripple = Ripple()
         self._ripple.setParent(self._container)
-        self._ripple.corner_shape = "full"
+        self._ripple.corner_shape = tokens.container_shape
 
         container_layout = QHBoxLayout(self._container)
         container_layout.setContentsMargins(QMargins(24, 0, 24, 0))
@@ -92,22 +92,10 @@ class ButtonBase(Component):
 
     def mousePressEvent(self, event: QMouseEvent) -> None:  # noqa: N802
         if event.button() == Qt.MouseButton.LeftButton:
-            self.pressed = True
             self._ripple.ripple_origin = event.position()
         return super().mousePressEvent(event)
 
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:  # noqa: N802
-        self.pressed = False
-        self._ripple.ripple_origin = None
-        mouse_inside = self.rect().contains(event.pos())
-        if event.button() == Qt.MouseButton.LeftButton and mouse_inside:
-            self.clicked.emit()
+        if event.button() == Qt.MouseButton.LeftButton:
+            self._ripple.ripple_origin = None
         return super().mouseReleaseEvent(event)
-
-    def enterEvent(self, event: QEnterEvent) -> None:  # noqa: N802
-        self.hovered = True
-        return super().enterEvent(event)
-
-    def leaveEvent(self, event: QEvent) -> None:  # noqa: N802
-        self.hovered = False
-        return super().leaveEvent(event)
