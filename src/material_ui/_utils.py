@@ -1,14 +1,16 @@
 """Utilities."""
 
-from qtpy.QtGui import QColor
-from material_ui.tokens import DesignToken, resolve_token
+from collections.abc import Mapping
 
+from qtpy.QtGui import QColor
+
+from material_ui.tokens import DesignToken, resolve_token
 
 StyleDictValue = str | int | QColor | DesignToken
 """Union of values that can be used in a style dictionary."""
 
 # TODO: use a typed dict for completion on keys and type checking on values
-StyleDict = dict[str, StyleDictValue]
+StyleDict = Mapping[str, StyleDictValue]
 """Dictionary of styles."""
 
 
