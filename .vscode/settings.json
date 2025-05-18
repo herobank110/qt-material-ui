@@ -2,6 +2,6 @@
   "python.testing.pytestEnabled": true,
   "ruff.organizeImports": true,
   "editor.codeActionsOnSave": {
-    "source.organizeImports.ruff": "always"
+    "source.organizeImports.ruff": "explicit"
   }
 }
