@@ -1,22 +1,23 @@
 """Tests for material_ui.tokens._utils.py."""
 
 import pytest
-from material_ui.tokens._utils import (
-    DesignToken,
-    _resolve_indirection,
-    _is_indirection,
-    resolve_token,
-    to_python_name,
-    find_root_token,
-)
+from qtpy.QtGui import QColor
+
 from material_ui.tokens import (
+    md_comp_switch,
     md_ref_palette,
     md_sys_color,
-    md_comp_switch,
     md_sys_elevation,
     md_sys_shape,
 )
-from qtpy.QtGui import QColor
+from material_ui.tokens._utils import (
+    DesignToken,
+    _is_indirection,
+    _resolve_indirection,
+    find_root_token,
+    resolve_token,
+    to_python_name,
+)
 
 
 def test_DesignToken_hash_basic_tests() -> None:
