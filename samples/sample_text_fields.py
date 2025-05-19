@@ -33,6 +33,8 @@ class SampleTextFields(Component):
 
         # Take the initial focus away from the first text field.
         self.setFocus()
+        # Steal focus when the empty area is clicked.
+        self.clicked.connect(lambda: self.setFocus())
 
 
 def main() -> None:
