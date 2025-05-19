@@ -88,10 +88,10 @@ class BaseTextField(Component):
     _RESTING_LABEL_POS = QPoint()
     _FLOATING_LABEL_POS = QPoint()
 
-    _resting_label_opacity = use_state(0.0, transition=200)
-    _floating_label_opacity = use_state(0.0, transition=200)
-    _resting_label_pos = use_state(QPoint(), transition=200)
-    _floating_label_pos = use_state(QPoint(), transition=200)
+    _resting_label_opacity = use_state(0.0, transition=80)
+    _floating_label_opacity = use_state(0.0, transition=80)
+    _resting_label_pos = use_state(QPoint(), transition=80)
+    _floating_label_pos = use_state(QPoint(), transition=80)
 
     @effect(_label_state)
     def _animate_labels(self) -> None:
