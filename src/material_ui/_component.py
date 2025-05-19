@@ -94,23 +94,6 @@ class State(QObject, Generic[_T]):
             self._value = value
             self.changed.emit(value)
 
-    # def asdjas(self):
-    #     if self.transition and not from_qt:
-    #         # Value wants to be set and not from a Qt animation, so
-    #         # start a transition.
-    #         # Special case for if value changed - check target end value.
-    #         target_value = (
-    #             self._active_animation.endValue()
-    #             if self._active_animation
-    #             else self._value
-    #         )
-    #         if target_value != value:
-    #             if "FilledTextField" in repr(self):
-    #                 print("transitioning to", value, self)
-    #             self.animate_to(
-    #                 value, self.transition.duration_ms, self.transition.easing
-    #             )
-
     def animate_to(
         self,
         value: _T,
@@ -455,7 +438,6 @@ class Component(QWidget, metaclass=_ComponentMeta):
             if other_state := _pop_last_accessed_state(value):
                 state.bind(other_state)
             elif state.transition:
-                if type(self).__name__ == "FilledTextField": print("animateto", value, state)
                 state.animate_to(
                     value, state.transition.duration_ms, state.transition.easing
                 )
@@ -553,14 +535,10 @@ class Component(QWidget, metaclass=_ComponentMeta):
         self.resize(self.size())
 
     def focusInEvent(self, event: QFocusEvent) -> None:  # noqa: N802
-        if type(self).__name__ == "FilledTextField":
-            print("focus in")
         self.focused = True
         return super().focusInEvent(event)
 
     def focusOutEvent(self, event: QFocusEvent) -> None:  # noqa: N802
-        if type(self).__name__ == "FilledTextField":
-            print("focus out")
         self.focused = False
         return super().focusOutEvent(event)
 
@@ -579,13 +557,9 @@ class Component(QWidget, metaclass=_ComponentMeta):
         if watched is self.focusProxy():
             # Intercept the focus events from the focus proxy.
             if event.type() == QEvent.Type.FocusIn:
-                if type(self).__name__ == "FilledTextField":
-                    print("proxy focus in")
                 self.focusInEvent(cast("QFocusEvent", event))
                 return False  # Focus proxy should handle it too.
             if event.type() == QEvent.Type.FocusOut:
-                if type(self).__name__ == "FilledTextField":
-                    print("proxy focus out")
                 self.focusOutEvent(cast("QFocusEvent", event))
                 return False  # Focus proxy should handle it too.
         return super().eventFilter(watched, event)
