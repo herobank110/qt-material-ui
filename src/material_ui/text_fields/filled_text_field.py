@@ -34,8 +34,6 @@ class FilledTextField(BaseTextField):
         self._background.overlay_widget(state_layer)
 
         self._active_indicator = Line()
-        self._active_indicator.color = tokens.hover_active_indicator_color
-        self._active_indicator.thickness = tokens.focus_active_indicator_thickness
         self._active_indicator.setParent(self._background)
 
         self._floating_label.setParent(self._background)
@@ -77,6 +75,15 @@ class FilledTextField(BaseTextField):
     def _apply_size(self) -> None:
         self._background.resize(self.size())
         self._active_indicator.setFixedWidth(self._background.width())
+
+    @effect(Component.size, Component.focused)
+    def _refresh_active_indicator(self) -> None:
+        if self.focused:
+            self._active_indicator.color = tokens.focus_active_indicator_color
+            self._active_indicator.thickness = tokens.focus_active_indicator_thickness
+        else:
+            self._active_indicator.color = tokens.active_indicator_color
+            self._active_indicator.thickness = tokens.active_indicator_height
         self._active_indicator.move(
             0,
             self._background.height() - self._active_indicator.resolved_thickness(),
