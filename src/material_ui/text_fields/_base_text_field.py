@@ -76,8 +76,10 @@ class BaseTextField(Component):
 
     @effect(value)
     def _apply_value(self) -> None:
+        cursor_pos = self._line_edit.cursorPosition()
         self._line_edit.setText(self.value)
-        # TODO: ensure cursor position is handled well
+        # Ensure cursor position is maintained.
+        self._line_edit.setCursorPosition(cursor_pos)
 
     _label_state = use_state(cast("LabelState", "resting"))
 
