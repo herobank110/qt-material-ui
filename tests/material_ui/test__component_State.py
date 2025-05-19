@@ -22,3 +22,12 @@ def test_State_transition_applies_over_time(qtbot: QtBot):
     assert periodically_inspected_values == sorted(periodically_inspected_values)
     assert min(periodically_inspected_values) >= start_value
     assert max(periodically_inspected_values) <= end_value
+
+
+def test_State_transition_instant_reapply_takes_new_value(qtbot: QtBot):
+    state = State(10.0, "state")
+    state.set_transition(_TransitionConfig(50, QEasingCurve.Type.Linear))
+    state.set_value(20.0)
+    state.set_value(10.0)
+    qtbot.wait(60)
+    assert state.get_value() == 10.0
