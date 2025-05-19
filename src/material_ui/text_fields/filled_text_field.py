@@ -28,7 +28,7 @@ class FilledTextField(BaseTextField):
         state_layer.visible = self.hovered
         state_layer.color = tokens.hover_state_layer_color
         state_layer.opacity = tokens.hover_state_layer_opacity
-        # self._background.overlay_widget(state_layer)
+        self._background.overlay_widget(state_layer)
 
         self._floating_label.setParent(self._background)
         self._floating_label.sx = {
