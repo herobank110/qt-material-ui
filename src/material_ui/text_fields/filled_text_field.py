@@ -1,7 +1,5 @@
 """Filled text field component."""
 
-from typing import cast
-
 from qtpy.QtCore import QMargins, QPoint
 
 from material_ui._component import Component, effect
@@ -9,7 +7,6 @@ from material_ui.layout_basics import Row
 from material_ui.shape import Line, Shape
 from material_ui.text_fields._base_text_field import BaseTextField
 from material_ui.tokens import md_comp_filled_text_field as tokens
-from material_ui.tokens._utils import DesignToken, resolve_token
 
 
 class FilledTextField(BaseTextField):
