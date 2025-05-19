@@ -20,15 +20,15 @@ class FilledTextField(BaseTextField):
 
         self._background = Shape()
         self._background.corner_shape = tokens.container_shape
-        self._background.sx = {
-            "background-color": tokens.container_color,
-            "height": tokens.container_height,
-        }
+        self._background.color = tokens.container_color
         self._background.setParent(self)
 
-        self._state_layer = Shape()
-        self._state_layer.corner_shape = tokens.container_shape
-        self._background.overlay_widget(self._state_layer)
+        state_layer = Shape()
+        state_layer.corner_shape = tokens.container_shape
+        state_layer.visible = self.hovered
+        state_layer.color = tokens.hover_state_layer_color
+        state_layer.opacity = tokens.hover_state_layer_opacity
+        # self._background.overlay_widget(state_layer)
 
         self._floating_label.setParent(self._background)
         self._floating_label.sx = {
@@ -69,12 +69,3 @@ class FilledTextField(BaseTextField):
     def _apply_size(self) -> None:
         # Set the size of the background to the size of the text field.
         self._background.resize(self.size())
-
-    @effect(Component.hovered)
-    def _update_state_layer(self) -> None:
-        self._state_layer.visible = self.hovered
-        self._state_layer.sx = {
-            **self._state_layer.sx,
-            "background-color": tokens.hover_state_layer_color,
-            "opacity": tokens.hover_state_layer_opacity,
-        }
