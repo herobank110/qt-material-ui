@@ -79,18 +79,15 @@ class State(QObject, Generic[_T]):
         """Get the value of the variable."""
         return self._value
 
-    def set_value(self, value_or_fn: _T | Callable[[_T], _T]) -> None:
+    def set_value(self, value: _T) -> None:
         """Set the value of the variable.
 
+        If the value changed, the changed signal is emitted.
+
         Args:
-            value_or_fn: Either a value directly, or a function that
-                takes the current value as input and returns a new one.
-            from_qt: If True, the value is set from Qt.
+            value: New value to use.
         """
-        value: _T = value_or_fn(self._value) if callable(value_or_fn) else value_or_fn
         if self._value != value:
-            # Normal case - set without transition or we are inside
-            # a Qt animation callback.
             self._value = value
             self.changed.emit(value)
 
@@ -138,7 +135,7 @@ class State(QObject, Generic[_T]):
         # TODO: track object deletion
 
     def __repr__(self) -> str:
-        parent_name = type(self.parent()).__name__ if self.parent() else "<unknown>"
+        parent_name = type(self.parent()).__name__ if self.parent() else "no-parent"
         return (
             f"<State '{self.objectName()}' of component '{parent_name}' "
             f"(current value: {str(self._value)[:20]})>"

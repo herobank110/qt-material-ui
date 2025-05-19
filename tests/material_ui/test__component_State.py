@@ -1,5 +1,6 @@
 from pytestqt.qtbot import QtBot
 from qtpy.QtCore import QEasingCurve
+from qtpy.QtWidgets import QWidget
 
 from material_ui._component import State, _TransitionConfig
 
@@ -43,3 +44,18 @@ def test_State_animate_to_instant_changes_take_last_value(
     state.animate_to(10.0, 50, QEasingCurve.Type.Linear)
     qtbot.wait(60)
     assert state.get_value() == 10.0
+
+
+def test_State___repr___current_value_and_parent_type(qtbot: QtBot):
+    widget = QWidget()
+    qtbot.add_widget(widget)
+    state = State(10.0, "state")
+    state.setParent(widget)
+    assert repr(state) == "<State 'state' of component 'QWidget' (current value: 10.0)>"
+
+
+def test_State___repr___null_parent():
+    state = State(10.0, "state")
+    assert (
+        repr(state) == "<State 'state' of component 'no-parent' (current value: 10.0)>"
+    )
