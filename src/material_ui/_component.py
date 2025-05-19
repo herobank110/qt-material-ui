@@ -302,6 +302,38 @@ _COMPONENT_STYLESHEET_RESET: StyleDict = {
 """Prevent Qt's unexpected behavior from inheriting parent's style."""
 
 
+_LAST_ACCESSED_STATE_KEY = "__mui_last_accessed_attr__"
+
+
+def _track_last_accessed_state(state: State[Any]) -> None:
+    frame = inspect.currentframe()
+    caller_frame = frame and frame.f_back
+    caller_frame = caller_frame and caller_frame.f_back
+    if caller_frame:
+        caller_frame.f_locals[_LAST_ACCESSED_STATE_KEY] = state
+
+
+def _pop_last_accessed_state(value: _T) -> State[_T] | None:
+    # Check if we can bind to another object's state.
+    # TODO: what if there are multiple intermediate stack frames?
+    #   should it be global?
+    frame = inspect.currentframe()
+    caller_frame = frame and frame.f_back
+    caller_frame = caller_frame and caller_frame.f_back
+    state = (
+        # Pop so it can't be rebound accidentally.
+        caller_frame.f_locals.pop(_LAST_ACCESSED_STATE_KEY, None)
+        if caller_frame
+        else None
+    )
+    # Ensure it's the same value. This isn't always reliable but should
+    # work for now...
+    # TODO: additional checks? check id of values? types? code lineno? not itself?
+    if state and isinstance(state, State) and state.get_value() is value:
+        return cast("State[_T]", state)
+    return None
+
+
 class Component(QWidget, metaclass=_ComponentMeta):
     """Base class for all widgets."""
 
@@ -347,32 +379,17 @@ class Component(QWidget, metaclass=_ComponentMeta):
         }:
             # Prevent recursion error. These are used below.
             return actual_value
-        frame = inspect.currentframe()
-        caller_frame = frame.f_back if frame else None
         state = self._find_state(name)
-        if state and caller_frame:
+        if state:
             # A state variable was accessed. Track it for binding.
-            caller_frame.f_locals["__mui_last_accessed_attr__"] = state
+            _track_last_accessed_state(state)
         return actual_value
 
     def __setattr__(self, name: str, value: Any) -> None:
         state = self._find_state(name)
         if state:
-            # Check if we can bind to another object's state.
-            # TODO: what if there are multiple intermediate stack frames?
-            #   should it be global?
-            frame = inspect.currentframe()
-            caller_frame = frame.f_back if frame else None
-            other_state = (
-                # Pop so it can't be rebound accidentally.
-                caller_frame.f_locals.pop("__mui_last_accessed_attr__", None)
-                if caller_frame
-                else None
-            )
-            # Ensure it's the same value. This isn't always reliable but
-            # should work for now...
-            if other_state and other_state.get_value() is value:
-                # TODO: additional checks? check id of values? types? code lineno?
+            other_state = _pop_last_accessed_state(value)
+            if other_state:
                 state.bind(other_state)
             # Shorthand for setting the value of a State variable.
             state.set_value(value)
