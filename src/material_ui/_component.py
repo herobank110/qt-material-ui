@@ -78,17 +78,33 @@ class State(QObject, Generic[_T]):
         """Get the value of the variable."""
         return self._value
 
-    def set_value(self, value_or_fn: _T | Callable[[_T], _T]) -> None:
+    def set_value(
+        self,
+        value_or_fn: _T | Callable[[_T], _T],
+        from_qt: bool = False,
+    ) -> None:
         """Set the value of the variable.
+
+        If a transition is set, it will be animated to the new value.
 
         Args:
             value_or_fn: Either a value directly, or a function that
                 takes the current value as input and returns a new one.
+            from_qt: If True, the value is set from Qt.
         """
         value: _T = value_or_fn(self._value) if callable(value_or_fn) else value_or_fn
         if self._value != value:
-            self._value = value
-            self.changed.emit(value)
+            if self._transition and not from_qt:
+                # Value wants to be set and not from a Qt animation, so
+                # start a transition.
+                self.animate_to(
+                    value, self._transition.duration_ms, self._transition.easing
+                )
+            else:
+                # Normal case - set without transition or we are inside
+                # a Qt animation callback.
+                self._value = value
+                self.changed.emit(value)
 
     def animate_to(
         self,
@@ -138,7 +154,9 @@ class State(QObject, Generic[_T]):
             f"(current value: {str(self._value)[:20]})>"
         )
 
-    _qt_property = Property("QVariant", get_value, set_value, None, "")
+    _qt_property = Property(
+        "QVariant", get_value, partial(set_value, from_qt=True), None, ""
+    )
     """This is used by Qt to drive the animation."""
 
     _QT_PROPERTY_NAME = "_qt_property"
