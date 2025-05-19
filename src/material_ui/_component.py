@@ -479,12 +479,12 @@ class Component(QWidget, metaclass=_ComponentMeta):
         """Set a transition for a state variable.
 
         Args:
-            state: The state variable to animate.
-            duration_ms: The duration of the animation in milliseconds.
-            easing: The easing curve to use for the animation.
+            state: Target state variable.
+            duration_ms: Animation duration, in milliseconds.
+            easing: Easing curve to use for the animation.
         """
         if state_obj := _pop_last_accessed_state(state):
-            state_obj.set_transition(duration_ms, easing)
+            state_obj.set_transition(_TransitionConfig(duration_ms, easing))
 
     @effect(sx)
     def _apply_sx(self) -> None:
