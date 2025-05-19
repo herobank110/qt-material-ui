@@ -87,18 +87,33 @@ class BaseTextField(Component):
     _RESTING_LABEL_POS = QPoint()
     _FLOATING_LABEL_POS = QPoint()
 
+    _resting_label_opacity = use_state(0.0, transition=200)
+    _floating_label_opacity = use_state(0.0, transition=200)
+
     @effect(_label_state)
     def _animate_labels(self) -> None:
         # TODO: animate the positions and opacities
         match self._label_state:
             case "resting":
-                self._resting_label.show()
-                # Weird Qt behavior - if widget is initially hidden it
-                # has zero size when it is later shown.
-                self._resting_label.resize(self._resting_label.sizeHint())
-                self._floating_label.hide()
+                self._resting_label_opacity = 1.0
+                self._floating_label_opacity = 0.0
+                return
             case "floating":
-                self._resting_label.hide()
-                self._floating_label.show()
+                self._resting_label_opacity = 0.0
+                self._floating_label_opacity = 1.0
             case _:
                 raise ValueError
+
+    @effect(_resting_label_opacity)
+    def _apply_resting_label_opacity(self) -> None:
+        self._resting_label.sx = {
+            **self._resting_label.sx,
+            "opacity": self._resting_label_opacity,
+        }
+
+    @effect(_floating_label_opacity)
+    def _apply_floating_label_opacity(self) -> None:
+        self._floating_label.sx = {
+            **self._floating_label.sx,
+            "opacity": self._floating_label_opacity,
+        }

@@ -66,14 +66,14 @@ class State(QObject, Generic[_T]):
 
     changed: Signal[_T] = QtSignal("QVariant")  # type: ignore[assignment]
 
-    def __init__(self, default_value: _T, name: str, component_name: str) -> None:
+    def __init__(self, default_value: _T, name: str) -> None:
         super().__init__()
         self.setObjectName(name)
-        self.__component_name = component_name
         self._value = default_value
         self._default_value = default_value
         self._transition: _TransitionConfig | None = None
         self._active_animation: QPropertyAnimation | None = None
+        self._is_bound = False
 
     def get_value(self) -> _T:
         """Get the value of the variable."""
@@ -147,11 +147,13 @@ class State(QObject, Generic[_T]):
         """Bind this variable to another variable."""
         other.changed.connect(self.set_value)
         self.set_value(other.get_value())  # Set initial state.
+        self._is_bound = True
         # TODO: track object deletion
 
     def __repr__(self) -> str:
+        parent_name = type(self.parent()).__name__ if self.parent() else "<unknown>"
         return (
-            f"<State '{self.objectName()}' of component '{self.__component_name}' "
+            f"<State '{self.objectName()}' of component '{parent_name}' "
             f"(current value: {str(self._value)[:20]})>"
         )
 
@@ -209,9 +211,15 @@ class _StateMarker:
 
     name: str
     default_value: Any
+    transition: int | None = None
+    easing: QEasingCurve.Type = QEasingCurve.Type.Linear
 
 
-def use_state(default_value: _T) -> _T:
+def use_state(
+    default_value: _T,
+    transition: int | None = None,
+    easing: QEasingCurve.Type = QEasingCurve.Type.Linear,
+) -> _T:
     """Declare a state variable.
 
     This is intended to be used as a class variable. The default value
@@ -227,6 +235,8 @@ def use_state(default_value: _T) -> _T:
             also sets the type of the variable, so it may be beneficial
             to use `cast` to show the full type (eg for optional values
             with initial state of None).
+        transition: Optional transition duration, in milliseconds.
+        easing: Optional easing curve to use for the transition.
 
     Returns:
         A marker object that will be replaced with the actual state once
@@ -237,7 +247,12 @@ def use_state(default_value: _T) -> _T:
     """
     # This is the wrong type but assert it so that IDEs give completion
     # based on the expected return type.
-    return _StateMarker(name="<unset>", default_value=default_value)  # type: ignore[return-value]
+    return _StateMarker(
+        name="<unset>",
+        default_value=default_value,
+        transition=transition,
+        easing=easing,
+    )  # type: ignore[return-value]
 
 
 def _find_state_markers(obj: object) -> list[_StateMarker]:
@@ -404,14 +419,18 @@ class Component(QWidget, metaclass=_ComponentMeta):
     def __instantiate_state_variables(self) -> None:
         """Create State instances from class variables."""
         for marker in _find_state_markers(self):
-            state = State(marker.default_value, marker.name, type(self).__name__)
+            state = State(marker.default_value, marker.name)
             state.setParent(self)
-            value = marker.default_value
-            setattr(self, marker.name, value)
+            setattr(self, marker.name, marker.default_value)
             # Propagate the internal state value to the mem var proxy.
             # This won't cause an infinite loop since the setter checks
             # if the value is different. It will eventually stabilize.
             state.changed.connect(partial(setattr, self, marker.name))
+            # Apply transition if specified.
+            if marker.transition:
+                state.set_transition(
+                    _TransitionConfig(marker.transition, marker.easing)
+                )
 
     def __getattribute__(self, name: str) -> Any:
         actual_value = super().__getattribute__(name)
