@@ -16,10 +16,13 @@ LabelState = Literal["resting", "floating"]
 class BaseTextField(Component):
     """Base class for Text Field components."""
 
-    label = use_state("Label")
-    value = use_state("")
+    label = use_state("")
+    """Floating label text."""
 
-    changed: Signal[str]
+    value = use_state("")
+    """Current value of the text field."""
+
+    on_change: Signal[str]
     """Emitted when the value changed."""
 
     def __init__(self) -> None:
@@ -68,7 +71,7 @@ class BaseTextField(Component):
         # Set the internal value already for non-controlled text fields.
         # However the controlled case would also set it again.
         self.value = text
-        self.changed.emit(text)
+        self.on_change.emit(text)
 
     @effect(value)
     def _apply_value(self) -> None:
