@@ -71,7 +71,7 @@ class State(QObject, Generic[_T]):
         self.setObjectName(name)
         self._value = default_value
         self._default_value = default_value
-        self._transition: _TransitionConfig | None = None
+        self.transition: _TransitionConfig | None = None
         self._active_animation: QPropertyAnimation | None = None
         self._is_bound = False
 
@@ -79,14 +79,8 @@ class State(QObject, Generic[_T]):
         """Get the value of the variable."""
         return self._value
 
-    def set_value(
-        self,
-        value_or_fn: _T | Callable[[_T], _T],
-        from_qt: bool = False,
-    ) -> None:
+    def set_value(self, value_or_fn: _T | Callable[[_T], _T]) -> None:
         """Set the value of the variable.
-
-        If a transition is set, it will be animated to the new value.
 
         Args:
             value_or_fn: Either a value directly, or a function that
@@ -95,18 +89,27 @@ class State(QObject, Generic[_T]):
         """
         value: _T = value_or_fn(self._value) if callable(value_or_fn) else value_or_fn
         if self._value != value:
-            if self._transition and not from_qt:
-                # Value wants to be set and not from a Qt animation, so
-                # start a transition.
-                if "FilledTextField" in repr(self): print("transitioning to", value, self)
-                self.animate_to(
-                    value, self._transition.duration_ms, self._transition.easing
-                )
-            else:
-                # Normal case - set without transition or we are inside
-                # a Qt animation callback.
-                self._value = value
-                self.changed.emit(value)
+            # Normal case - set without transition or we are inside
+            # a Qt animation callback.
+            self._value = value
+            self.changed.emit(value)
+
+    # def asdjas(self):
+    #     if self.transition and not from_qt:
+    #         # Value wants to be set and not from a Qt animation, so
+    #         # start a transition.
+    #         # Special case for if value changed - check target end value.
+    #         target_value = (
+    #             self._active_animation.endValue()
+    #             if self._active_animation
+    #             else self._value
+    #         )
+    #         if target_value != value:
+    #             if "FilledTextField" in repr(self):
+    #                 print("transitioning to", value, self)
+    #             self.animate_to(
+    #                 value, self.transition.duration_ms, self.transition.easing
+    #             )
 
     def animate_to(
         self,
@@ -142,7 +145,7 @@ class State(QObject, Generic[_T]):
 
     def set_transition(self, config: _TransitionConfig) -> None:
         """Automatically animate to the new value when set."""
-        self._transition = config
+        self.transition = config
 
     def bind(self, other: "State[_T]") -> None:
         """Bind this variable to another variable."""
@@ -158,9 +161,7 @@ class State(QObject, Generic[_T]):
             f"(current value: {str(self._value)[:20]})>"
         )
 
-    _qt_property = Property(
-        "QVariant", get_value, partial(set_value, from_qt=True), None, ""
-    )
+    _qt_property = Property("QVariant", get_value, set_value, None, "")
     """This is used by Qt to drive the animation."""
 
     _QT_PROPERTY_NAME = "_qt_property"
@@ -426,7 +427,9 @@ class Component(QWidget, metaclass=_ComponentMeta):
             # Propagate the internal state value to the mem var proxy.
             # This won't cause an infinite loop since the setter checks
             # if the value is different. It will eventually stabilize.
-            state.changed.connect(partial(setattr, self, marker.name))
+            # Use super so that it doesn't try to call the set_value of
+            # the state again.
+            state.changed.connect(partial(super().__setattr__, marker.name))
             # Apply transition if specified.
             if marker.transition:
                 state.set_transition(
@@ -451,6 +454,11 @@ class Component(QWidget, metaclass=_ComponentMeta):
         if state := self._find_state(name):
             if other_state := _pop_last_accessed_state(value):
                 state.bind(other_state)
+            elif state.transition:
+                if type(self).__name__ == "FilledTextField": print("animateto", value, state)
+                state.animate_to(
+                    value, state.transition.duration_ms, state.transition.easing
+                )
             else:
                 state.set_value(value)
         return super().__setattr__(name, value)
@@ -545,12 +553,14 @@ class Component(QWidget, metaclass=_ComponentMeta):
         self.resize(self.size())
 
     def focusInEvent(self, event: QFocusEvent) -> None:  # noqa: N802
-        if type(self).__name__ == "FilledTextField": print("focus in")
+        if type(self).__name__ == "FilledTextField":
+            print("focus in")
         self.focused = True
         return super().focusInEvent(event)
 
     def focusOutEvent(self, event: QFocusEvent) -> None:  # noqa: N802
-        if type(self).__name__ == "FilledTextField": print("focus out")
+        if type(self).__name__ == "FilledTextField":
+            print("focus out")
         self.focused = False
         return super().focusOutEvent(event)
 
@@ -569,11 +579,13 @@ class Component(QWidget, metaclass=_ComponentMeta):
         if watched is self.focusProxy():
             # Intercept the focus events from the focus proxy.
             if event.type() == QEvent.Type.FocusIn:
-                if type(self).__name__ == "FilledTextField": print("proxy focus in")
+                if type(self).__name__ == "FilledTextField":
+                    print("proxy focus in")
                 self.focusInEvent(cast("QFocusEvent", event))
                 return False  # Focus proxy should handle it too.
             if event.type() == QEvent.Type.FocusOut:
-                if type(self).__name__ == "FilledTextField": print("proxy focus out")
+                if type(self).__name__ == "FilledTextField":
+                    print("proxy focus out")
                 self.focusOutEvent(cast("QFocusEvent", event))
                 return False  # Focus proxy should handle it too.
         return super().eventFilter(watched, event)
