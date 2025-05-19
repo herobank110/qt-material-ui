@@ -2,7 +2,8 @@
 
 from typing import Literal, cast
 
-from qtpy.QtCore import QPoint, QSize, Qt
+from qtpy.QtCore import QEvent, QPoint, QSize, Qt
+from qtpy.QtGui import QMouseEvent
 from qtpy.QtWidgets import QLineEdit, QSizePolicy
 
 from material_ui._component import Component, Signal, effect, use_state
@@ -83,6 +84,7 @@ class BaseTextField(Component):
     @effect(value, Component.focused)
     def _update_label_state(self) -> None:
         self._label_state = "floating" if self.value or self.focused else "resting"
+        print("update label state", self.focused, self._label_state)
 
     # Configured in derived classes.
     _RESTING_LABEL_POS = QPoint()
@@ -133,3 +135,23 @@ class BaseTextField(Component):
     @effect(_floating_label_pos)
     def _apply_floating_label_pos(self) -> None:
         self._floating_label.move(self._floating_label_pos)
+
+    # def mousePressEvent(self, event: QMouseEvent) -> None:  # noqa: N802
+    #     print("mousepress")
+    #     event.accept()
+    #     return super().mousePressEvent(event)
+    # def mousePressEvent(self, event: QMouseEvent):
+    #     pass
+
+    # def mouseReleaseEvent(self, event: QMouseEvent):
+    #     pass
+        # return super().mousePressEvent(event)
+
+    # def event(self, event: QEvent) -> bool:
+    #     if event.type() == QEvent.Type.MouseButtonPress:
+    #         # Ignore the event if the line edit is not enabled.
+    #         # if not self._line_edit.isEnabled():
+    #         #     return
+    #         print("mousepress")
+    #         return True
+    #     return super().event(event)

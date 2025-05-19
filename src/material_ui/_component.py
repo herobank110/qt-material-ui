@@ -98,6 +98,7 @@ class State(QObject, Generic[_T]):
             if self._transition and not from_qt:
                 # Value wants to be set and not from a Qt animation, so
                 # start a transition.
+                if "FilledTextField" in repr(self): print("transitioning to", value, self)
                 self.animate_to(
                     value, self._transition.duration_ms, self._transition.easing
                 )
@@ -544,10 +545,12 @@ class Component(QWidget, metaclass=_ComponentMeta):
         self.resize(self.size())
 
     def focusInEvent(self, event: QFocusEvent) -> None:  # noqa: N802
+        if type(self).__name__ == "FilledTextField": print("focus in")
         self.focused = True
         return super().focusInEvent(event)
 
     def focusOutEvent(self, event: QFocusEvent) -> None:  # noqa: N802
+        if type(self).__name__ == "FilledTextField": print("focus out")
         self.focused = False
         return super().focusOutEvent(event)
 
@@ -566,9 +569,11 @@ class Component(QWidget, metaclass=_ComponentMeta):
         if watched is self.focusProxy():
             # Intercept the focus events from the focus proxy.
             if event.type() == QEvent.Type.FocusIn:
+                if type(self).__name__ == "FilledTextField": print("proxy focus in")
                 self.focusInEvent(cast("QFocusEvent", event))
                 return False  # Focus proxy should handle it too.
             if event.type() == QEvent.Type.FocusOut:
+                if type(self).__name__ == "FilledTextField": print("proxy focus out")
                 self.focusOutEvent(cast("QFocusEvent", event))
                 return False  # Focus proxy should handle it too.
         return super().eventFilter(watched, event)

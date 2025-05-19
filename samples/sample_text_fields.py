@@ -23,7 +23,7 @@ class SampleTextFields(Component):
 
         filled = FilledTextField()
         filled.label = "Label"
-        filled.value = "Value"
+        # filled.value = "Value"
         row.add_widget(filled)
 
         outlined = OutlinedTextField()
@@ -34,7 +34,15 @@ class SampleTextFields(Component):
         # Take the initial focus away from the first text field.
         self.setFocus()
         # Steal focus when the empty area is clicked.
-        self.clicked.connect(lambda: self.setFocus())
+        def f():
+            print("clicked window - clearing focus")
+            self.setFocus()
+        self.clicked.connect(f)
+
+        from qtpy.QtCore import QTimer
+        # QTimer.singleShot(100, lambda: filled.setFocus())
+        # QTimer.singleShot(0, lambda: filled.setFocus())
+        # filled.setFocus()
 
 
 def main() -> None:
