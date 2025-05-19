@@ -84,19 +84,21 @@ class Line(Component):
     @effect(color, thickness, orientation)
     def _apply_line(self) -> None:
         self.sx = {"background-color": self.color}
-        thickness = (
-            resolve_token(self.thickness)
-            if isinstance(self.thickness, DesignToken)
-            else self.thickness
-        )
-        if not isinstance(thickness, int):
-            raise TypeError
+
         # Set one of the dimensions to the thickness. Parent component
         # will have to set the other dimension.
         match self.orientation:
             case Qt.Orientation.Horizontal:
-                self.setFixedHeight(thickness)
+                self.setFixedHeight(self.resolved_thickness())
             case Qt.Orientation.Vertical:
-                self.setFixedWidth(thickness)
+                self.setFixedWidth(self.resolved_thickness())
             case _:
                 raise ValueError
+
+    def resolved_thickness(self) -> int:
+        """Return the resolved thickness of the line."""
+        if isinstance(self.thickness, DesignToken):
+            if isinstance(resolved := resolve_token(self.thickness), int):
+                return resolved
+            raise TypeError
+        return self.thickness

@@ -75,11 +75,9 @@ class FilledTextField(BaseTextField):
 
     @effect(Component.size)
     def _apply_size(self) -> None:
-        # Set the size of the background to the size of the text field.
         self._background.resize(self.size())
         self._active_indicator.setFixedWidth(self._background.width())
-        indicator_thickness = cast(
-            "int",
-            resolve_token(cast("DesignToken", self._active_indicator.thickness)),
+        self._active_indicator.move(
+            0,
+            self._background.height() - self._active_indicator.resolved_thickness(),
         )
-        self._active_indicator.move(0, self._background.height() - indicator_thickness)
