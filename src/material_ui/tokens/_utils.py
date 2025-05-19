@@ -1,11 +1,11 @@
 """Token core."""
 
 import contextlib
+import re
 from dataclasses import dataclass
 from functools import partial
-import re
-from qtpy.QtGui import QColor
 
+from qtpy.QtGui import QColor
 
 Indirection = str
 """Token value that is a reference to another token."""
@@ -81,11 +81,7 @@ def find_root_token(token: DesignToken) -> DesignToken:
 
 
 # TODO: make proper indirection class instead of hardcoded string check
-_NOT_INDIRECTION = {
-    "SHAPE_FAMILY_CIRCULAR",
-    "SHAPE_FAMILY_ROUNDED_CORNERS",
-    "Roboto"
-}
+_NOT_INDIRECTION = {"SHAPE_FAMILY_CIRCULAR", "SHAPE_FAMILY_ROUNDED_CORNERS", "Roboto"}
 
 
 def _is_indirection(token: DesignToken) -> bool:
