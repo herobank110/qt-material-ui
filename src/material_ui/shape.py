@@ -1,8 +1,12 @@
 """Basic shape utility widget."""
 
+from typing import cast
+
+from qtpy.QtGui import QColor
+
 from material_ui._component import Component, effect, use_state
-from material_ui.tokens import md_sys_shape
-from material_ui.tokens._utils import find_root_token
+from material_ui.tokens import md_sys_color, md_sys_shape
+from material_ui.tokens._utils import DesignToken, find_root_token, resolve_token
 
 
 class Shape(Component):
@@ -10,9 +14,8 @@ class Shape(Component):
 
     visible = use_state(True)
     corner_shape = use_state(md_sys_shape.corner_none)
-
-    def __init__(self) -> None:
-        super().__init__()
+    color = use_state(md_sys_color.surface)
+    opacity = use_state(cast("float | DesignToken", 1.0))
 
     @effect(corner_shape, Component.size)
     def _apply_corner_shape(self) -> None:
@@ -50,3 +53,21 @@ class Shape(Component):
     @effect(visible)
     def _apply_visible(self) -> None:
         self.setVisible(self.visible)
+
+    @effect(color, opacity)
+    def _apply_background_color(self) -> None:
+        color = resolve_token(self.color)
+        if not isinstance(color, QColor):
+            raise TypeError
+        # Apply the opacity to the color.
+        opacity_float = (
+            self.opacity
+            if isinstance(self.opacity, float)
+            else resolve_token(self.opacity)
+        )
+        if not isinstance(opacity_float, float):
+            raise TypeError
+        # Make a copy to keep the design token's value unmodified.
+        color = QColor(color)
+        color.setAlphaF(opacity_float)
+        self.sx = {**self.sx, "background-color": color}
