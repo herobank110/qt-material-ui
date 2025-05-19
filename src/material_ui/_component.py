@@ -474,7 +474,10 @@ class Component(QWidget, metaclass=_ComponentMeta):
         layout.addWidget(widget)
 
     def set_transition(
-        self, state: Any, duration_ms: int, easing: QEasingCurve.Type
+        self,
+        state: Any,
+        duration_ms: int,
+        easing: QEasingCurve.Type = QEasingCurve.Type.Linear,
     ) -> None:
         """Set a transition for a state variable.
 
