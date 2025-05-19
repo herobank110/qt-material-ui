@@ -55,6 +55,7 @@ class BaseTextField(Component):
         self.setFocusProxy(self._line_edit)
 
         self.clicked.connect(self._on_clicked)
+        self.should_propagate_click = False
 
     def sizeHint(self) -> QSize:  # noqa: N802
         height = resolve_token(tokens.container_height)
@@ -140,10 +141,13 @@ class BaseTextField(Component):
     #     print("mousepress")
     #     event.accept()
     #     return super().mousePressEvent(event)
+
     # def mousePressEvent(self, event: QMouseEvent):
     #     pass
 
     # def mouseReleaseEvent(self, event: QMouseEvent):
+    #     # self.setFocus()
+    #     event.accept()
     #     pass
         # return super().mousePressEvent(event)
 

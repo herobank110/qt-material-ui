@@ -398,6 +398,9 @@ class Component(QWidget, metaclass=_ComponentMeta):
         # Make qt stylesheets work properly!
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, on=True)
 
+        self.should_propagate_click = True
+        """Whether the click event should be propagated to the parent widget."""
+
     def __instantiate_state_variables(self) -> None:
         """Create State instances from class variables."""
         for marker in _find_state_markers(self):
@@ -576,6 +579,8 @@ class Component(QWidget, metaclass=_ComponentMeta):
             mouse_inside = self.rect().contains(event.pos())
             if mouse_inside:
                 self.clicked.emit()
+                if not self.should_propagate_click:
+                    return
         return super().mouseReleaseEvent(event)
 
     def enterEvent(self, event: QEnterEvent) -> None:  # noqa: N802
