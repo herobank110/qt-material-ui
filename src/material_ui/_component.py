@@ -115,7 +115,7 @@ class State(QObject, Generic[_T]):
             f"(current value: {str(self._value)[:20]})>"
         )
 
-    _qt_property = Property("QVariant", get_value, set_value, None, "")  # pyright: ignore[reportArgumentType]
+    _qt_property = Property("QVariant", get_value, set_value, None, "")
     """This is used by Qt to drive the animation."""
 
     _QT_PROPERTY_NAME = "_qt_property"
@@ -154,7 +154,7 @@ class _ComponentMeta(type(QObject)):  # type: ignore[misc]
         # remember exact examples but it may fail for certain types.
         attrs.update(
             {
-                key: QtSignal(*["QVariant"] * num_args)  # pyright: ignore[reportArgumentType]
+                key: QtSignal(*["QVariant"] * num_args)
                 for key, num_args in _find_signal_annotations(attrs).items()
             },
         )
@@ -400,7 +400,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
                 state.changed.connect(func)
             # Call the function to apply the initial state. The timer
             # ensures the derived class's constructor is finished first.
-            QTimer.singleShot(0, func)  # pyright: ignore[reportUnknownMemberType]
+            QTimer.singleShot(0, func)
 
     def overlay_widget(self, widget: QWidget, margins: QMargins | None = None) -> None:
         """Overlay a widget on top of this widget.
@@ -450,7 +450,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
             w.installEventFilter(self)
 
         # Wrong Qt type annotation - should be QWidget | None.
-        return super().setFocusProxy(w)  # type: ignore[arg-type]
+        return super().setFocusProxy(w)
 
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:  # noqa: N802
         if watched is self.focusProxy():
