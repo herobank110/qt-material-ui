@@ -76,6 +76,7 @@ omit = [
     "src/material_ui/tokens/md_comp_*",
     "src/material_ui/tokens/md_sys_*",
     "src/material_ui/tokens/md_ref_*",
+    "tests/*"
 ]
 
 [tool.pyright]
