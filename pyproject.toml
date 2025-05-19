@@ -90,5 +90,5 @@ reportUnknownMemberType = false
 
 executionEnvironments = [
     # Allow tests to import private functions to test them.
-    { root = "tests", reportPrivateUsage = false },
+    { root = "tests", reportPrivateUsage = false, reportMissingTypeStubs = false },
 ]

@@ -37,7 +37,7 @@ def test_Component_effect_called_initially_and_on_change(
         a = use_state("hello")
 
         @effect(a)
-        def my_effect(self):
+        def my_effect(self) -> None:
             stub(self.a)
 
     c = C()
