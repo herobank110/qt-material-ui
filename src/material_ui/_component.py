@@ -46,6 +46,14 @@ class Signal(Generic[Unpack[_Ts]]):
 _T = TypeVar("_T")
 
 
+@dataclass
+class _TransitionConfig:
+    """Transition properties for a state variable."""
+
+    duration_ms: int
+    easing: QEasingCurve.Type
+
+
 class State(QObject, Generic[_T]):
     """Type safe property wrapper object.
 
@@ -63,6 +71,8 @@ class State(QObject, Generic[_T]):
         self.__component_name = component_name
         self._value = default_value
         self._default_value = default_value
+        self._transition: _TransitionConfig | None = None
+        self._active_animation: QPropertyAnimation | None = None
 
     def get_value(self) -> _T:
         """Get the value of the variable."""
@@ -93,6 +103,7 @@ class State(QObject, Generic[_T]):
             duration_ms: The duration of the animation in milliseconds.
             easing: The easing curve to use for the animation.
         """
+        self._clear_active_animation()
         animation = QPropertyAnimation()
         animation.setParent(self)
         animation.setTargetObject(self)
@@ -102,6 +113,18 @@ class State(QObject, Generic[_T]):
         animation.setStartValue(self._value)
         animation.setEndValue(value)
         animation.start()
+        animation.finished.connect(self._clear_active_animation)
+        self._active_animation = animation
+
+    def _clear_active_animation(self) -> None:
+        if self._active_animation:
+            self._active_animation.setParent(None)
+            self._active_animation.deleteLater()
+            self._active_animation = None
+
+    def set_transition(self, config: _TransitionConfig) -> None:
+        """Automatically animate to the new value when set."""
+        self._transition = config
 
     def bind(self, other: "State[_T]") -> None:
         """Bind this variable to another variable."""
@@ -386,13 +409,11 @@ class Component(QWidget, metaclass=_ComponentMeta):
         return actual_value
 
     def __setattr__(self, name: str, value: Any) -> None:
-        state = self._find_state(name)
-        if state:
-            other_state = _pop_last_accessed_state(value)
-            if other_state:
+        if state := self._find_state(name):
+            if other_state := _pop_last_accessed_state(value):
                 state.bind(other_state)
-            # Shorthand for setting the value of a State variable.
-            state.set_value(value)
+            else:
+                state.set_value(value)
         return super().__setattr__(name, value)
 
     def _find_state(self, name: str) -> State[Any] | None:
@@ -433,6 +454,19 @@ class Component(QWidget, metaclass=_ComponentMeta):
         layout.setSpacing(0)
         layout.setContentsMargins(margins or QMargins())
         layout.addWidget(widget)
+
+    def set_transition(
+        self, state: Any, duration_ms: int, easing: QEasingCurve.Type
+    ) -> None:
+        """Set a transition for a state variable.
+
+        Args:
+            state: The state variable to animate.
+            duration_ms: The duration of the animation in milliseconds.
+            easing: The easing curve to use for the animation.
+        """
+        if state_obj := _pop_last_accessed_state(state):
+            state_obj.set_transition(duration_ms, easing)
 
     @effect(sx)
     def _apply_sx(self) -> None:
