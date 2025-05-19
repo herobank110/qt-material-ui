@@ -1,12 +1,15 @@
 """Filled text field component."""
 
+from typing import cast
+
 from qtpy.QtCore import QMargins, QPoint
 
 from material_ui._component import Component, effect
 from material_ui.layout_basics import Row
-from material_ui.shape import Shape
+from material_ui.shape import Line, Shape
 from material_ui.text_fields._base_text_field import BaseTextField
 from material_ui.tokens import md_comp_filled_text_field as tokens
+from material_ui.tokens._utils import DesignToken, resolve_token
 
 
 class FilledTextField(BaseTextField):
@@ -29,6 +32,11 @@ class FilledTextField(BaseTextField):
         state_layer.color = tokens.hover_state_layer_color
         state_layer.opacity = tokens.hover_state_layer_opacity
         self._background.overlay_widget(state_layer)
+
+        self._active_indicator = Line()
+        self._active_indicator.color = tokens.hover_active_indicator_color
+        self._active_indicator.thickness = tokens.focus_active_indicator_thickness
+        self._active_indicator.setParent(self._background)
 
         self._floating_label.setParent(self._background)
         self._floating_label.sx = {
@@ -69,3 +77,9 @@ class FilledTextField(BaseTextField):
     def _apply_size(self) -> None:
         # Set the size of the background to the size of the text field.
         self._background.resize(self.size())
+        self._active_indicator.setFixedWidth(self._background.width())
+        indicator_thickness = cast(
+            "int",
+            resolve_token(cast("DesignToken", self._active_indicator.thickness)),
+        )
+        self._active_indicator.move(0, self._background.height() - indicator_thickness)

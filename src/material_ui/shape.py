@@ -2,6 +2,7 @@
 
 from typing import cast
 
+from qtpy.QtCore import Qt
 from qtpy.QtGui import QColor
 
 from material_ui._component import Component, effect, use_state
@@ -60,14 +61,42 @@ class Shape(Component):
         if not isinstance(color, QColor):
             raise TypeError
         # Apply the opacity to the color.
-        opacity_float = (
-            self.opacity
-            if isinstance(self.opacity, float)
-            else resolve_token(self.opacity)
+        opacity = (
+            resolve_token(self.opacity)
+            if isinstance(self.opacity, DesignToken)
+            else self.opacity
         )
-        if not isinstance(opacity_float, float):
+        if not isinstance(opacity, float):
             raise TypeError
         # Make a copy to keep the design token's value unmodified.
         color = QColor(color)
-        color.setAlphaF(opacity_float)
+        color.setAlphaF(opacity)
         self.sx = {**self.sx, "background-color": color}
+
+
+class Line(Component):
+    """A straight line."""
+
+    color = use_state(md_sys_color.outline)
+    thickness = use_state(cast("int | DesignToken", 1))
+    orientation = use_state(Qt.Orientation.Horizontal)
+
+    @effect(color, thickness, orientation)
+    def _apply_line(self) -> None:
+        self.sx = {"background-color": self.color}
+        thickness = (
+            resolve_token(self.thickness)
+            if isinstance(self.thickness, DesignToken)
+            else self.thickness
+        )
+        if not isinstance(thickness, int):
+            raise TypeError
+        # Set one of the dimensions to the thickness. Parent component
+        # will have to set the other dimension.
+        match self.orientation:
+            case Qt.Orientation.Horizontal:
+                self.setFixedHeight(thickness)
+            case Qt.Orientation.Vertical:
+                self.setFixedWidth(thickness)
+            case _:
+                raise ValueError
