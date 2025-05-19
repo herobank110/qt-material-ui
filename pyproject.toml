@@ -83,6 +83,11 @@ omit = [
 include = ["src", "tests"]
 typeCheckingMode = "strict"
 
+# This seems to make it so if you assign a mem var in a derived class it
+# changes the type defined in the base class. Not sure if it's a bug or
+# feature.
+reportAttributeAccessIssue = false
+
 # This seems to be broken with variadic generic types with no arguments.
 # Eg: Signal with no arguments.
 reportMissingTypeArgument = false
