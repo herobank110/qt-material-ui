@@ -21,10 +21,11 @@ from qtpy.QtCore import (
     Signal as QtSignal,  # pyright: ignore  # noqa: PGH003
 )
 from qtpy.QtGui import QEnterEvent, QFocusEvent, QMouseEvent, QResizeEvent
-from qtpy.QtWidgets import QVBoxLayout, QWidget
+from qtpy.QtWidgets import QGraphicsOpacityEffect, QVBoxLayout, QWidget
 from typing_extensions import TypeVarTuple, Unpack
 
 from material_ui._utils import StyleDict, convert_sx_to_qss
+from material_ui.tokens._utils import DesignToken, resolve_token_or_value
 
 _Ts = TypeVarTuple("_Ts")
 
@@ -493,8 +494,26 @@ class Component(QWidget, metaclass=_ComponentMeta):
     def _apply_sx(self) -> None:
         """Apply the sx property to the widget."""
         sx = {**_COMPONENT_STYLESHEET_RESET, **self.sx}
+        # Special handling for opacity - pass to a graphics effect.
+        if (opacity := sx.pop("opacity", None)) is not None:
+            self._apply_opacity_from_sx(opacity)
         qss = convert_sx_to_qss(sx)
         self.setStyleSheet(qss)
+
+    def _apply_opacity_from_sx(self, opacity: float | DesignToken) -> None:
+        if effect := self.graphicsEffect():
+            # Reuse existing effect unless one is already set - Qt can
+            # only have one.
+            if not isinstance(effect, QGraphicsOpacityEffect):
+                raise RuntimeError
+        else:
+            # Create a new effect.
+            effect = QGraphicsOpacityEffect(self)
+            self.setGraphicsEffect(effect)
+        resolved_opacity = resolve_token_or_value(opacity)
+        if not isinstance(resolved_opacity, float):
+            raise TypeError
+        effect.setOpacity(resolved_opacity)
 
     def resizeEvent(self, event: QResizeEvent) -> None:  # noqa: N802
         super().resizeEvent(event)

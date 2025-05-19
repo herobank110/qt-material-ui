@@ -4,6 +4,7 @@ import contextlib
 import re
 from dataclasses import dataclass
 from functools import partial
+from typing import TypeVar, cast
 
 from qtpy.QtGui import QColor
 
@@ -55,6 +56,17 @@ def resolve_token(token: DesignToken) -> TokenValue:
         value = resolve_token(tokens.container_color)
     """
     return find_root_token(token).value
+
+
+_T = TypeVar("_T")
+
+
+def resolve_token_or_value(token_or_value: _T | DesignToken) -> _T:
+    """If a token is passed, resolve it. Otherwise, return the value itself."""
+    if isinstance(token_or_value, DesignToken):
+        resolved = resolve_token(token_or_value)
+        return cast("_T", resolved)
+    return token_or_value
 
 
 def find_root_token(token: DesignToken) -> DesignToken:
