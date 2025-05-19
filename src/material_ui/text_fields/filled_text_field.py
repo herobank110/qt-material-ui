@@ -38,7 +38,6 @@ class FilledTextField(BaseTextField):
 
         self._floating_label.setParent(self._background)
         self._floating_label.sx = {
-            "color": tokens.label_text_color,
             "font-family": tokens.label_text_font,
             "font-size": tokens.label_text_populated_size,
             "font-weight": tokens.label_text_weight,
@@ -46,7 +45,6 @@ class FilledTextField(BaseTextField):
         self._floating_label.move(self._FLOATING_LABEL_POS)
         self._resting_label.setParent(self._background)
         self._resting_label.sx = {
-            "color": tokens.label_text_color,
             "font-family": tokens.label_text_font,
             "font-size": tokens.label_text_size,
             "font-weight": tokens.label_text_weight,
@@ -84,7 +82,17 @@ class FilledTextField(BaseTextField):
         else:
             self._active_indicator.color = tokens.active_indicator_color
             self._active_indicator.thickness = tokens.active_indicator_height
+        # TODO: use an overlay layout that will just handle anchoring to
+        #   bottom of background
         self._active_indicator.move(
             0,
             self._background.height() - self._active_indicator.resolved_thickness(),
         )
+
+    @effect(Component.focused)
+    def _refresh_label(self) -> None:
+        color = (
+            tokens.focus_label_text_color if self.focused else tokens.label_text_color
+        )
+        self._floating_label.sx = {**self._floating_label.sx, "color": color}
+        self._resting_label.sx = {**self._resting_label.sx, "color": color}
