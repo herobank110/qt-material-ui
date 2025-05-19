@@ -84,23 +84,31 @@ class BaseTextField(Component):
     def _update_label_state(self) -> None:
         self._label_state = "floating" if self.value or self.focused else "resting"
 
+    # Configured in derived classes.
     _RESTING_LABEL_POS = QPoint()
     _FLOATING_LABEL_POS = QPoint()
 
     _resting_label_opacity = use_state(0.0, transition=200)
     _floating_label_opacity = use_state(0.0, transition=200)
+    _resting_label_pos = use_state(QPoint(), transition=200)
+    _floating_label_pos = use_state(QPoint(), transition=200)
 
     @effect(_label_state)
     def _animate_labels(self) -> None:
-        # TODO: animate the positions and opacities
+        # Animate the positions and opacities. Instead of animating font
+        # size, animate the opacity and positions to make two labels
+        # look like one.
         match self._label_state:
             case "resting":
                 self._resting_label_opacity = 1.0
                 self._floating_label_opacity = 0.0
-                return
+                self._resting_label_pos = self._RESTING_LABEL_POS
+                self._floating_label_pos = self._RESTING_LABEL_POS
             case "floating":
                 self._resting_label_opacity = 0.0
                 self._floating_label_opacity = 1.0
+                self._resting_label_pos = self._FLOATING_LABEL_POS
+                self._floating_label_pos = self._FLOATING_LABEL_POS
             case _:
                 raise ValueError
 
@@ -117,3 +125,11 @@ class BaseTextField(Component):
             **self._floating_label.sx,
             "opacity": self._floating_label_opacity,
         }
+
+    @effect(_resting_label_pos)
+    def _apply_resting_label_pos(self) -> None:
+        self._resting_label.move(self._resting_label_pos)
+
+    @effect(_floating_label_pos)
+    def _apply_floating_label_pos(self) -> None:
+        self._floating_label.move(self._floating_label_pos)

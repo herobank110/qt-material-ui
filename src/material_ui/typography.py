@@ -6,6 +6,7 @@ from qtpy.QtCore import Qt
 from qtpy.QtWidgets import QLabel
 
 from material_ui._component import Component, effect, use_state
+from material_ui.tokens import md_sys_typescale
 
 Typescale = Literal[
     "display",
@@ -52,7 +53,7 @@ class Typography(Component):
             self.typescale = typescale
 
         self.sx = {
-            "font-size": "14px",
+            "font-size": md_sys_typescale.body_medium_size,
             "color": "black",
         }
 

@@ -39,14 +39,14 @@ class FilledTextField(BaseTextField):
             "font-size": tokens.label_text_populated_size,
             "font-weight": tokens.label_text_weight,
         }
-        self._floating_label.move(self._FLOATING_LABEL_POS)
+        # self._floating_label.move(self._FLOATING_LABEL_POS)
         self._resting_label.setParent(self._background)
         self._resting_label.sx = {
             "font-family": tokens.label_text_font,
             "font-size": tokens.label_text_size,
             "font-weight": tokens.label_text_weight,
         }
-        self._resting_label.move(self._RESTING_LABEL_POS)
+        # self._resting_label.move(self._RESTING_LABEL_POS)
 
         row = Row()
         row.gap = 16
