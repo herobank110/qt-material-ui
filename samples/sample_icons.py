@@ -1,14 +1,14 @@
 """Sample of using the icons."""
 
-from qtpy.QtWidgets import QApplication, QGridLayout
-from qtpy.QtCore import Qt, QMargins
+from material_ui import Component
 from material_ui._component import use_state
 from material_ui.icon import Icon
-from material_ui.layout_basics import Stack, Row
+from material_ui.layout_basics import Row, Stack
 from material_ui.switch import Switch
 from material_ui.tokens import md_sys_color
-from material_ui import Component
 from material_ui.typography import Typography
+from qtpy.QtCore import QMargins, Qt
+from qtpy.QtWidgets import QApplication, QGridLayout
 
 ICONS = ["star", "arrow_drop_down", "more_vert", "check", "close", "add"]
 
@@ -39,8 +39,8 @@ class IconsSample(Component):
         filled_label.text = "Filled"
         filled_row.add_widget(filled_label)
         filled_switch = Switch()
-        filled_switch.selected.bind(self.filled)
-        filled_switch.change_requested.connect(self.filled.set)
+        filled_switch.selected = self.filled
+        filled_switch.change_requested.connect(self._find_state("filled").set_value)
         filled_row.add_widget(filled_switch)
         filters_box.add_widget(filled_row)
 
@@ -53,7 +53,7 @@ class IconsSample(Component):
         for i, icon_name in enumerate(ICONS):
             icon = Icon()
             icon.icon_name = icon_name
-            icon.filled.bind(self.filled)
+            icon.filled = self.filled
             icon_grid_layout.addWidget(icon, i // 3, i % 3)
             self._icons.append(icon)
         main_row.add_widget(icon_grid)

@@ -24,14 +24,14 @@ class TV(Component):
         super().__init__()
 
         status_label = Typography()
-        status_label.text.bind(
-            lambda: f"TV is {'on' if self.is_powered_on.get() else 'off'}",
-            [self.is_powered_on]
+
+        power_switch = Switch(
+            selected=self.is_powered_on,
+            on_change=self.set_state(self.is_powered_on),
         )
 
-        power_switch = Switch()
-        power_switch.selected.bind(self.is_powered_on)
-        power_switch.change_requested.connect(self.is_powered_on.set)
-
         # TODO: add widgets to a layout?
+    @effect(is_powered_on)
+    def update_status_label(self):
+        status_label.text = f"TV is {'on' if self.is_powered_on.get() else 'off'}"
 ```

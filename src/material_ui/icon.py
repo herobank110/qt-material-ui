@@ -48,7 +48,7 @@ class Icon(Component):
 
     @effect(color)
     def _apply_color(self) -> None:
-        self.sx.set(lambda prev: prev | {"color": self.color})
+        self.sx = {**self.sx, "color": self.color}
 
     @effect(icon_name)
     def _apply_icon_name(self):

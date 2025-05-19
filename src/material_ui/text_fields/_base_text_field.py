@@ -3,7 +3,7 @@
 from typing import Literal, cast
 
 from qtpy.QtCore import QPoint, QSize, Qt
-from qtpy.QtWidgets import QLineEdit
+from qtpy.QtWidgets import QLineEdit, QSizePolicy
 
 from material_ui._component import Component, Signal, effect, use_state
 from material_ui.tokens import md_comp_filled_text_field as tokens
@@ -26,6 +26,10 @@ class BaseTextField(Component):
         super().__init__()
 
         self.setCursor(Qt.CursorShape.IBeamCursor)
+        self.setSizePolicy(
+            QSizePolicy.Policy.Expanding,
+            QSizePolicy.Policy.Fixed,
+        )
 
         self._resting_label = Typography()
         self._resting_label.text = self.label
@@ -51,8 +55,7 @@ class BaseTextField(Component):
     def sizeHint(self) -> QSize:  # noqa: N802
         height = resolve_token(tokens.container_height)
         if not isinstance(height, int):
-            msg = "Height must be an integer"
-            raise TypeError(msg)
+            raise TypeError
         return QSize(200, height)
 
     def _on_clicked(self) -> None:

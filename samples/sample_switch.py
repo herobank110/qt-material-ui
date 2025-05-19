@@ -31,9 +31,9 @@ class SampleSwitch(Component):
 
         switch2 = Switch()
         switch2.selected = self.selected
-        switch2.change_requested.connect(
-            lambda selected: self._find_state("selected").set_value(selected)
-        )
+        # switch2.change_requested.connect(
+        #     lambda selected: self._find_state("selected").set_value(selected)
+        # )
         stack.add_widget(switch2)
 
 

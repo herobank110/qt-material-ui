@@ -2,6 +2,7 @@ from qtpy import QtCore, QtGui
 
 from material_ui._component import Component, Signal, effect, use_state
 from material_ui.shape import Shape
+from material_ui.tokens import md_comp_switch as tokens
 
 _UNSELECTED_TRACK_OUTLINE_COLOR = "#79747E"
 _UNSELECTED_TRACK_COLOR = QtGui.QColor("#E6E0E9")
@@ -71,8 +72,8 @@ class Switch(Component):
     """Switches toggle the selection of an item on or off."""
 
     selected = use_state(False)
-    hovered = use_state(False)
-    pressed = use_state(False)
+    # hovered = use_state(False)
+    # pressed = use_state(False)
     disabled = use_state(False)
 
     # Create states for the animated properties. Can't be bothered
@@ -87,26 +88,31 @@ class Switch(Component):
         super().__init__()
 
         self.setFixedSize(_SWITCH_WIDTH, _SWITCH_HEIGHT)
+        self.clicked.connect(self._on_click)
 
         self._track = Shape()
-        self._track.corner_shape = "full"
+        self._track.corner_shape = tokens.track_shape
         self._track.setGeometry(_TRACK_GEOMETRY)
         self._track.setParent(self)
 
         self._state_layer = Shape()
         self._state_layer.sx = {"background-color": _STATE_LAYER_COLOR}
-        self._state_layer.corner_shape = "full"
+        self._state_layer.corner_shape = tokens.state_layer_shape
         self._state_layer.visible = self.hovered
         self._state_layer.setParent(self)
 
         self._handle = Shape()
-        self._handle.corner_shape = "full"
+        self._handle.corner_shape = tokens.handle_shape
         self._handle.setParent(self)
 
         # Set the internal selected state but use the change_requested
         # signal as source of truth, so using it as a 'controlled' input
         # the parent component can hook into into to set its bound state.
-        self.change_requested.connect(self._find_state("selected").set_value)
+        # self.change_requested.connect(self._find_state("selected").set_value)
+
+    def _on_click(self) -> None:
+        """Handle click events to toggle the switch."""
+        self.change_requested.emit(not self.selected)
 
     @effect(_handle_geometry)
     def _apply_handle_geometry(self) -> None:
@@ -121,7 +127,7 @@ class Switch(Component):
             "background-color": self._track_color,
         }
 
-    @effect(selected, pressed, hovered)
+    @effect(selected, Component.pressed, Component.hovered)
     def _refresh_shapes(self):
         self._find_state("_track_color").animate_to(
             _SELECTED_TRACK_COLOR if self.selected else _UNSELECTED_TRACK_COLOR,
@@ -165,22 +171,22 @@ class Switch(Component):
             else _UNSELECTED_STATE_LAYER_GEOMETRY
         )
 
-    def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
-        if event.button() == QtCore.Qt.LeftButton:
-            self.pressed = True
-        return super().mousePressEvent(event)
+    # def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
+    #     if event.button() == QtCore.Qt.LeftButton:
+    #         self.pressed = True
+    #     return super().mousePressEvent(event)
 
-    def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
-        self.pressed = False
-        mouse_inside = self.rect().contains(event.pos())
-        if event.button() == QtCore.Qt.LeftButton and mouse_inside:
-            self.change_requested.emit(not self.selected)
-        return super().mouseReleaseEvent(event)
+    # def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
+    #     self.pressed = False
+    #     mouse_inside = self.rect().contains(event.pos())
+    #     if event.button() == QtCore.Qt.LeftButton and mouse_inside:
+    #         self.change_requested.emit(not self.selected)
+    #     return super().mouseReleaseEvent(event)
 
-    def enterEvent(self, event: QtGui.QEnterEvent) -> None:  # noqa: N802
-        self.hovered = True
-        return super().enterEvent(event)
+    # def enterEvent(self, event: QtGui.QEnterEvent) -> None:  # noqa: N802
+    #     self.hovered = True
+    #     return super().enterEvent(event)
 
-    def leaveEvent(self, event: QtCore.QEvent) -> None:  # noqa: N802
-        self.hovered = False
-        return super().leaveEvent(event)
+    # def leaveEvent(self, event: QtCore.QEvent) -> None:  # noqa: N802
+    #     self.hovered = False
+    #     return super().leaveEvent(event)
