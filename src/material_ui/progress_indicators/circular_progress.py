@@ -2,7 +2,7 @@
 
 from typing import cast
 
-from qtpy.QtCore import QMargins, QRect, QSize
+from qtpy.QtCore import QMargins, QPropertyAnimation, QRect, QSize, Qt
 from qtpy.QtGui import QPainter, QPaintEvent, QPen
 from qtpy.QtWidgets import QSizePolicy
 
@@ -39,7 +39,29 @@ class CircularProgress(Component):
             self._start_angle = 90 * 16
             self._span_angle = -int(self.value * 360 * 16)
         else:
-            raise NotImplementedError
+            # self.animate(self._start_angle,
+            #              start_value=2,
+            #              num_loops="infinite")
+            start_angle_animation = QPropertyAnimation()
+            start_angle_animation.setParent(self)
+            start_angle_animation.setTargetObject(self._find_state("_start_angle"))
+            start_angle_animation.setPropertyName(b"_qt_property")
+            start_angle_animation.setStartValue(90 * 16)
+            start_angle_animation.setEndValue(-270 * 16)
+            start_angle_animation.setDuration(2000)
+            start_angle_animation.setLoopCount(-1)
+            start_angle_animation.start()
+
+            span_angle_animation = QPropertyAnimation()
+            span_angle_animation.setParent(self)
+            span_angle_animation.setTargetObject(self._find_state("_span_angle"))
+            span_angle_animation.setPropertyName(b"_qt_property")
+            span_angle_animation.setStartValue(0)
+            span_angle_animation.setKeyValueAt(0.5, -300 * 16)
+            span_angle_animation.setEndValue(0)
+            span_angle_animation.setDuration(1200)
+            span_angle_animation.setLoopCount(-1)
+            span_angle_animation.start()
 
     @effect(_start_angle, _span_angle)
     def _update_on_angles_change(self) -> None:
