@@ -79,14 +79,21 @@ class State(QObject, Generic[_T]):
         """Get the value of the variable."""
         return self._value
 
-    def set_value(self, value: _T) -> None:
+    def set_value(self, value: _T, *, _from_binding: bool = False) -> None:
         """Set the value of the variable.
 
         If the value changed, the changed signal is emitted.
 
+        If the state is bound to another state, this function has no
+        effect.
+
         Args:
             value: New value to use.
+            _from_binding: Internal - whether the value was set from
+                the state it is bound to.
         """
+        if self._is_bound and not _from_binding:
+            return
         if self._value != value:
             self._value = value
             self.changed.emit(value)
@@ -129,7 +136,7 @@ class State(QObject, Generic[_T]):
 
     def bind(self, other: "State[_T]") -> None:
         """Bind this variable to another variable."""
-        other.changed.connect(self.set_value)
+        other.changed.connect(partial(self.set_value, _from_binding=True))
         self.set_value(other.get_value())  # Set initial state.
         self._is_bound = True
         # TODO: track object deletion

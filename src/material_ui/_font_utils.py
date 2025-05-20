@@ -1,11 +1,12 @@
 """Utilities for internal default fonts."""
 
-from functools import cache, partial
 import asyncio
-import httpx
+from functools import cache, partial
+from hashlib import md5
 from pathlib import Path
 from tempfile import gettempdir
-from hashlib import md5
+
+import httpx
 from qtpy.QtGui import QFontDatabase
 
 _FONT_URLS = [
@@ -37,7 +38,10 @@ async def _download_all_fonts() -> list[Path | None]:
 
 
 async def _download_font(
-    client: httpx.AsyncClient, url: str, no_cache: bool = False
+    client: httpx.AsyncClient,
+    url: str,
+    *,
+    no_cache: bool = False,
 ) -> Path | None:
     """Fetch a font from a URL and save to disk.
 
@@ -49,22 +53,21 @@ async def _download_font(
     Returns:
         Path to the downloaded font file on disk, or None if it failed.
     """
-
     file_path = _get_cache_path_for_url(url)
 
     if no_cache or not file_path.exists():
         resp = await client.get(url)
-        if resp.status_code != 200:
+        if resp.status_code != httpx.codes.OK:
             return None
         file_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(file_path, "wb") as f:
+        with file_path.open("wb") as f:
             f.write(resp.content)
 
     return file_path
 
 
 def _get_cache_path_for_url(url: str) -> Path:
-    return _get_font_cache_dir() / md5(url.encode()).hexdigest()
+    return _get_font_cache_dir() / md5(url.encode(), usedforsecurity=False).hexdigest()
 
 
 def _get_font_cache_dir() -> Path:

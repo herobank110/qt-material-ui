@@ -1,6 +1,5 @@
 """Sample of using the buttons."""
 
-from qtpy import QtCore, QtWidgets
 from material_ui.buttons import (
     ElevatedButton,
     FilledButton,
@@ -9,6 +8,7 @@ from material_ui.buttons import (
     TextButton,
 )
 from material_ui.layout_basics import Row
+from qtpy import QtCore, QtWidgets
 
 
 def main() -> None:

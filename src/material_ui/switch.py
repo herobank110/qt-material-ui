@@ -1,17 +1,14 @@
-from qtpy import QtCore, QtGui
+"""Switch component."""
+
+from qtpy.QtCore import QEasingCurve, QRect
+from qtpy.QtGui import QColor
 
 from material_ui._component import Component, Signal, effect, use_state
 from material_ui.shape import Shape
 from material_ui.tokens import md_comp_switch as tokens
 
 _UNSELECTED_TRACK_OUTLINE_COLOR = "#79747E"
-_UNSELECTED_TRACK_COLOR = QtGui.QColor("#E6E0E9")
-_UNSELECTED_HANDLE_COLOR = "#79747E"
-_UNSELECTED_HOVER_HANDLE_COLOR = "#49454F"
-_SELECTED_HANDLE_COLOR = "#FFFFFF"
-_SELECTED_HOVER_HANDLE_COLOR = "#EADDFF"
-_SELECTED_TRACK_COLOR = QtGui.QColor("#6750A4")
-_STATE_LAYER_COLOR = "rgba(0, 0, 0, 40)"
+_UNSELECTED_TRACK_COLOR = QColor("#E6E0E9")
 
 _TRACK_WIDTH = 52
 _TRACK_HEIGHT = 32
@@ -24,28 +21,28 @@ _UNSELECTED_HANDLE_WIDTH = 16
 _PRESSED_HANDLE_WIDTH = 28
 _SELECTED_HANDLE_WIDTH = 24
 
-_TRACK_GEOMETRY = QtCore.QRect(
+_TRACK_GEOMETRY = QRect(
     _STATE_LAYER_MARGIN, _STATE_LAYER_MARGIN, _TRACK_WIDTH, _TRACK_HEIGHT
 )
-_UNSELECTED_HANDLE_GEOMETRY = QtCore.QRect(
+_UNSELECTED_HANDLE_GEOMETRY = QRect(
     _STATE_LAYER_MARGIN + (_TRACK_HEIGHT - _UNSELECTED_HANDLE_WIDTH) / 2,
     _STATE_LAYER_MARGIN + (_TRACK_HEIGHT - _UNSELECTED_HANDLE_WIDTH) / 2,
     _UNSELECTED_HANDLE_WIDTH,
     _UNSELECTED_HANDLE_WIDTH,
 )
-_UNSELECTED_PRESSED_HANDLE_GEOMETRY = QtCore.QRect(
+_UNSELECTED_PRESSED_HANDLE_GEOMETRY = QRect(
     _STATE_LAYER_MARGIN + _TRACK_OUTLINE_WIDTH,
     _STATE_LAYER_MARGIN + _TRACK_OUTLINE_WIDTH,
     _PRESSED_HANDLE_WIDTH,
     _PRESSED_HANDLE_WIDTH,
 )
-_SELECTED_PRESSED_HANDLE_GEOMETRY = QtCore.QRect(
+_SELECTED_PRESSED_HANDLE_GEOMETRY = QRect(
     _STATE_LAYER_MARGIN + _TRACK_WIDTH - _PRESSED_HANDLE_WIDTH - _TRACK_OUTLINE_WIDTH,
     _STATE_LAYER_MARGIN + _TRACK_OUTLINE_WIDTH,
     _PRESSED_HANDLE_WIDTH,
     _PRESSED_HANDLE_WIDTH,
 )
-_SELECTED_HANDLE_GEOMETRY = QtCore.QRect(
+_SELECTED_HANDLE_GEOMETRY = QRect(
     _STATE_LAYER_MARGIN
     + _TRACK_WIDTH
     - _SELECTED_HANDLE_WIDTH
@@ -54,13 +51,13 @@ _SELECTED_HANDLE_GEOMETRY = QtCore.QRect(
     _SELECTED_HANDLE_WIDTH,
     _SELECTED_HANDLE_WIDTH,
 )
-_UNSELECTED_STATE_LAYER_GEOMETRY = QtCore.QRect(
+_UNSELECTED_STATE_LAYER_GEOMETRY = QRect(
     0,
     0,
     _STATE_LAYER_SIZE,
     _STATE_LAYER_SIZE,
 )
-_SELECTED_STATE_LAYER_GEOMETRY = QtCore.QRect(
+_SELECTED_STATE_LAYER_GEOMETRY = QRect(
     _SWITCH_WIDTH - _SWITCH_HEIGHT,
     0,
     _STATE_LAYER_SIZE,
@@ -72,16 +69,23 @@ class Switch(Component):
     """Switches toggle the selection of an item on or off."""
 
     selected = use_state(False)
-    # hovered = use_state(False)
-    # pressed = use_state(False)
     disabled = use_state(False)
 
-    # Create states for the animated properties. Can't be bothered
-    # animating the rest - these seem like the most useful.
-    _handle_geometry = use_state(_UNSELECTED_HANDLE_GEOMETRY)
-    _track_color = use_state(_UNSELECTED_TRACK_COLOR)
+    # Create states for the animated properties.
+    _handle_geometry = use_state(
+        _UNSELECTED_HANDLE_GEOMETRY,
+        transition=100,
+        easing=QEasingCurve.Type.InOutCubic,
+    )
+    _track_color = use_state(
+        _UNSELECTED_TRACK_COLOR,
+        # Shorter than the handle geometry animation to draw more
+        # attention to the handle.
+        transition=70,
+        easing=QEasingCurve.Type.InOutCubic,
+    )
 
-    change_requested: Signal[bool]
+    on_change: Signal[bool]
     """Emitted when the user toggles the switch."""
 
     def __init__(self) -> None:
@@ -89,6 +93,7 @@ class Switch(Component):
 
         self.setFixedSize(_SWITCH_WIDTH, _SWITCH_HEIGHT)
         self.clicked.connect(self._on_click)
+        self.should_propagate_click = False
 
         self._track = Shape()
         self._track.corner_shape = tokens.track_shape
@@ -96,7 +101,8 @@ class Switch(Component):
         self._track.setParent(self)
 
         self._state_layer = Shape()
-        self._state_layer.sx = {"background-color": _STATE_LAYER_COLOR}
+        self._state_layer.color = tokens.unselected_focus_state_layer_color
+        self._state_layer.opacity = tokens.unselected_focus_state_layer_opacity
         self._state_layer.corner_shape = tokens.state_layer_shape
         self._state_layer.visible = self.hovered
         self._state_layer.setParent(self)
@@ -105,88 +111,59 @@ class Switch(Component):
         self._handle.corner_shape = tokens.handle_shape
         self._handle.setParent(self)
 
-        # Set the internal selected state but use the change_requested
-        # signal as source of truth, so using it as a 'controlled' input
-        # the parent component can hook into into to set its bound state.
-        # self.change_requested.connect(self._find_state("selected").set_value)
-
     def _on_click(self) -> None:
         """Handle click events to toggle the switch."""
-        self.change_requested.emit(not self.selected)
+        new_value = not self.selected
+        self.selected = new_value
+        self.on_change.emit(new_value)
 
     @effect(_handle_geometry)
     def _apply_handle_geometry(self) -> None:
         # TODO: make geometry a property of shape? even though conflict with qt property?
         self._handle.setGeometry(self._handle_geometry)
 
-    @effect(_track_color)
-    def _apply_track_color(self):
-        self._track.sx = {
-            **self._track.sx,
-            # "background-color": "#%06x" % self._track_color.rgb(),
-            "background-color": self._track_color,
-        }
+    @effect(selected)
+    def _apply_track_color(self) -> None:
+        self._track.color = (
+            tokens.selected_track_color
+            if self.selected
+            else tokens.unselected_track_color
+        )
+
+    @effect(selected, Component.hovered)
+    def _apply_handle_color(self) -> None:
+        self._handle.color = (
+            tokens.selected_hover_handle_color
+            if self.selected and self.hovered
+            else tokens.selected_handle_color
+            if self.selected
+            else tokens.unselected_hover_handle_color
+            if self.hovered
+            else tokens.unselected_handle_color
+        )
 
     @effect(selected, Component.pressed, Component.hovered)
-    def _refresh_shapes(self):
-        self._find_state("_track_color").animate_to(
-            _SELECTED_TRACK_COLOR if self.selected else _UNSELECTED_TRACK_COLOR,
-            # Shorter than the handle geometry animation to draw more
-            # attention to the handle.
-            duration_ms=70,
-            easing=QtCore.QEasingCurve.InOutCubic,
+    def _refresh_shapes(self) -> None:
+        selected_border = (
+            f"{_TRACK_OUTLINE_WIDTH}px solid {_UNSELECTED_TRACK_OUTLINE_COLOR}"
         )
         self._track.sx = {
             **self._track.sx,
-            "border": f"{_TRACK_OUTLINE_WIDTH}px solid {_UNSELECTED_TRACK_OUTLINE_COLOR}"
-            if not self.selected
-            else "none",
+            "border": selected_border if not self.selected else "none",
         }
 
-        self._find_state("_handle_geometry").animate_to(
+        self._handle_geometry = (
             _SELECTED_PRESSED_HANDLE_GEOMETRY
             if self.selected and self.pressed
             else _UNSELECTED_PRESSED_HANDLE_GEOMETRY
             if self.pressed
             else _SELECTED_HANDLE_GEOMETRY
             if self.selected
-            else _UNSELECTED_HANDLE_GEOMETRY,
-            duration_ms=100,
-            easing=QtCore.QEasingCurve.InOutCubic,
+            else _UNSELECTED_HANDLE_GEOMETRY
         )
-        self._handle.sx = {
-            **self._handle.sx,
-            "background-color": _SELECTED_HOVER_HANDLE_COLOR
-            if self.selected and self.hovered
-            else _SELECTED_HANDLE_COLOR
-            if self.selected
-            else _UNSELECTED_HOVER_HANDLE_COLOR
-            if self.hovered
-            else _UNSELECTED_HANDLE_COLOR,
-        }
 
         self._state_layer.setGeometry(
             _SELECTED_STATE_LAYER_GEOMETRY
             if self.selected
-            else _UNSELECTED_STATE_LAYER_GEOMETRY
+            else _UNSELECTED_STATE_LAYER_GEOMETRY,
         )
-
-    # def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
-    #     if event.button() == QtCore.Qt.LeftButton:
-    #         self.pressed = True
-    #     return super().mousePressEvent(event)
-
-    # def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:  # noqa: N802
-    #     self.pressed = False
-    #     mouse_inside = self.rect().contains(event.pos())
-    #     if event.button() == QtCore.Qt.LeftButton and mouse_inside:
-    #         self.change_requested.emit(not self.selected)
-    #     return super().mouseReleaseEvent(event)
-
-    # def enterEvent(self, event: QtGui.QEnterEvent) -> None:  # noqa: N802
-    #     self.hovered = True
-    #     return super().enterEvent(event)
-
-    # def leaveEvent(self, event: QtCore.QEvent) -> None:  # noqa: N802
-    #     self.hovered = False
-    #     return super().leaveEvent(event)

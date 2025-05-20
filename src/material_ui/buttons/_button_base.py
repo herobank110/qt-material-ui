@@ -1,7 +1,9 @@
 """Base class for button variants."""
 
+from typing import cast
+
 from qtpy.QtCore import QMargins, QSize, Qt
-from qtpy.QtGui import QColor, QMouseEvent
+from qtpy.QtGui import QMouseEvent
 from qtpy.QtWidgets import QHBoxLayout
 
 from material_ui._component import Component, Signal, effect, use_state
@@ -62,9 +64,7 @@ class ButtonBase(Component):
         container_layout.addWidget(self._label)
 
     def sizeHint(self) -> QSize:  # noqa: N802
-        height = resolve_token(tokens.container_height)
-        if not isinstance(height, int):
-            raise TypeError
+        height = cast("int", resolve_token(tokens.container_height))
         return (
             self._container.sizeHint()
             # For some reason, setting the fixedHeight on the container
@@ -83,12 +83,10 @@ class ButtonBase(Component):
 
     @effect(hovered)
     def _update_state_layer(self) -> None:
-        color = QColor(resolve_token(tokens.hover_state_layer_color))
-        hover_opacity = resolve_token(tokens.hover_state_layer_opacity)
-        if not isinstance(hover_opacity, float):
-            raise TypeError
-        color.setAlphaF(hover_opacity if self.hovered else 0.0)
-        self._state_layer.sx = {**self._state_layer.sx, "background-color": color}
+        self._state_layer.color = tokens.hover_state_layer_color
+        self._state_layer.opacity = (
+            tokens.hover_state_layer_opacity if self.hovered else 0.0
+        )
 
     def mousePressEvent(self, event: QMouseEvent) -> None:  # noqa: N802
         if event.button() == Qt.MouseButton.LeftButton:

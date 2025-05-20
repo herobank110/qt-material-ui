@@ -10,7 +10,7 @@ from qtpy.QtCore import Qt
 class SampleSwitch(Component):
     """Window with two switches with linked state."""
 
-    selected = use_state(True)
+    selected = use_state(False)
 
     def __init__(self) -> None:
         super().__init__()
@@ -24,16 +24,12 @@ class SampleSwitch(Component):
 
         switch = Switch()
         switch.selected = self.selected
-        switch.change_requested.connect(
-            lambda selected: self._find_state("selected").set_value(selected)
-        )
+        switch.on_change.connect(lambda value: setattr(self, "selected", value))
         stack.add_widget(switch)
 
+        # This switch can't be toggled - value is controlled the other one.
         switch2 = Switch()
-        switch2.selected = self.selected
-        # switch2.change_requested.connect(
-        #     lambda selected: self._find_state("selected").set_value(selected)
-        # )
+        # switch2.selected = self.selected
         stack.add_widget(switch2)
 
 

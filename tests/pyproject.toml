@@ -10,4 +10,5 @@ ignore = [
     "ANN201",  # Skip return type annotation (always -> None)
     "D100",    # Skip docstring in module.
     "D101",    # Skip docstring in class.
+    "SLF001",  # Allow private member access.
 ]

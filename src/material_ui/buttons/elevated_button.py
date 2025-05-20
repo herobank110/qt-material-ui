@@ -8,11 +8,11 @@ from material_ui.tokens import md_comp_elevated_button as tokens
 class ElevatedButton(ButtonBase):
     """ElevatedButton."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._drop_shadow.shadow_color = tokens.container_shadow_color
         self._drop_shadow.elevation = tokens.container_elevation
-        self._container.sx = {"background-color": tokens.container_color}
+        self._container.color = tokens.container_color
         self._ripple.color = tokens.pressed_state_layer_color
         self._label.sx = {
             "color": tokens.label_text_color,
@@ -27,5 +27,5 @@ class ElevatedButton(ButtonBase):
                 True: tokens.container_elevation,
                 self.hovered: tokens.hover_container_elevation,
                 self.pressed: tokens.pressed_container_elevation,
-            }[True]
+            }[True],
         )

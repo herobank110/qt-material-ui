@@ -7,7 +7,12 @@ from qtpy.QtGui import QColor
 
 from material_ui._component import Component, effect, use_state
 from material_ui.tokens import md_sys_color, md_sys_shape
-from material_ui.tokens._utils import DesignToken, find_root_token, resolve_token
+from material_ui.tokens._utils import (
+    DesignToken,
+    find_root_token,
+    resolve_token,
+    resolve_token_or_value,
+)
 
 
 class Shape(Component):
@@ -15,7 +20,7 @@ class Shape(Component):
 
     visible = use_state(True)
     corner_shape = use_state(md_sys_shape.corner_none)
-    color = use_state(md_sys_color.surface)
+    color = use_state(cast("QColor | DesignToken", QColor("transparent")))
     opacity = use_state(cast("float | DesignToken", 1.0))
 
     @effect(corner_shape, Component.size)
@@ -57,17 +62,8 @@ class Shape(Component):
 
     @effect(color, opacity)
     def _apply_background_color(self) -> None:
-        color = resolve_token(self.color)
-        if not isinstance(color, QColor):
-            raise TypeError
-        # Apply the opacity to the color.
-        opacity = (
-            resolve_token(self.opacity)
-            if isinstance(self.opacity, DesignToken)
-            else self.opacity
-        )
-        if not isinstance(opacity, float):
-            raise TypeError
+        color = resolve_token_or_value(self.color)
+        opacity = resolve_token_or_value(self.opacity)
         # Make a copy to keep the design token's value unmodified.
         color = QColor(color)
         color.setAlphaF(opacity)
