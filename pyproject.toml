@@ -94,6 +94,9 @@ reportMissingTypeArgument = false
 reportArgumentType = false
 reportUnknownMemberType = false
 
+# Bug with literals in match statement.
+reportMatchNotExhaustive = false
+
 executionEnvironments = [
     # Allow tests to import private functions to test them.
     { root = "tests", reportPrivateUsage = false, reportMissingTypeStubs = false },

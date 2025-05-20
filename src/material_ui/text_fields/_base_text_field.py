@@ -112,8 +112,6 @@ class BaseTextField(Component):
                 self._floating_label_opacity = 1.0
                 self._resting_label_pos = self._FLOATING_LABEL_POS
                 self._floating_label_pos = self._FLOATING_LABEL_POS
-            case _:
-                raise ValueError
 
     @effect(_resting_label_opacity)
     def _apply_resting_label_opacity(self) -> None:
