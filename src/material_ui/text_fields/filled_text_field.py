@@ -12,8 +12,8 @@ from material_ui.tokens import md_comp_filled_text_field as tokens
 class FilledTextField(BaseTextField):
     """Filled text field component."""
 
-    _RESTING_LABEL_POS = QPoint(16, 18)
     _FLOATING_LABEL_POS = QPoint(18, 8)
+    _RESTING_LABEL_POS = QPoint(16, 18)
 
     def __init__(self) -> None:
         super().__init__()
@@ -59,14 +59,17 @@ class FilledTextField(BaseTextField):
             "font-family": tokens.input_text_font,
             "font-size": tokens.input_text_size,
             "font-weight": tokens.input_text_weight,
-            "margin-top": "14px",
+            "margin-top": "22px",
         }
         line_edit_wrapper.overlay_widget(self._line_edit)
         row.add_widget(line_edit_wrapper)
 
     @effect(Component.size)
     def _apply_size(self) -> None:
-        self._background.resize(self.size())
+        self._background.resize(
+            self.size().shrunkBy(QMargins(0, self._TOP_SPACE, 0, 0)),
+        )
+        self._background.move(0, self._TOP_SPACE)
         self._active_indicator.setFixedWidth(self._background.width())
 
     @effect(Component.size, Component.focused)

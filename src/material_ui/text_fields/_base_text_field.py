@@ -56,11 +56,11 @@ class BaseTextField(Component):
         self.clicked.connect(self._on_clicked)
         self.should_propagate_click = False
 
+    _TOP_SPACE = 6
+
     def sizeHint(self) -> QSize:  # noqa: N802
-        height = resolve_token(tokens.container_height)
-        if not isinstance(height, int):
-            raise TypeError
-        return QSize(200, height)
+        height = cast("int", resolve_token(tokens.container_height))
+        return QSize(200, height + self._TOP_SPACE)
 
     def _on_clicked(self) -> None:
         # Focus the itself when clicked.
