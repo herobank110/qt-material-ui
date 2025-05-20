@@ -29,18 +29,17 @@ class CircularProgress(Component):
     _start_angle = use_state(0)
     _span_angle = use_state(0)
 
-    @effect(value)
+    @effect(value, indeterminate)
     def _update_draw_parameters(self) -> None:
         if not (0.0 <= self.value <= 1.0):
             raise ValueError
+        # Qt angles start at 3 o'clock, go counterclockwise and use
+        # 1/16th of a degree as units.
         if not self.indeterminate:
-            # Qt angles start at 3 o'clock, go clockwise and use 1/16th
-            # of a degree as the unit ... ;(
             self._start_angle = 90 * 16
             self._span_angle = -int(self.value * 360 * 16)
         else:
-            pass
-            # raise NotImplementedError
+            raise NotImplementedError
 
     @effect(_start_angle, _span_angle)
     def _update_on_angles_change(self) -> None:
