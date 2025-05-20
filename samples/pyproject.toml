@@ -3,6 +3,7 @@ extend = "../pyproject.toml"
 
 ignore = [
     "INP001", # Skip creating __init__.py files for samples.
+    "D101",   # Skip docstrings for classes.
     "D103",   # Skip docstrings for functions.
     "T201",   # Allow print statements in samples.
 ]

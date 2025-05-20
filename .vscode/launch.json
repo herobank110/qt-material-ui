@@ -38,6 +38,13 @@
       "request": "launch",
       "program": "${workspaceFolder}/samples/sample_text_fields.py",
       "console": "integratedTerminal"
+    },
+    {
+      "name": "Sample - Progress Indicators",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/samples/sample_progress_indicators.py",
+      "console": "integratedTerminal"
     }
   ]
 }
