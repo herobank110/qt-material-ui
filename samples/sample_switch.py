@@ -29,7 +29,7 @@ class SampleSwitch(Component):
 
         # This switch can't be toggled - value is controlled the other one.
         switch2 = Switch()
-        # switch2.selected = self.selected
+        switch2.selected = self.selected
         stack.add_widget(switch2)
 
 
