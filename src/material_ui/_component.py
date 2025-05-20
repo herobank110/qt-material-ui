@@ -587,7 +587,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
             if mouse_inside:
                 self.clicked.emit()
                 if not self.should_propagate_click:
-                    return
+                    return None
         return super().mouseReleaseEvent(event)
 
     def enterEvent(self, event: QEnterEvent) -> None:  # noqa: N802
