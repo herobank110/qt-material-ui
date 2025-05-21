@@ -5,6 +5,5 @@
 
 from material_ui.tokens._utils import define_token as _define_token
 
-
-color = _define_token('md.sys.color.outline-variant')
+color = _define_token("md.sys.color.outline-variant")
 thickness = _define_token(1)

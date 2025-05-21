@@ -5,9 +5,8 @@
 
 from material_ui.tokens._utils import define_token as _define_token
 
-
-brand = _define_token('Roboto')
-plain = _define_token('Roboto')
+brand = _define_token("Roboto")
+plain = _define_token("Roboto")
 weight_bold = _define_token(700)
 weight_medium = _define_token(500)
 weight_regular = _define_token(400)

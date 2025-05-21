@@ -5,16 +5,15 @@
 
 from material_ui.tokens._utils import define_token as _define_token
 
-
-color = _define_token('md.sys.color.error')
-large_color = _define_token('md.sys.color.error')
-large_label_text_color = _define_token('md.sys.color.on-error')
-large_label_text_font = _define_token('md.sys.typescale.label-small.font')
-large_label_text_line_height = _define_token('md.sys.typescale.label-small.line-height')
-large_label_text_size = _define_token('md.sys.typescale.label-small.size')
-large_label_text_tracking = _define_token('md.sys.typescale.label-small.tracking')
-large_label_text_weight = _define_token('md.sys.typescale.label-small.weight')
-large_shape = _define_token('md.sys.shape.corner.full')
+color = _define_token("md.sys.color.error")
+large_color = _define_token("md.sys.color.error")
+large_label_text_color = _define_token("md.sys.color.on-error")
+large_label_text_font = _define_token("md.sys.typescale.label-small.font")
+large_label_text_line_height = _define_token("md.sys.typescale.label-small.line-height")
+large_label_text_size = _define_token("md.sys.typescale.label-small.size")
+large_label_text_tracking = _define_token("md.sys.typescale.label-small.tracking")
+large_label_text_weight = _define_token("md.sys.typescale.label-small.weight")
+large_shape = _define_token("md.sys.shape.corner.full")
 large_size = _define_token(16)
-shape = _define_token('md.sys.shape.corner.full')
+shape = _define_token("md.sys.shape.corner.full")
 size = _define_token(6)

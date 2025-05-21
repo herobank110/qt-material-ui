@@ -5,12 +5,11 @@
 
 from material_ui.tokens._utils import define_token as _define_token
 
-
-container_color = _define_token('md.sys.color.inverse-surface')
-container_shape = _define_token('md.sys.shape.corner.extra-small')
-supporting_text_color = _define_token('md.sys.color.inverse-on-surface')
-supporting_text_font = _define_token('md.sys.typescale.body-small.font')
-supporting_text_line_height = _define_token('md.sys.typescale.body-small.line-height')
-supporting_text_size = _define_token('md.sys.typescale.body-small.size')
-supporting_text_tracking = _define_token('md.sys.typescale.body-small.tracking')
-supporting_text_weight = _define_token('md.sys.typescale.body-small.weight')
+container_color = _define_token("md.sys.color.inverse-surface")
+container_shape = _define_token("md.sys.shape.corner.extra-small")
+supporting_text_color = _define_token("md.sys.color.inverse-on-surface")
+supporting_text_font = _define_token("md.sys.typescale.body-small.font")
+supporting_text_line_height = _define_token("md.sys.typescale.body-small.line-height")
+supporting_text_size = _define_token("md.sys.typescale.body-small.size")
+supporting_text_tracking = _define_token("md.sys.typescale.body-small.tracking")
+supporting_text_weight = _define_token("md.sys.typescale.body-small.weight")

@@ -5,7 +5,6 @@
 
 from material_ui.tokens._utils import define_token as _define_token
 
-
 level0 = _define_token(0)
 level1 = _define_token(1)
 level2 = _define_token(3)

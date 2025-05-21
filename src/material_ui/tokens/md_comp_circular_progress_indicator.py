@@ -5,12 +5,11 @@
 
 from material_ui.tokens._utils import define_token as _define_token
 
-
-active_indicator_color = _define_token('md.sys.color.primary')
-active_indicator_shape = _define_token('md.sys.shape.corner.none')
+active_indicator_color = _define_token("md.sys.color.primary")
+active_indicator_shape = _define_token("md.sys.shape.corner.none")
 active_indicator_width = _define_token(4)
-four_color_active_indicator_four_color = _define_token('md.sys.color.tertiary-container')
-four_color_active_indicator_one_color = _define_token('md.sys.color.primary')
-four_color_active_indicator_three_color = _define_token('md.sys.color.tertiary')
-four_color_active_indicator_two_color = _define_token('md.sys.color.primary-container')
+four_color_active_indicator_four_color = _define_token("md.sys.color.tertiary-container")
+four_color_active_indicator_one_color = _define_token("md.sys.color.primary")
+four_color_active_indicator_three_color = _define_token("md.sys.color.tertiary")
+four_color_active_indicator_two_color = _define_token("md.sys.color.primary-container")
 size = _define_token(48)

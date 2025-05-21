@@ -5,7 +5,6 @@
 
 from material_ui.tokens._utils import define_token as _define_token
 
-
 dragged_state_layer_opacity = _define_token(0.16)
 focus_indicator_inner_offset = _define_token(0)
 focus_indicator_outer_offset = _define_token(2)

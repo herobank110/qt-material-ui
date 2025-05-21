@@ -5,16 +5,15 @@
 
 from material_ui.tokens._utils import define_token as _define_token
 
-
-corner_extra_large = _define_token('SHAPE_FAMILY_ROUNDED_CORNERS')
-corner_extra_large_top = _define_token('SHAPE_FAMILY_ROUNDED_CORNERS')
-corner_extra_small = _define_token('SHAPE_FAMILY_ROUNDED_CORNERS')
-corner_extra_small_top = _define_token('SHAPE_FAMILY_ROUNDED_CORNERS')
-corner_full = _define_token('SHAPE_FAMILY_CIRCULAR')
-corner_large = _define_token('SHAPE_FAMILY_ROUNDED_CORNERS')
-corner_large_end = _define_token('SHAPE_FAMILY_ROUNDED_CORNERS')
-corner_large_start = _define_token('SHAPE_FAMILY_ROUNDED_CORNERS')
-corner_large_top = _define_token('SHAPE_FAMILY_ROUNDED_CORNERS')
-corner_medium = _define_token('SHAPE_FAMILY_ROUNDED_CORNERS')
-corner_none = _define_token('SHAPE_FAMILY_ROUNDED_CORNERS')
-corner_small = _define_token('SHAPE_FAMILY_ROUNDED_CORNERS')
+corner_extra_large = _define_token("SHAPE_FAMILY_ROUNDED_CORNERS")
+corner_extra_large_top = _define_token("SHAPE_FAMILY_ROUNDED_CORNERS")
+corner_extra_small = _define_token("SHAPE_FAMILY_ROUNDED_CORNERS")
+corner_extra_small_top = _define_token("SHAPE_FAMILY_ROUNDED_CORNERS")
+corner_full = _define_token("SHAPE_FAMILY_CIRCULAR")
+corner_large = _define_token("SHAPE_FAMILY_ROUNDED_CORNERS")
+corner_large_end = _define_token("SHAPE_FAMILY_ROUNDED_CORNERS")
+corner_large_start = _define_token("SHAPE_FAMILY_ROUNDED_CORNERS")
+corner_large_top = _define_token("SHAPE_FAMILY_ROUNDED_CORNERS")
+corner_medium = _define_token("SHAPE_FAMILY_ROUNDED_CORNERS")
+corner_none = _define_token("SHAPE_FAMILY_ROUNDED_CORNERS")
+corner_small = _define_token("SHAPE_FAMILY_ROUNDED_CORNERS")
