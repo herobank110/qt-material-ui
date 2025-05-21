@@ -6,7 +6,6 @@ from typing import cast
 from qtpy.QtCore import (
     QEasingCurve,
     QMargins,
-    QPointF,
     QPropertyAnimation,
     QRect,
     QSize,
@@ -75,23 +74,17 @@ class CircularProgress(Component):
             # self.animate(self._start_angle,
             #              start_value=2,
             #              num_loops="infinite")
-            easing = QEasingCurve(QEasingCurve.Type.BezierSpline)
-            easing.addCubicBezierSegment(
-                QPointF(0.4, 0.0),
-                QPointF(0.2, 1.0),
-                QPointF(1.0, 1.0),
-            )
 
             start_angle_animation = QPropertyAnimation()
             start_angle_animation.setParent(self)
             start_angle_animation.setTargetObject(self._find_state("_start_angle"))
             start_angle_animation.setPropertyName(b"_qt_property")
             start_angle_animation.setStartValue(-45 * 16)
-            start_angle_animation.setKeyValueAt(0.5, -105 * 16)
-            # start_angle_animation.setKeyValueAt(0.7, -45 * 16)
+            start_angle_animation.setKeyValueAt(0.45, -105 * 16)
+            start_angle_animation.setKeyValueAt(0.65, -105 * 16)
             start_angle_animation.setEndValue(-405 * 16)
-            start_angle_animation.setDuration(3333)
-            start_angle_animation.setEasingCurve(easing)
+            start_angle_animation.setDuration(1333)
+            start_angle_animation.setEasingCurve(QEasingCurve.Type.InOutQuad)
             start_angle_animation.setLoopCount(-1)
             start_angle_animation.start()
 
@@ -99,12 +92,12 @@ class CircularProgress(Component):
             span_angle_animation.setParent(self)
             span_angle_animation.setTargetObject(self._find_state("_span_angle"))
             span_angle_animation.setPropertyName(b"_qt_property")
-            span_angle_animation.setStartValue(-270 * 16)
-            span_angle_animation.setKeyValueAt(0.5, -10 * 16)
-            # span_angle_animation.setKeyValueAt(0.7, -270 * 16)
-            span_angle_animation.setEndValue(-270 * 16)
-            span_angle_animation.setDuration(3333)
-            span_angle_animation.setEasingCurve(easing)
+            span_angle_animation.setStartValue(-10 * 16)
+            span_angle_animation.setKeyValueAt(0.45, -270 * 16)
+            span_angle_animation.setKeyValueAt(0.65, -270 * 16)
+            span_angle_animation.setEndValue(-10 * 16)
+            span_angle_animation.setDuration(1333)
+            span_angle_animation.setEasingCurve(QEasingCurve.Type.InOutQuad)
             span_angle_animation.setLoopCount(-1)
             span_angle_animation.start()
             # self._span_angle = -10 * 16
@@ -124,13 +117,8 @@ class CircularProgress(Component):
         painter.setPen(QPen(color, float(self._thickness)))
         time_seconds = self._t / 1_000_000_000
         import math
-
         # painter.rotate(math.sin(time_seconds) * math.pi / 2)
-        painter.drawArc(
-            self._arc_rect,
-            self._start_angle + ((time_seconds * 0.333) % 1 * 360) * -16,
-            self._span_angle,
-        )
+        painter.drawArc(self._arc_rect, self._start_angle + ((time_seconds*0.473) % 1 * 360) * -16, self._span_angle)
 
         painter.end()
 
