@@ -9,7 +9,6 @@ from qtpy.QtCore import (
     QPropertyAnimation,
     QRect,
     QSize,
-    Qt,
     QTimerEvent,
 )
 from qtpy.QtGui import QPainter, QPaintEvent, QPen
@@ -70,11 +69,6 @@ class CircularProgress(Component):
             self._start_angle = 90 * 16
             self._span_angle = -int(self.value * 360 * 16)
         else:
-            # a = self._t
-            # self.animate(self._start_angle,
-            #              start_value=2,
-            #              num_loops="infinite")
-
             start_angle_animation = QPropertyAnimation()
             start_angle_animation.setParent(self)
             start_angle_animation.setTargetObject(self._find_state("_start_angle"))
@@ -100,7 +94,6 @@ class CircularProgress(Component):
             span_angle_animation.setEasingCurve(QEasingCurve.Type.InOutQuad)
             span_angle_animation.setLoopCount(-1)
             span_angle_animation.start()
-            # self._span_angle = -10 * 16
 
     @effect(_start_angle, _span_angle, _t)
     def _update_on_angles_change(self) -> None:
@@ -116,9 +109,11 @@ class CircularProgress(Component):
         color = resolve_token(tokens.active_indicator_color)
         painter.setPen(QPen(color, float(self._thickness)))
         time_seconds = self._t / 1_000_000_000
-        import math
-        # painter.rotate(math.sin(time_seconds) * math.pi / 2)
-        painter.drawArc(self._arc_rect, self._start_angle + ((time_seconds*0.473) % 1 * 360) * -16, self._span_angle)
+        angle_offset = (
+            int(((time_seconds * 0.473) % 1 * 360) * -16) if self.indeterminate else 0
+        )
+        start_angle = self._start_angle + angle_offset
+        painter.drawArc(self._arc_rect, start_angle, self._span_angle)
 
         painter.end()
 
