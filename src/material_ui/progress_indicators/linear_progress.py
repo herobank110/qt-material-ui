@@ -55,12 +55,14 @@ class LinearProgress(BaseProgress):
             self._bar1_rect = QRect(0, 0, self.value * self.width(), self.height())
             self._bar2_rect = QRect()
         else:
+            # Magic numbers from material-web implementation:
+            # https://github.com/material-components/material-web/blob/main/progress/internal/_linear-progress.scss#L141
             anim = QVariantAnimation()
             anim.setParent(self)
-            anim.setStartValue(0.0)
-            anim.setKeyValueAt(0.2, 0.0)
-            anim.setKeyValueAt(0.5915, 0.836714)
-            anim.setEndValue(2.00611)
+            anim.setStartValue(0.0 - 1.45167)
+            anim.setKeyValueAt(0.2, 0.0 - 1.45167)
+            anim.setKeyValueAt(0.5915, 0.836714 - 1.45167)
+            anim.setEndValue(2.00611 - 1.45167)
             anim.setDuration(2000)
             anim.setLoopCount(-1)
             anim.valueChanged.connect(partial(setattr, self, "_bar1_translate"))
@@ -79,10 +81,10 @@ class LinearProgress(BaseProgress):
 
             anim = QVariantAnimation()
             anim.setParent(self)
-            anim.setStartValue(0.0)
-            anim.setKeyValueAt(0.25, 0.376519)
-            anim.setKeyValueAt(0.4835, 0.843862)
-            anim.setEndValue(1.60278)
+            anim.setStartValue(0.0 - 0.548889)
+            anim.setKeyValueAt(0.25, 0.376519 - 0.548889)
+            anim.setKeyValueAt(0.4835, 0.843862 - 0.548889)
+            anim.setEndValue(1.60278 - 0.548889)
             anim.setDuration(2000)
             anim.setLoopCount(-1)
             anim.valueChanged.connect(partial(setattr, self, "_bar2_translate"))
@@ -104,20 +106,14 @@ class LinearProgress(BaseProgress):
         w = self.width()
         h = self.height()
 
-        # bar1_rect = QRect(self.rect())
-        # bar1_rect.moveTopLeft()
-        # # bar1_rect_center
-        # bar1_rect.setWidth(w * self._bar1_scale)
-        # bar1_rect.moveCenter(bar1_rect_center)
-
         self._bar1_rect = QRect(
-            int((self._bar1_translate + self._bar1_scale/2) * w),
+            int((self._bar1_translate + (1 - self._bar1_scale) / 2) * w),
             0,
             int(self._bar1_scale * w),
             h,
         )
         self._bar2_rect = QRect(
-            int((self._bar2_translate + self._bar2_scale/2)* w),
+            int((self._bar2_translate + (1 - self._bar2_scale) / 2) * w),
             0,
             int(self._bar2_scale * w),
             h,
