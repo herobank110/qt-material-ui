@@ -450,7 +450,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
                 )
             else:
                 state.set_value(value)
-        return super().__setattr__(name, value)
+        super().__setattr__(name, value)
 
     def _find_state(self, name: str) -> State[Any] | None:
         """Find state variable by name."""
