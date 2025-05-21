@@ -38,7 +38,7 @@ class CircularProgress(Component):
 
     _start_angle = use_state(0)
     _span_angle = use_state(0)
-    _t = use_state(0)
+    _t = use_state(0.0)
 
     @effect(indeterminate)
     def _start_stop_indeterminate_animation(self) -> None:
@@ -55,7 +55,7 @@ class CircularProgress(Component):
     def timerEvent(self, event: QTimerEvent) -> None:  # noqa: N802
         """Animate the indeterminate progress."""
         if event.timerId() == self._timer_id:
-            self._t = time.time_ns()
+            self._t = time.time_ns() / 1_000_000_000
         else:
             super().timerEvent(event)
 
@@ -108,9 +108,8 @@ class CircularProgress(Component):
 
         color = resolve_token(tokens.active_indicator_color)
         painter.setPen(QPen(color, float(self._thickness)))
-        time_seconds = self._t / 1_000_000_000
         angle_offset = (
-            int(((time_seconds * 0.473) % 1 * 360) * -16) if self.indeterminate else 0
+            int(((self._t * 0.473) % 1 * 360) * -16) if self.indeterminate else 0
         )
         start_angle = self._start_angle + angle_offset
         painter.drawArc(self._arc_rect, start_angle, self._span_angle)
