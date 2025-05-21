@@ -30,11 +30,11 @@ class ProgressIndicatorsSample(Component):
         stack.setFixedWidth(100)
 
         linear = LinearProgress()
-        # linear.value = 0.75
+        linear.value = 0.75
         stack.add_widget(linear)
 
         linear_indeterminate = LinearProgress()
-        # linear_indeterminate.indeterminate = True
+        linear_indeterminate.indeterminate = True
         stack.add_widget(linear_indeterminate)
 
         row.add_widget(stack)

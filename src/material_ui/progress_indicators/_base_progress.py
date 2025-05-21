@@ -1,4 +1,4 @@
-"""Common functionality for progress indicators."""
+"""Base progress."""
 
 from material_ui._component import Component, use_state
 
@@ -11,6 +11,3 @@ class BaseProgress(Component):
 
     indeterminate = use_state(False)
     """Whether the progress is indeterminate (looping animation)."""
-
-    def __init__(self) -> None:
-        super().__init__()
