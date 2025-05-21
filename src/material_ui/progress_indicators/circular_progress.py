@@ -125,5 +125,5 @@ class CircularProgress(Component):
     def _arc_rect(self) -> QRect:
         """Returns the rectangle for the arc."""
         # Subtract padding so the line isn't drawn half out of bounds.
-        p = self._thickness // 2
+        p = self._thickness + 1
         return self.rect().marginsRemoved(QMargins(p, p, p, p))
