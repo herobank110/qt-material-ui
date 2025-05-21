@@ -111,18 +111,17 @@ class LinearProgress(BaseProgress):
         # bar1_rect.moveCenter(bar1_rect_center)
 
         self._bar1_rect = QRect(
-            int(self._bar1_translate * w),
+            int((self._bar1_translate + self._bar1_scale/2) * w),
             0,
             int(self._bar1_scale * w),
             h,
         )
         self._bar2_rect = QRect(
-            int(self._bar2_translate * w),
+            int((self._bar2_translate + self._bar2_scale/2)* w),
             0,
             int(self._bar2_scale * w),
             h,
         )
-        print(f"bar1: {self._bar1_translate}                                                                   \r",end="")
 
     @effect(_bar1_rect, _bar2_rect)
     def _update_on_rect_change(self) -> None:
