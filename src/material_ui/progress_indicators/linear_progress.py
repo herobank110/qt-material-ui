@@ -2,7 +2,8 @@
 
 from typing import cast
 
-from qtpy.QtGui import QPainter, QPaintEvent
+from qtpy.QtCore import QLine
+from qtpy.QtGui import QColor, QPainter, QPaintEvent, QPen
 from qtpy.QtWidgets import QSizePolicy
 
 from material_ui.progress_indicators._base_progress import BaseProgress
@@ -23,5 +24,13 @@ class LinearProgress(BaseProgress):
         """Overridden QWidget.paintEvent."""
         super().paintEvent(event)
         painter = QPainter(self)
-        painter.fillRect(self.rect(), "red")
+
+        track_color = cast("QColor", resolve_token(tokens.track_color))
+        painter.setBrush(track_color)
+        painter.drawRect(self.rect())
+
+        track_color = cast("QColor", resolve_token(tokens.track_color))
+        painter.setBrush(track_color)
+        painter.drawRect(self.rect())
+
         painter.end()
