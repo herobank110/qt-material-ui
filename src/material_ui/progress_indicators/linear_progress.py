@@ -2,6 +2,7 @@
 
 from typing import cast
 
+from qtpy.QtCore import Qt
 from qtpy.QtGui import QColor, QPainter, QPaintEvent
 from qtpy.QtWidgets import QSizePolicy
 
@@ -23,6 +24,7 @@ class LinearProgress(BaseProgress):
         """Overridden QWidget.paintEvent."""
         super().paintEvent(event)
         painter = QPainter(self)
+        painter.setPen(Qt.PenStyle.NoPen)
 
         active_color = cast("QColor", resolve_token(tokens.track_color))
         painter.setBrush(active_color)
