@@ -3,7 +3,7 @@
 from functools import partial
 from typing import cast
 
-from qtpy.QtCore import QRect, Qt, QVariantAnimation
+from qtpy.QtCore import QEasingCurve, QPointF, QRect, Qt, QVariantAnimation
 from qtpy.QtGui import QColor, QPainter, QPaintEvent
 from qtpy.QtWidgets import QSizePolicy, QWidget
 
@@ -28,26 +28,7 @@ class LinearProgress(BaseProgress):
     def __init__(self) -> None:
         super().__init__()
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        height = cast("int", resolve_token(tokens.track_height))
-        self.setFixedHeight(height)
-
-        # self._track = Shape()
-        # self._track.color = tokens.track_color
-        # self._track._size = self._size
-        # self._track.setParent(self)
-
-        # self._bar1_bar = Shape()
-        # self._bar1_bar.color = tokens.active_indicator_color
-        # # self._bar1_bar.resize(10, 10)
-        # self._bar1_bar.setParent(self)
-
-        # self._bar2_bar_wrapper = QWidget()
-        # self._bar2_bar_wrapper.setParent(self)
-        # hbox2 = QHBoxLayout(self._bar2_bar_wrapper)
-
-        # self._bar2_bar = Shape()
-        # self._bar2_bar.color = tokens.active_indicator_color
-        # # self._bar2_bar.setParent(self._bar2_bar_wrapper)
+        self.setFixedHeight(cast("int", resolve_token(tokens.track_height)))
 
     @effect(BaseProgress.value, BaseProgress.indeterminate)
     def _apply_bar_geometry(self) -> None:
@@ -55,6 +36,14 @@ class LinearProgress(BaseProgress):
             self._bar1_rect = QRect(0, 0, self.value * self.width(), self.height())
             self._bar2_rect = QRect()
         else:
+            duration = 2000
+            easing = QEasingCurve(QEasingCurve.Type.BezierSpline)
+            easing.addCubicBezierSegment(
+                QPointF(0.0, 0.2),
+                QPointF(0.8, 1.0),
+                QPointF(1.0, 1.0),
+            )
+
             # Magic numbers from material-web implementation:
             # https://github.com/material-components/material-web/blob/main/progress/internal/_linear-progress.scss#L141
             anim = QVariantAnimation()
@@ -63,7 +52,8 @@ class LinearProgress(BaseProgress):
             anim.setKeyValueAt(0.2, 0.0 - 1.45167)
             anim.setKeyValueAt(0.5915, 0.836714 - 1.45167)
             anim.setEndValue(2.00611 - 1.45167)
-            anim.setDuration(2000)
+            anim.setDuration(duration)
+            anim.setEasingCurve(easing)
             anim.setLoopCount(-1)
             anim.valueChanged.connect(partial(setattr, self, "_bar1_translate"))
             anim.start()
@@ -74,7 +64,8 @@ class LinearProgress(BaseProgress):
             anim.setKeyValueAt(0.3665, 0.08)
             anim.setKeyValueAt(0.6915, 0.661479)
             anim.setEndValue(0.08)
-            anim.setDuration(2000)
+            anim.setDuration(duration)
+            anim.setEasingCurve(easing)
             anim.setLoopCount(-1)
             anim.valueChanged.connect(partial(setattr, self, "_bar1_scale"))
             anim.start()
@@ -85,7 +76,8 @@ class LinearProgress(BaseProgress):
             anim.setKeyValueAt(0.25, 0.376519 - 0.548889)
             anim.setKeyValueAt(0.4835, 0.843862 - 0.548889)
             anim.setEndValue(1.60278 - 0.548889)
-            anim.setDuration(2000)
+            anim.setDuration(duration)
+            anim.setEasingCurve(easing)
             anim.setLoopCount(-1)
             anim.valueChanged.connect(partial(setattr, self, "_bar2_translate"))
             anim.start()
@@ -96,7 +88,8 @@ class LinearProgress(BaseProgress):
             anim.setKeyValueAt(0.1915, 0.457104)
             anim.setKeyValueAt(0.4415, 0.72796)
             anim.setEndValue(0.08)
-            anim.setDuration(2000)
+            anim.setDuration(duration)
+            anim.setEasingCurve(easing)
             anim.setLoopCount(-1)
             anim.valueChanged.connect(partial(setattr, self, "_bar2_scale"))
             anim.start()
@@ -106,12 +99,15 @@ class LinearProgress(BaseProgress):
         w = self.width()
         h = self.height()
 
+        # Condense 2 nested rects into 1 by offsetting the position so
+        # that the inner rect would appear centered.
         self._bar1_rect = QRect(
             int((self._bar1_translate + (1 - self._bar1_scale) / 2) * w),
             0,
             int(self._bar1_scale * w),
             h,
         )
+
         self._bar2_rect = QRect(
             int((self._bar2_translate + (1 - self._bar2_scale) / 2) * w),
             0,
@@ -123,29 +119,17 @@ class LinearProgress(BaseProgress):
     def _update_on_rect_change(self) -> None:
         self.update()
 
-    # @effect(Component.size)
-    # def _refresh_sizes(self) -> None:
-    #     self._track.resize(self.size())
-    #     self._bar1_bar.setFixedHeight(self.height())
-    #     # r = QRect()
-    #     # r.setWidth()
-    #     # r.moveCenter()
-    #     self._bar2_bar.setFixedHeight(self.height())
-
-    # _bar1_line_pos
-
     def paintEvent(self, event: QPaintEvent) -> None:  # noqa: N802
         """Overridden QWidget.paintEvent."""
         super().paintEvent(event)
+
         painter = QPainter(self)
         painter.setPen(Qt.PenStyle.NoPen)
 
-        active_color = cast("QColor", resolve_token(tokens.track_color))
-        painter.setBrush(active_color)
+        painter.setBrush(cast("QColor", resolve_token(tokens.track_color)))
         painter.drawRect(self.rect())
 
-        active_color = cast("QColor", resolve_token(tokens.active_indicator_color))
-        painter.setBrush(active_color)
+        painter.setBrush(cast("QColor", resolve_token(tokens.active_indicator_color)))
         painter.drawRect(self._bar1_rect)
         painter.drawRect(self._bar2_rect)
 
