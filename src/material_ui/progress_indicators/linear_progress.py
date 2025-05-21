@@ -39,8 +39,8 @@ class LinearProgress(BaseProgress):
             duration = 2000
             easing = QEasingCurve(QEasingCurve.Type.BezierSpline)
             easing.addCubicBezierSegment(
-                QPointF(0.0, 0.2),
-                QPointF(0.8, 1.0),
+                QPointF(0.2, 0.3),
+                QPointF(0.9, 1.0),
                 QPointF(1.0, 1.0),
             )
 
@@ -62,7 +62,8 @@ class LinearProgress(BaseProgress):
             anim.setParent(self)
             anim.setStartValue(0.08)
             anim.setKeyValueAt(0.3665, 0.08)
-            anim.setKeyValueAt(0.6915, 0.661479)
+            anim.setKeyValueAt(0.6915, 0.561479)
+            anim.setKeyValueAt(0.93, 0.08)
             anim.setEndValue(0.08)
             anim.setDuration(duration)
             anim.setEasingCurve(easing)
