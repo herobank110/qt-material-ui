@@ -89,6 +89,7 @@ class CircularProgress(BaseProgress):
             span_angle_animation.setEasingCurve(QEasingCurve.Type.InOutQuad)
             span_angle_animation.setLoopCount(-1)
             span_angle_animation.start()
+            # self._span_angle = -180 * 16
 
     @effect(_start_angle, _span_angle, _t)
     def _update_on_angles_change(self) -> None:
@@ -103,9 +104,26 @@ class CircularProgress(BaseProgress):
 
         color = resolve_token(tokens.active_indicator_color)
         painter.setPen(QPen(color, float(self._thickness)))
-        angle_offset = (
-            int(((self._t * 0.473) % 1 * 360) * -16) if self.indeterminate else 0
+        import math
+
+        # For indeterminate
+        indeterminate_angle_offset = int(
+            (
+                (
+                    # 1st animation layer - constant rotation
+                    (self._t * 0.373) % 1
+                    + (
+                        # 2nd animation layer - jerky rotation
+                        (self._t * 0.2) % 10
+                        + (math.sin(self._t * math.pi * 2) + 1) * 0.01
+                    )
+                )
+                * 360
+            )
+            * -16,
         )
+
+        angle_offset = indeterminate_angle_offset if self.indeterminate else 0
         start_angle = self._start_angle + angle_offset
         painter.drawArc(self._arc_rect, start_angle, self._span_angle)
 
