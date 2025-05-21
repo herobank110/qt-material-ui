@@ -14,19 +14,14 @@ from qtpy.QtCore import (
 from qtpy.QtGui import QPainter, QPaintEvent, QPen
 from qtpy.QtWidgets import QSizePolicy
 
-from material_ui._component import Component, effect, use_state
+from material_ui._component import effect, use_state
+from material_ui.progress_indicators._base_progress import BaseProgress
 from material_ui.tokens import md_comp_circular_progress_indicator as tokens
 from material_ui.tokens._utils import resolve_token
 
 
-class CircularProgress(Component):
+class CircularProgress(BaseProgress):
     """Circular progress indicator."""
-
-    value = use_state(0.0)
-    """Progress percentage, in range [0, 1]."""
-
-    indeterminate = use_state(False)
-    """Whether the progress is indeterminate (looping animation)."""
 
     def __init__(self) -> None:
         super().__init__()
@@ -40,7 +35,7 @@ class CircularProgress(Component):
     _span_angle = use_state(0)
     _t = use_state(0.0)
 
-    @effect(indeterminate)
+    @effect(BaseProgress.indeterminate)
     def _start_stop_indeterminate_animation(self) -> None:
         """Start or stop the indeterminate animation."""
         if self.indeterminate:
@@ -59,7 +54,7 @@ class CircularProgress(Component):
         else:
             super().timerEvent(event)
 
-    @effect(value, indeterminate)
+    @effect(BaseProgress.value, BaseProgress.indeterminate)
     def _update_draw_parameters(self) -> None:
         if not (0.0 <= self.value <= 1.0):
             raise ValueError

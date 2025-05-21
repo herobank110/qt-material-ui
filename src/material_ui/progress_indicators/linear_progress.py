@@ -2,16 +2,15 @@
 
 from typing import cast
 
-from qtpy.QtCore import QSize
 from qtpy.QtGui import QPainter, QPaintEvent
 from qtpy.QtWidgets import QSizePolicy
 
-from material_ui._component import Component, effect, use_state
+from material_ui.progress_indicators._base_progress import BaseProgress
 from material_ui.tokens import md_comp_linear_progress_indicator as tokens
 from material_ui.tokens._utils import resolve_token
 
 
-class LinearProgress(Component):
+class LinearProgress(BaseProgress):
     """Linear progress indicator component."""
 
     def __init__(self) -> None:
