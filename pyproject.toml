@@ -43,6 +43,7 @@ packages = ["src/material_ui"]
 markers = [
     "record_gif: manual entry point for recording a gif",
 ]
+asyncio_default_fixture_loop_scope = "function"
 
 [tool.ruff]
 include = ["samples/**/*.py", "src/**/*.py", "tests/**/*.py"]
