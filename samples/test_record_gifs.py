@@ -6,6 +6,7 @@ tests are skipped, this module has be imported to discover tests.
 
 import time
 from collections.abc import Callable, Generator
+from functools import partial
 from threading import Thread
 
 import pytest
@@ -50,13 +51,16 @@ def click() -> None:
     pyautogui.mouseUp()
 
 
-def move_to(x: int, y: int, duration: float = 0.5) -> Callable[[], None]:
+def move_to(x: int, y: int, *, instant: bool = False) -> Callable[[], None]:
     import pyautogui
 
-    def inner():
-        pyautogui.moveTo(x, y, duration=duration, tween=pyautogui.easeInOutQuad)
-
-    return inner
+    return partial(
+        pyautogui.moveTo,
+        x,
+        y,
+        duration=0 if instant else 0.5,
+        tween=pyautogui.easeInOutQuad,
+    )
 
 
 @pytest.mark.record_gif
