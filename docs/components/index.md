@@ -1,4 +1,6 @@
 # Components
 
-<a href="switch">Buttons</a>
-<a href="buttons">Switch</a>
+- <a href="buttons">Buttons</a>
+- <a href="progress-indicators">Progress Indicators</a>
+- <a href="switch">Switch</a>
+- <a href="text-fields">Text Fields</a>

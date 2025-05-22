@@ -14,21 +14,21 @@ class SampleTextFields(Component):
     def __init__(self) -> None:
         super().__init__()
 
-        self.sx = {"background-color": md_sys_color.surface}
+        self.sx = {"background-color": md_sys_color.background}
 
         row = Row()
         row.gap = 30
-        row.margins = QMargins(20, 20, 20, 20)
+        row.margins = QMargins(40, 30, 40, 30)
         self.overlay_widget(row)
 
         filled = FilledTextField()
-        filled.label = "Label"
-        filled.value = "Value"
+        filled.label = "Filled"
+        filled.value = ""
         row.add_widget(filled)
 
         outlined = OutlinedTextField()
-        outlined.label = "Label"
-        outlined.value = "Value"
+        outlined.label = "Outlined"
+        outlined.value = ""
         row.add_widget(outlined)
 
         # Take the initial focus away from the first text field.

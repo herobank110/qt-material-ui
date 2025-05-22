@@ -13,10 +13,10 @@ class ProgressIndicatorsSample(Component):
     def __init__(self) -> None:
         super().__init__()
 
-        self.sx = {"background-color": md_sys_color.surface}
+        self.sx = {"background-color": md_sys_color.background}
 
         row = Row()
-        row.gap = 10
+        row.gap = 20
 
         circular = CircularProgress()
         circular.value = 0.75
@@ -39,7 +39,7 @@ class ProgressIndicatorsSample(Component):
 
         row.add_widget(stack)
 
-        self.overlay_widget(row, margins=QMargins(20, 20, 20, 20))
+        self.overlay_widget(row, margins=QMargins(40, 30, 40, 30))
 
 
 def main() -> None:

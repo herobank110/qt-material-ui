@@ -6,13 +6,13 @@ tests are skipped, this module has be imported to discover tests.
 
 import time
 from collections.abc import Callable, Generator
-from functools import partial
 from threading import Thread
 
 import pytest
 from pytestqt.qtbot import QtBot
 
 from sample_buttons import SampleButtons
+from sample_text_fields import SampleTextFields
 
 
 class MousePlaybackThread(Thread):
@@ -52,13 +52,24 @@ def click() -> None:
 def move_to(x: int, y: int, *, instant: bool = False) -> Callable[[], None]:
     import pyautogui
 
-    return partial(
-        pyautogui.moveTo,
+    return lambda: pyautogui.moveTo(
         x,
         y,
         duration=0 if instant else 0.5,
-        tween=pyautogui.easeInOutQuad,
+        tween=pyautogui.easeInOutQuad,  # pyright: ignore[reportUnknownArgumentType]
     )
+
+
+def typewrite(string: str) -> Callable[[], None]:
+    import pyautogui
+
+    return lambda: pyautogui.typewrite(string, interval=0.1)
+
+
+def keypress(key: str) -> Callable[[], None]:
+    import pyautogui
+
+    return lambda: pyautogui.press(key)
 
 
 @pytest.mark.record_gif
@@ -87,3 +98,32 @@ def test_sample_buttons_gif(qtbot: QtBot, mouse_playback: MousePlaybackThread) -
             move_to(x + (750 * dpr), y),
         ]
         qtbot.wait(12000)
+
+
+@pytest.mark.record_gif
+def test_sample_text_fields_gif(
+    qtbot: QtBot,
+    mouse_playback: MousePlaybackThread,
+) -> None:
+    window = SampleTextFields()
+    qtbot.addWidget(window)
+    window.show()
+    with qtbot.wait_exposed(window):
+        dpr = window.devicePixelRatioF()
+        x = int(window.x() * dpr)
+        y = int((window.y() + window.height() / 2 + 30) * dpr)
+        mouse_playback.movements = [
+            move_to(x + 200 * dpr, y + 100 * dpr, instant=True),
+            lambda: time.sleep(3),
+            move_to(x + 200 * dpr, y),
+            click,
+            typewrite("Hello"),
+            lambda: time.sleep(0.75),
+            move_to(x + 350 * dpr, y),
+            click,
+            lambda: time.sleep(0.5),
+            typewrite("world"),
+            lambda: time.sleep(1),
+            move_to(x + 350 * dpr, y + 100 * dpr),
+        ]
+        qtbot.wait(14000)

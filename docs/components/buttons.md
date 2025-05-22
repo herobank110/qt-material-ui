@@ -19,12 +19,12 @@ button.clicked.connect(lambda: print("Clicked!"))
 
 ### Properties
 
-| Name   | Type  | Description                                                               |
-| ------ | ----- | ------------------------------------------------------------------------- |
-| `text` | `str` | Text to display inside the button, indicating the action it will perform. |
+| Name   | Type  | Default | Description                                                               |
+| ------ | ----- | ------- | ------------------------------------------------------------------------- |
+| `text` | `str` | `""`    | Text to display inside the button, indicating the action it will perform. |
 
 ### Signals
 
-| Name      | Description                         |
-| --------- | ----------------------------------- |
-| `clicked` | Emitted when the button is clicked. |
+| Name      | Arguments | Description                         |
+| --------- | --------- | ----------------------------------- |
+| `clicked` | n/a       | Emitted when the button is clicked. |

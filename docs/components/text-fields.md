@@ -17,13 +17,13 @@ text_field.label = "Name"
 
 ### Properties
 
-| Name    | Type  | Description                      |
-| ------- | ----- | -------------------------------- |
-| `label` | `str` | Floating label text.             |
-| `value` | `str` | Current value of the text field. |
+| Name    | Type  | Default | Description                      |
+| ------- | ----- | ------- | -------------------------------- |
+| `label` | `str` | `""`    | Floating label text.             |
+| `value` | `str` | `""`    | Current value of the text field. |
 
 ### Signals
 
-| Name        | Description                     |
-| ----------- | ------------------------------- |
-| `on_change` | Emitted when the value changed. |
+| Name        | Arguments    | Description                     |
+| ----------- | ------------ | ------------------------------- |
+| `on_change` | `value: str` | Emitted when the value changed. |

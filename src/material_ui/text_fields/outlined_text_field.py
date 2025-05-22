@@ -53,7 +53,7 @@ class OutlinedTextField(BaseTextField):
             "font-size": tokens.label_text_populated_size,
             "font-weight": tokens.label_text_weight,
             # TODO: split outline into 3 parts to make it all transparent
-            "background-color": md_sys_color.surface,
+            "background-color": md_sys_color.background,
             "margin": "0 4px",
         }
 

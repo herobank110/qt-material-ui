@@ -16,12 +16,12 @@ switch = Switch()
 
 ### Properties
 
-| Name       | Type   | Description                      |
-| ---------- | ------ | -------------------------------- |
-| `selected` | `bool` | Whether the switch is on or off. |
+| Name       | Type   | Default | Description                      |
+| ---------- | ------ | ------- | -------------------------------- |
+| `selected` | `bool` | `False` | Whether the switch is on or off. |
 
 ### Signals
 
-| Name               | Description                               |
-| ------------------ | ----------------------------------------- |
-| `change_requested` | Emitted when the user toggles the switch. |
+| Name        | Arguments     | Description                               |
+| ----------- | ------------- | ----------------------------------------- |
+| `on_change` | `value: bool` | Emitted when the user toggles the switch. |
