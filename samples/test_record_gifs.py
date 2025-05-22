@@ -11,7 +11,6 @@ from threading import Thread
 
 import pytest
 from pytestqt.qtbot import QtBot
-from qtpy.QtCore import QPoint
 
 from sample_buttons import SampleButtons
 
@@ -21,8 +20,7 @@ class MousePlaybackThread(Thread):
 
     def __init__(self) -> None:
         super().__init__()
-        self.window_pos = QPoint()
-        self.movements = []
+        self.movements: list[Callable[[], None]] = []
         self.kill = False
 
     def run(self) -> None:
@@ -74,7 +72,7 @@ def test_sample_buttons_gif(qtbot: QtBot, mouse_playback: MousePlaybackThread) -
         x = int(window.x() * dpr)
         y = int((window.y() + window.height() / 2 + 30) * dpr)
         mouse_playback.movements = [
-            move_to(x - 50, y, duration=0),
+            move_to(x - 50, y, instant=True),
             lambda: time.sleep(1.5),
             move_to(x + (120 * dpr), y),
             click,
