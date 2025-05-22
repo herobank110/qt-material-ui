@@ -1,5 +1,8 @@
 """Sample of using the buttons."""
 
+from functools import partial
+
+from material_ui._component import Component
 from material_ui.buttons import (
     ElevatedButton,
     FilledButton,
@@ -8,31 +11,40 @@ from material_ui.buttons import (
     TextButton,
 )
 from material_ui.layout_basics import Row
-from qtpy import QtCore, QtWidgets
+from qtpy.QtCore import Qt
+from qtpy.QtWidgets import QApplication
+
+
+class SampleButtons(Component):
+    def __init__(self) -> None:
+        super().__init__()
+        self.resize(700, 200)
+
+        row = Row()
+        row.alignment = Qt.AlignmentFlag.AlignCenter
+        row.gap = 30
+        row.sx = {"background-color": "white"}
+        self.overlay_widget(row)
+
+        for variant, klass in {
+            "Elevated": ElevatedButton,
+            "Filled": FilledButton,
+            "Tonal": FilledTonalButton,
+            "Outlined": OutlinedButton,
+            "Text": TextButton,
+        }.items():
+            button = klass()
+            button.text = variant
+            button.clicked.connect(partial(self._on_click_button, variant))
+            row.add_widget(button)
+
+    def _on_click_button(self, variant: str) -> None:
+        print(f"Clicked: {variant}")
 
 
 def main() -> None:
-    """Main function."""
-    app = QtWidgets.QApplication()
-
-    window = Row()
-    window.alignment = QtCore.Qt.AlignCenter
-    window.gap = 30
-    window.sx = {"background-color": "white"}
-    window.resize(700, 200)
-
-    for variant, klass in {
-        "Elevated": ElevatedButton,
-        "Filled": FilledButton,
-        "Tonal": FilledTonalButton,
-        "Outlined": OutlinedButton,
-        "Text": TextButton,
-    }.items():
-        button = klass()
-        button.text = variant
-        button.clicked.connect(lambda variant=variant: print(f"Clicked: {variant}"))
-        window.add_widget(button)
-
+    app = QApplication()
+    window = SampleButtons()
     window.show()
     app.exec_()
 
