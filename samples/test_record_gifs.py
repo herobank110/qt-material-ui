@@ -1,10 +1,13 @@
-"""Record gifs for docs."""
+"""Record gifs for docs.
+
+Importing pyautogui locally as it breaks CI. Even though the record_gif
+tests are skipped, this module has be imported to discover tests.
+"""
 
 import time
 from collections.abc import Callable, Generator
 from threading import Thread
 
-import pyautogui
 import pytest
 from pytestqt.qtbot import QtBot
 from qtpy.QtCore import QPoint
@@ -40,12 +43,16 @@ def mouse_playback() -> Generator[MousePlaybackThread, None, None]:
 
 
 def click() -> None:
+    import pyautogui
+
     pyautogui.mouseDown()
     time.sleep(0.2)
     pyautogui.mouseUp()
 
 
 def move_to(x: int, y: int, duration: float = 0.5) -> Callable[[], None]:
+    import pyautogui
+
     def inner():
         pyautogui.moveTo(x, y, duration=duration, tween=pyautogui.easeInOutQuad)
 
