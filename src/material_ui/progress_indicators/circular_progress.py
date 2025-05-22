@@ -128,6 +128,6 @@ class CircularProgress(BaseProgress):
         if not self.indeterminate:
             return 0
 
-        layer1 = (self._t * 0.373) % 1
-        layer2 = (self._t * 0.3) % 12 + (math.sin(self._t * math.pi * 4) + 1) * 0.02
+        layer1 = (self._t * 0.3) % 1
+        layer2 = (math.sin(self._t * math.pi * 3) + 1) * 0.024
         return int((layer1 + layer2) * 360 * -16)
