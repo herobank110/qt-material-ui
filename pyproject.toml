@@ -39,6 +39,11 @@ Documentation = "https://qt-material-ui.readthedocs.io"
 [tool.hatch.build.targets.wheel]
 packages = ["src/material_ui"]
 
+[tool.pytest.ini_options]
+markers = [
+    "record_gif: manual entry point for recording a gif",
+]
+
 [tool.ruff]
 include = ["samples/**/*.py", "src/**/*.py", "tests/**/*.py"]
 line-length = 88

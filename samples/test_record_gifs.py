@@ -52,6 +52,7 @@ def move_to(x: int, y: int, duration: float = 0.5) -> Callable[[], None]:
     return inner
 
 
+@pytest.mark.record_gif
 def test_sample_buttons_gif(qtbot: QtBot, mouse_playback: MousePlaybackThread) -> None:
     """Test the sample buttons."""
     window = SampleButtons()
