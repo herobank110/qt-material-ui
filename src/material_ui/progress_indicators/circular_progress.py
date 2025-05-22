@@ -1,5 +1,6 @@
 """Circular progress indicator."""
 
+import math
 import time
 from typing import cast
 
@@ -89,7 +90,6 @@ class CircularProgress(BaseProgress):
             span_angle_animation.setEasingCurve(QEasingCurve.Type.InOutQuad)
             span_angle_animation.setLoopCount(-1)
             span_angle_animation.start()
-            # self._span_angle = -180 * 16
 
     @effect(_start_angle, _span_angle, _t)
     def _update_on_angles_change(self) -> None:
@@ -104,27 +104,10 @@ class CircularProgress(BaseProgress):
 
         color = resolve_token(tokens.active_indicator_color)
         painter.setPen(QPen(color, float(self._thickness)))
-        import math
 
         # For indeterminate
-        indeterminate_angle_offset = int(
-            (
-                (
-                    # 1st animation layer - constant rotation
-                    (self._t * 0.373) % 1
-                    + (
-                        # 2nd animation layer - jerky rotation
-                        (self._t * 0.2) % 10
-                        + (math.sin(self._t * math.pi * 2) + 1) * 0.01
-                    )
-                )
-                * 360
-            )
-            * -16,
-        )
 
-        angle_offset = indeterminate_angle_offset if self.indeterminate else 0
-        start_angle = self._start_angle + angle_offset
+        start_angle = self._start_angle + self._indeterminate_angle_offset()
         painter.drawArc(self._arc_rect, start_angle, self._span_angle)
 
         painter.end()
@@ -140,3 +123,11 @@ class CircularProgress(BaseProgress):
         # Subtract padding so the line isn't drawn half out of bounds.
         p = self._thickness + 1
         return self.rect().marginsRemoved(QMargins(p, p, p, p))
+
+    def _indeterminate_angle_offset(self) -> int:
+        if not self.indeterminate:
+            return 0
+
+        layer1 = (self._t * 0.373) % 1
+        layer2 = (self._t * 0.3) % 12 + (math.sin(self._t * math.pi * 4) + 1) * 0.02
+        return int((layer1 + layer2) * 360 * -16)
