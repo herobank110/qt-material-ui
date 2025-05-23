@@ -8,6 +8,16 @@
 
 Material 3 component library for Qt Widgets
 
+## Features
+
+- Modern UI building blocks
+- Runtime theme customization
+- Visual flair (ripples, elevations, transitions)
+- Optional reactive state system for fast app development
+- Documented with previews and usage examples
+- Sample apps
+- Type annotations and pep8 naming conventions
+- Authentic handcrafted code - not just vibes
 
 ## Get Started
 
@@ -23,43 +33,3 @@ For further information, check out the
 ### Qt Version
 
 This library has been tested with PySide 6.9.
-
-## Development
-
-### Documentation
-
-The docs are kept in markdown format under the /docs directory. To
-build the HTML, you should use [VitePress](https://vitepress.dev).
-As a prerequisite, you will need NodeJS installed.
-
-From the root of the repository, run the following command to install
-vitepress:
-
-```
-npm install
-```
-
-Subsequently you can work on the docs with a hot reload server:
-
-```
-cd docs && npx vitepress
-```
-
-> This is also available as a VSCode task called `serve docs locally`.
-
-#### Documentation Guidelines
-
-Components should have a page which contains at least the following
-elements: a brief description which may be copied from Material docs, a
-gif showing it in action, a usage example, and API reference for props
-and signals.
-
-Other random pages may be added as needed but the components reference
-is the most important.
-
-Where possible markdown content should be wrapped at 72 characters.
-
-## Contributing
-
-Currently the library is in a very early stage but if you want to get
-involved, feel free to reach out.
