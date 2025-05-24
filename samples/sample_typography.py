@@ -4,6 +4,7 @@ from material_ui._component import Component
 from material_ui.layout_basics import Stack
 from material_ui.tokens import md_sys_color
 from material_ui.typography import Typography
+from qtpy.QtCore import QMargins
 from qtpy.QtWidgets import QApplication
 
 
@@ -13,12 +14,27 @@ class SampleTypography(Component):
 
         self.sx = {"background-color": md_sys_color.background}
 
-        stack = Stack(gap=8)
+        stack = Stack(gap=8, margins=QMargins(40, 30, 40, 30))
 
-        for variant in ["display", "headline", "title", "body", "label"]:
+        for variant in [
+            "display-large",
+            "display-medium",
+            "headline-large",
+            "headline-medium",
+            "headline-small",
+            "title-large",
+            "title-medium",
+            "title-small",
+            "body-large",
+            "body-medium",
+            "body-small",
+            "label-large",
+            "label-medium",
+            "label-small",
+        ]:
             typography = Typography()
             typography.variant = variant
-            typography.text = variant.title()
+            typography.text = variant.replace("-", " ").title()
             stack.add_widget(typography)
 
         self.overlay_widget(stack)
