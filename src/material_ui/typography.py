@@ -1,13 +1,16 @@
 """Typography module."""
 
-from typing import Literal, cast
+from typing import TYPE_CHECKING, Literal, cast
 
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import QLabel
 
 from material_ui._component import Component, effect, use_state
 from material_ui.tokens import md_sys_color, md_sys_typescale
-from material_ui.tokens._utils import DesignToken
+from material_ui.tokens._utils import DesignToken, resolve_token, resolve_token_or_value
+
+if TYPE_CHECKING:
+    from qtpy.QtGui import QColor
 
 TypographyVariant = Literal[
     "display",
@@ -112,7 +115,7 @@ class Typography(Component):
     """Typography helps make writing legible and beautiful."""
 
     text = use_state("")
-    color = use_state(md_sys_color.on_surface)
+    color = use_state(cast("DesignToken | QColor", md_sys_color.on_surface))
     variant = use_state(cast("TypographyVariant | None", None))
     font_family = use_state(md_sys_typescale.body_medium_font)
     font_size = use_state(md_sys_typescale.body_medium_size)
@@ -149,8 +152,8 @@ class Typography(Component):
     @effect(font_family, font_size, font_weight, color)
     def _apply_styles(self) -> None:
         self.sx = {
-            "font-family": self.font_family,
-            "font-size": f"{self.font_size}px",
-            "font-weight": self.font_weight,
-            "color": self.color,
+            "font-family": resolve_token(self.font_family),
+            "font-size": f"{resolve_token(self.font_size)}px",
+            "font-weight": resolve_token(self.font_weight),
+            "color": resolve_token_or_value(self.color),
         }
