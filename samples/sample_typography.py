@@ -2,7 +2,7 @@
 
 from material_ui._component import Component
 from material_ui.layout_basics import Stack
-from material_ui.tokens import md_sys_color, md_sys_typescale
+from material_ui.tokens import md_sys_color
 from material_ui.typography import Typography
 from qtpy.QtCore import QMargins
 from qtpy.QtWidgets import QApplication
@@ -14,7 +14,7 @@ class SampleTypography(Component):
 
         self.sx = {"background-color": md_sys_color.background}
 
-        stack = Stack(gap=8, margins=QMargins(40, 30, 40, 30))
+        stack = Stack(gap=5, margins=QMargins(40, 30, 40, 30))
 
         for variant in [
             "display-large",
