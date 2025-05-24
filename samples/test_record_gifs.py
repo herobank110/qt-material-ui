@@ -7,6 +7,7 @@ tests are skipped, this module has be imported to discover tests.
 import time
 from collections.abc import Callable, Generator
 from threading import Thread
+from typing import Self
 
 import pytest
 from pytestqt.qtbot import QtBot
@@ -15,8 +16,8 @@ from sample_buttons import SampleButtons
 from sample_text_fields import SampleTextFields
 
 
-class MousePlaybackThread(Thread):
-    """Playback mouse movement coordinates."""
+class Controller(Thread):
+    """Play back pyautogui actions in a separate thread."""
 
     def __init__(self) -> None:
         super().__init__()
@@ -34,11 +35,15 @@ class MousePlaybackThread(Thread):
 
 
 @pytest.fixture
-def mouse_playback() -> Generator[MousePlaybackThread, None, None]:
-    thread = MousePlaybackThread()
+def controller() -> Generator[Controller, None, None]:
+    thread = Controller()
     thread.start()
     yield thread
     thread.kill = True
+
+
+def wait(duration_secs: float) -> Callable[[], None]:
+    return lambda: time.sleep(duration_secs)
 
 
 def click() -> None:
@@ -73,7 +78,7 @@ def keypress(key: str) -> Callable[[], None]:
 
 
 @pytest.mark.record_gif
-def test_sample_buttons_gif(qtbot: QtBot, mouse_playback: MousePlaybackThread) -> None:
+def test_sample_buttons_gif(qtbot: QtBot, controller: Controller) -> None:
     """Test the sample buttons."""
     window = SampleButtons()
     qtbot.addWidget(window)
@@ -82,9 +87,9 @@ def test_sample_buttons_gif(qtbot: QtBot, mouse_playback: MousePlaybackThread) -
         dpr = window.devicePixelRatioF()
         x = int(window.x() * dpr)
         y = int((window.y() + window.height() / 2 + 30) * dpr)
-        mouse_playback.movements = [
+        controller.movements = [
             move_to(x - 50, y, instant=True),
-            lambda: time.sleep(1.5),
+            wait(1.5),
             move_to(x + (120 * dpr), y),
             click,
             move_to(x + (240 * dpr), y),
@@ -103,7 +108,7 @@ def test_sample_buttons_gif(qtbot: QtBot, mouse_playback: MousePlaybackThread) -
 @pytest.mark.record_gif
 def test_sample_text_fields_gif(
     qtbot: QtBot,
-    mouse_playback: MousePlaybackThread,
+    controller: Controller,
 ) -> None:
     window = SampleTextFields()
     qtbot.addWidget(window)
@@ -112,18 +117,18 @@ def test_sample_text_fields_gif(
         dpr = window.devicePixelRatioF()
         x = int(window.x() * dpr)
         y = int((window.y() + window.height() / 2 + 30) * dpr)
-        mouse_playback.movements = [
+        controller.movements = [
             move_to(x + 200 * dpr, y + 100 * dpr, instant=True),
-            lambda: time.sleep(3),
+            wait(3),
             move_to(x + 200 * dpr, y),
             click,
             typewrite("Hello"),
-            lambda: time.sleep(0.75),
+            wait(0.75),
             move_to(x + 350 * dpr, y),
             click,
-            lambda: time.sleep(0.5),
+            wait(0.5),
             typewrite("world"),
-            lambda: time.sleep(1),
+            wait(1),
             move_to(x + 350 * dpr, y + 100 * dpr),
         ]
         qtbot.wait(14000)
