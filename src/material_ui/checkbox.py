@@ -48,12 +48,6 @@ class Checkbox(Component):
         container.color = resolve_token(tokens.selected_container_color)
         container.setParent(self)
         container.move(12, 12)
-
-        icon = Icon()
-        icon.icon_name = self._icon_name
-        icon.font_size = tokens.icon_size
-        icon.color = tokens.selected_icon_color
-
         ripple = Ripple()
         ripple.ripple_origin = self._ripple_origin
         ripple.color = tokens.unselected_pressed_state_layer_color
@@ -74,12 +68,15 @@ class Checkbox(Component):
         state_layer.opacity = tokens.unselected_hover_state_layer_opacity
         state_layer.visible = self.hovered
 
+        icon = Icon()
+        icon.icon_name = self._icon_name
+        icon.font_size = 14
+        icon.color = tokens.selected_icon_color
         self._icon_opacity_effect = QGraphicsOpacityEffect()
         # Set opacity at 1 so only the mask has effect (default is 0.7).
         self._icon_opacity_effect.setOpacity(1.0)
         self._icon_opacity_effect.setParent(icon)
         icon.setGraphicsEffect(self._icon_opacity_effect)
-        icon.update()
 
         container.overlay_widget(icon)
 
@@ -102,7 +99,7 @@ class Checkbox(Component):
     @effect(Component.pressed)
     def _apply_ripple_origin(self) -> None:
         if self.pressed:
-            self._ripple_origin = QPointF(self.width() / 2, self.height() / 2)
+            self._ripple_origin = QPointF(self.width() / 2 - 2, self.height() / 2 - 2)
         else:
             self._ripple_origin = None
 
@@ -110,14 +107,14 @@ class Checkbox(Component):
     def _animate_tick_fade_in(self) -> None:
         self._tick_fade_in_value = 1.0 if self.selected else 0.0
 
-    @effect(_tick_fade_in_value)
-    def _apply_tick_fade_in(self) -> None:
-        if self._tick_fade_in_value == 1.0:
-            self._icon_opacity_effect.setOpacityMask(QColor("black"))
+    @effect(_tick_fade_in_value, indeterminate)
+    def _apply_icon_opacity_mask(self) -> None:
+        if self.indeterminate or self._tick_fade_in_value == 1.0:
+            self._icon_opacity_effect.setOpacityMask(QColor("white"))
             return
         grad = QLinearGradient()
         grad.setStart(0, 0)
         grad.setFinalStop(18, 0)
-        grad.setColorAt(self._tick_fade_in_value, "black")
+        grad.setColorAt(self._tick_fade_in_value, "white")
         grad.setColorAt(1, "transparent")
         self._icon_opacity_effect.setOpacityMask(grad)
