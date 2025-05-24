@@ -38,6 +38,7 @@ class Checkbox(Component):
         self.setFixedSize(48, 48)
         self.clicked.connect(self._on_clicked)
         self.should_propagate_click = False
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
 
         container = Shape()
         container.corner_shape = tokens.container_shape
