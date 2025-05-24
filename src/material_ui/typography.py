@@ -59,9 +59,9 @@ _VARIANT_SETTINGS_MAPPING: dict[
         md_sys_typescale.headline_large_weight,
     ),
     "title-small": (
-        md_sys_typescale.headline_small_font,
-        md_sys_typescale.headline_small_size,
-        md_sys_typescale.headline_small_weight,
+        md_sys_typescale.title_small_font,
+        md_sys_typescale.title_small_size,
+        md_sys_typescale.title_small_weight,
     ),
     "title-medium": (
         md_sys_typescale.title_medium_font,
