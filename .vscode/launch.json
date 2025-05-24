@@ -45,6 +45,13 @@
       "request": "launch",
       "program": "${workspaceFolder}/samples/sample_progress_indicators.py",
       "console": "integratedTerminal"
+    },
+    {
+      "name": "Sample - Checkbox",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/samples/sample_checkbox.py",
+      "console": "integratedTerminal"
     }
   ]
 }
