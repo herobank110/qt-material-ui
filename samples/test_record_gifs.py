@@ -7,12 +7,12 @@ tests are skipped, this module has be imported to discover tests.
 import time
 from collections.abc import Callable, Generator
 from threading import Thread
-from typing import Self
 
 import pytest
 from pytestqt.qtbot import QtBot
 
 from sample_buttons import SampleButtons
+from sample_checkbox import SampleCheckbox
 from sample_text_fields import SampleTextFields
 
 
@@ -106,10 +106,7 @@ def test_sample_buttons_gif(qtbot: QtBot, controller: Controller) -> None:
 
 
 @pytest.mark.record_gif
-def test_sample_text_fields_gif(
-    qtbot: QtBot,
-    controller: Controller,
-) -> None:
+def test_sample_text_fields_gif(qtbot: QtBot, controller: Controller) -> None:
     window = SampleTextFields()
     qtbot.addWidget(window)
     window.show()
@@ -132,3 +129,25 @@ def test_sample_text_fields_gif(
             move_to(x + 350 * dpr, y + 100 * dpr),
         ]
         qtbot.wait(14000)
+
+
+@pytest.mark.record_gif
+def test_sample_checkbox_gif(qtbot: QtBot, controller: Controller) -> None:
+    window = SampleCheckbox()
+    qtbot.addWidget(window)
+    window.show()
+    with qtbot.wait_exposed(window):
+        dpr = window.devicePixelRatioF()
+        x = int(window.x() * dpr)
+        y = int((window.y() + window.height() / 2 + 30) * dpr)
+        controller.movements = [
+            move_to(x + 137 * dpr, y + 100 * dpr, instant=True),
+            wait(2),
+            move_to(x + 137 * dpr, y),
+            click,
+            wait(1.5),
+            click,
+            wait(0.75),
+            move_to(x + 137 * dpr, y + 100 * dpr),
+        ]
+        qtbot.wait(12000)
