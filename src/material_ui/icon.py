@@ -27,8 +27,16 @@ class Icon(Component):
     icon_name = use_state("star")
     icon_style = use_state(cast("IconStyle", "outlined"))
     font_size = use_state(cast("DesignToken | int", 24))
+    """Font size of icon."""
+
     color = use_state(md_sys_color.on_surface)
+    """Color of the icon."""
+
     filled = use_state(False)
+    """Whether the icon should be filled."""
+
+    grade = use_state(0)
+    """Thickness. 0 is default, -25 is thin, 200 is thick."""
 
     def __init__(self) -> None:
         super().__init__()
@@ -37,8 +45,7 @@ class Icon(Component):
         install_default_fonts()
 
         self._label = QLabel()
-        self.overlay_widget(self._label)
-        self.layout().setAlignment(Qt.AlignCenter)
+        self.overlay_widget(self._label, center=True)
 
     @effect(color)
     def _apply_color(self) -> None:
@@ -56,5 +63,6 @@ class Icon(Component):
             weight=400,
         )
         font.setVariableAxis(QFont.Tag("FILL"), 1 if self.filled else 0)
-        # font.setVariableAxis(QFont.Tag("GRAD"), 200)
+        font.setVariableAxis(QFont.Tag("GRAD"), self.grade)
+        font.setVariableAxis(QFont.Tag("opsz"), 24)
         self._label.setFont(font)

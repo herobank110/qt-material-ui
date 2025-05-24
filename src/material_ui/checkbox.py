@@ -75,14 +75,14 @@ class Checkbox(Component):
         icon = Icon()
         icon.icon_name = self._icon_name
         icon.font_size = 14
+        icon.grade = 200
         icon.color = tokens.selected_icon_color
         self._icon_opacity_effect = QGraphicsOpacityEffect()
         # Set opacity at 1 so only the mask has effect (default is 0.7).
         self._icon_opacity_effect.setOpacity(1.0)
         self._icon_opacity_effect.setParent(icon)
         icon.setGraphicsEffect(self._icon_opacity_effect)
-
-        self._container.overlay_widget(icon)
+        self._container.overlay_widget(icon, center=True)
 
     def _on_clicked(self) -> None:
         if self.indeterminate:
@@ -96,7 +96,7 @@ class Checkbox(Component):
         self._tick_fade_in_value = 1.0 if self.selected else 0.0
         self._outline_width = (
             tokens.selected_outline_width
-            if self.selected
+            if self.selected or self.indeterminate
             else tokens.unselected_outline_width
         )
         self._container_fill_opacity = (
