@@ -3,7 +3,7 @@
 from typing import Literal, cast
 
 from qtpy.QtCore import Qt
-from qtpy.QtGui import QFont
+from qtpy.QtGui import QColor, QFont
 from qtpy.QtWidgets import QLabel
 
 from material_ui._component import Component, effect, use_state
@@ -25,11 +25,15 @@ class Icon(Component):
     """
 
     icon_name = use_state("star")
+    """Icon name to display. See: https://fonts.google.com/icons."""
+
     icon_style = use_state(cast("IconStyle", "outlined"))
+    """Icon style. Either 'outlined', 'rounded', or 'sharp'."""
+
     font_size = use_state(cast("DesignToken | int", 24))
     """Font size of icon."""
 
-    color = use_state(md_sys_color.on_surface)
+    color = use_state(cast("DesignToken | QColor", md_sys_color.on_surface))
     """Color of the icon."""
 
     filled = use_state(False)
@@ -52,7 +56,7 @@ class Icon(Component):
 
     @effect(color)
     def _apply_color(self) -> None:
-        self.sx = {**self.sx, "color": self.color}
+        self.sx = {**self.sx, "color": resolve_token_or_value(self.color)}
 
     @effect(icon_name)
     def _apply_icon_name(self) -> None:
