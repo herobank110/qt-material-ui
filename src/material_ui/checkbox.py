@@ -51,7 +51,7 @@ class Checkbox(Component):
 
         ripple = Ripple()
         ripple.ripple_origin = self._ripple_origin
-        ripple.color = tokens.error_pressed_state_layer_color
+        ripple.color = tokens.unselected_pressed_state_layer_color
         ripple.setFixedSize(
             resolve_token(tokens.state_layer_size),
             resolve_token(tokens.state_layer_size),
