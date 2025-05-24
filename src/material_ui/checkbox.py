@@ -24,6 +24,7 @@ class Checkbox(Component):
     """Whether the checkbox is in an indeterminate state."""
 
     _outline_width = use_state(tokens.unselected_outline_width)
+    _container_fill_opacity = use_state(1.0)
     _icon_name = use_state("check")
     _ripple_origin = use_state(cast("QPointF | None", None))
     _state_layer_color = use_state(tokens.unselected_hover_state_layer_color)
@@ -47,7 +48,8 @@ class Checkbox(Component):
             resolve_token(tokens.container_height),
             resolve_token(tokens.container_width),
         )
-        self._container.color = resolve_token(tokens.selected_container_color)
+        self._container.color = tokens.selected_container_color
+        self._container.opacity = self._container_fill_opacity
         self._container.setParent(self)
         self._container.move(12, 12)
         ripple = Ripple()
@@ -89,7 +91,7 @@ class Checkbox(Component):
         else:
             self.selected = not self.selected
 
-    @effect(selected)
+    @effect(selected, indeterminate)
     def _apply_selected_effects(self) -> None:
         self._tick_fade_in_value = 1.0 if self.selected else 0.0
         self._outline_width = (
@@ -97,15 +99,16 @@ class Checkbox(Component):
             if self.selected
             else tokens.unselected_outline_width
         )
-
-    @effect(selected, indeterminate)
-    def _apply_icon(self) -> None:
-        if self.indeterminate:
-            self._icon_name = "check_indeterminate_small"
-        elif self.selected:
-            self._icon_name = "check"
-        else:
-            self._icon_name = ""
+        self._container_fill_opacity = (
+            1.0 if self.selected or self.indeterminate else 0.0
+        )
+        self._icon_name = (
+            "check_indeterminate_small"
+            if self.indeterminate
+            else "check"
+            if self.selected
+            else ""
+        )
 
     @effect(Component.pressed)
     def _apply_ripple_origin(self) -> None:
