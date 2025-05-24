@@ -52,6 +52,7 @@ class Checkbox(Component):
         self._container.opacity = self._container_fill_opacity
         self._container.setParent(self)
         self._container.move(12, 12)
+
         ripple = Ripple()
         ripple.ripple_origin = self._ripple_origin
         ripple.color = tokens.unselected_pressed_state_layer_color
