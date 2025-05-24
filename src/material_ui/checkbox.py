@@ -75,7 +75,7 @@ class Checkbox(Component):
         icon = Icon()
         icon.icon_name = self._icon_name
         icon.font_size = 14
-        icon.grade = 200
+        icon.weight = 600
         icon.color = tokens.selected_icon_color
         self._icon_opacity_effect = QGraphicsOpacityEffect()
         # Set opacity at 1 so only the mask has effect (default is 0.7).

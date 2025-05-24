@@ -35,6 +35,9 @@ class Icon(Component):
     color = use_state(cast("DesignToken | QColor", md_sys_color.on_surface))
     """Color of the icon."""
 
+    weight = use_state(400)
+    """Main control of thickness. 400 is default, 100 is thin, 700 is thick."""
+
     filled = use_state(False)
     """Whether the icon should be filled."""
 
@@ -61,7 +64,7 @@ class Icon(Component):
     def _apply_icon_name(self) -> None:
         self._label.setText(self.icon_name)
 
-    @effect(icon_style, filled, font_size, grade, use_optical_size)
+    @effect(icon_style, filled, font_size, weight, grade, use_optical_size)
     def _apply_font(self) -> None:
         font = QFont(
             "Material Symbols " + self.icon_style.title(),
@@ -69,6 +72,7 @@ class Icon(Component):
             weight=400,
         )
         font.setVariableAxis(QFont.Tag("FILL"), 1 if self.filled else 0)
+        font.setVariableAxis(QFont.Tag("wght"), self.weight)
         font.setVariableAxis(QFont.Tag("GRAD"), self.grade)
         optical_size = self.font_size if self.use_optical_size else 24
         font.setVariableAxis(QFont.Tag("opsz"), optical_size)
