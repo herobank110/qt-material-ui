@@ -3,7 +3,7 @@
 from typing import cast
 
 from qtpy.QtCore import QEasingCurve, QPointF, Qt
-from qtpy.QtGui import QColor, QLinearGradient, QMouseEvent
+from qtpy.QtGui import QColor, QLinearGradient
 from qtpy.QtWidgets import QGraphicsOpacityEffect
 
 from material_ui._component import Component, effect, use_state
@@ -23,6 +23,7 @@ class Checkbox(Component):
     indeterminate = use_state(False)
     """Whether the checkbox is in an indeterminate state."""
 
+    _outline_width = use_state(tokens.unselected_outline_width)
     _icon_name = use_state("check")
     _ripple_origin = use_state(cast("QPointF | None", None))
     _state_layer_color = use_state(tokens.unselected_hover_state_layer_color)
@@ -40,15 +41,15 @@ class Checkbox(Component):
         self.should_propagate_click = False
         self.setCursor(Qt.CursorShape.PointingHandCursor)
 
-        container = Shape()
-        container.corner_shape = tokens.container_shape
-        container.setFixedSize(
+        self._container = Shape()
+        self._container.corner_shape = tokens.container_shape
+        self._container.setFixedSize(
             resolve_token(tokens.container_height),
             resolve_token(tokens.container_width),
         )
-        container.color = resolve_token(tokens.selected_container_color)
-        container.setParent(self)
-        container.move(12, 12)
+        self._container.color = resolve_token(tokens.selected_container_color)
+        self._container.setParent(self)
+        self._container.move(12, 12)
         ripple = Ripple()
         ripple.ripple_origin = self._ripple_origin
         ripple.color = tokens.unselected_pressed_state_layer_color
@@ -79,7 +80,7 @@ class Checkbox(Component):
         self._icon_opacity_effect.setParent(icon)
         icon.setGraphicsEffect(self._icon_opacity_effect)
 
-        container.overlay_widget(icon)
+        self._container.overlay_widget(icon)
 
     def _on_clicked(self) -> None:
         if self.indeterminate:
@@ -87,6 +88,15 @@ class Checkbox(Component):
             self.selected = True
         else:
             self.selected = not self.selected
+
+    @effect(selected)
+    def _apply_selected_effects(self) -> None:
+        self._tick_fade_in_value = 1.0 if self.selected else 0.0
+        self._outline_width = (
+            tokens.selected_outline_width
+            if self.selected
+            else tokens.unselected_outline_width
+        )
 
     @effect(selected, indeterminate)
     def _apply_icon(self) -> None:
@@ -104,10 +114,6 @@ class Checkbox(Component):
         else:
             self._ripple_origin = None
 
-    @effect(selected)
-    def _animate_tick_fade_in(self) -> None:
-        self._tick_fade_in_value = 1.0 if self.selected else 0.0
-
     @effect(_tick_fade_in_value, indeterminate)
     def _apply_icon_opacity_mask(self) -> None:
         if self.indeterminate or self._tick_fade_in_value == 1.0:
@@ -119,3 +125,12 @@ class Checkbox(Component):
         grad.setColorAt(self._tick_fade_in_value, "white")
         grad.setColorAt(1, "transparent")
         self._icon_opacity_effect.setOpacityMask(grad)
+
+    @effect(_outline_width)
+    def _apply_outline(self) -> None:
+        self._container.sx = {
+            **self._container.sx,
+            "border-width": self._outline_width,
+            "border-color": tokens.unselected_outline_color,
+            "border-style": "solid",
+        }
