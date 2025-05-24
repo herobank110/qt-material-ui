@@ -2,8 +2,8 @@
 
 from typing import cast
 
-from qtpy.QtCore import QPointF, Qt
-from qtpy.QtGui import QLinearGradient, QMouseEvent
+from qtpy.QtCore import QEasingCurve, QPointF, Qt
+from qtpy.QtGui import QColor, QLinearGradient, QMouseEvent
 from qtpy.QtWidgets import QGraphicsOpacityEffect
 
 from material_ui._component import Component, effect, use_state
@@ -26,6 +26,11 @@ class Checkbox(Component):
     _icon_name = use_state("check")
     _ripple_origin = use_state(cast("QPointF | None", None))
     _state_layer_color = use_state(tokens.unselected_hover_state_layer_color)
+    _tick_fade_in_value = use_state(
+        0.0,
+        transition=100,
+        easing=QEasingCurve.Type.InCubic,
+    )
 
     def __init__(self) -> None:
         super().__init__()
@@ -69,26 +74,11 @@ class Checkbox(Component):
         state_layer.opacity = tokens.unselected_hover_state_layer_opacity
         state_layer.visible = self.hovered
 
-        icon_opacity_effect = QGraphicsOpacityEffect()
-        icon_opacity_effect.setOpacity(1.0)
-        icon_opacity_effect.setParent(icon)
-
-        # mask = QImage(18, 18, QImage.Format.Format_ARGB32_Premultiplied)
-        # painter = QPainter(mask)
-        # painter.setRenderHints(QPainter.RenderHint.Antialiasing, on=False)
-        # painter.fillRect(0, 0, 18, 18, "transparent")
-        # # painter.fillRect(0, 0, 9, 18, "white")
-        # painter.end()
-        # icon_opacity_effect.setOpacityMask(mask)
-
-        grad = QLinearGradient()
-        grad.setStart(0, 0)
-        grad.setFinalStop(18, 0)
-        grad.setColorAt(0.5, "black")
-        grad.setColorAt(1, "transparent")
-        icon_opacity_effect.setOpacityMask(grad)
-
-        icon.setGraphicsEffect(icon_opacity_effect)
+        self._icon_opacity_effect = QGraphicsOpacityEffect()
+        # Set opacity at 1 so only the mask has effect (default is 0.7).
+        self._icon_opacity_effect.setOpacity(1.0)
+        self._icon_opacity_effect.setParent(icon)
+        icon.setGraphicsEffect(self._icon_opacity_effect)
         icon.update()
 
         container.overlay_widget(icon)
@@ -115,3 +105,19 @@ class Checkbox(Component):
             self._ripple_origin = QPointF(self.width() / 2, self.height() / 2)
         else:
             self._ripple_origin = None
+
+    @effect(selected)
+    def _animate_tick_fade_in(self) -> None:
+        self._tick_fade_in_value = 1.0 if self.selected else 0.0
+
+    @effect(_tick_fade_in_value)
+    def _apply_tick_fade_in(self) -> None:
+        if self._tick_fade_in_value == 1.0:
+            self._icon_opacity_effect.setOpacityMask(QColor("black"))
+            return
+        grad = QLinearGradient()
+        grad.setStart(0, 0)
+        grad.setFinalStop(18, 0)
+        grad.setColorAt(self._tick_fade_in_value, "black")
+        grad.setColorAt(1, "transparent")
+        self._icon_opacity_effect.setOpacityMask(grad)
