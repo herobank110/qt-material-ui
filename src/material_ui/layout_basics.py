@@ -2,25 +2,28 @@
 
 from typing import cast
 
-from qtpy import QtCore, QtWidgets
+from qtpy.QtCore import QMargins, Qt
+from qtpy.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 
 from material_ui._component import Component, effect, use_state
+
+_DefaultAlignment = cast("Qt.AlignmentFlag", Qt.AlignmentFlag())  # type: ignore[assignment]
 
 
 class Row(Component):
     """A horizontal container."""
 
-    alignment = use_state(cast(QtCore.Qt.AlignmentFlag, QtCore.Qt.AlignmentFlag()))
+    alignment = use_state(_DefaultAlignment)
     gap = use_state(0)
-    margins = use_state(QtCore.QMargins())
+    margins = use_state(QMargins())
 
     def __init__(self) -> None:
         super().__init__()
-        self._hbox = QtWidgets.QHBoxLayout(self)
+        self._hbox = QHBoxLayout(self)
 
-    def add_widget(self, widget: QtWidgets.QWidget) -> None:
+    def add_widget(self, widget: QWidget) -> None:
         """Add a widget to the row."""
-        self.layout().addWidget(widget)
+        self._hbox.addWidget(widget)
 
     @effect(gap, alignment, margins)
     def _update_hbox(self) -> None:
@@ -32,31 +35,31 @@ class Row(Component):
 class Stack(Component):
     """A vertical container."""
 
-    alignment = use_state(cast(QtCore.Qt.AlignmentFlag, QtCore.Qt.AlignmentFlag()))
+    alignment = use_state(_DefaultAlignment)
     gap = use_state(0)
-    margins = use_state(QtCore.QMargins())
+    margins = use_state(QMargins())
 
     def __init__(
         self,
         *,
-        alignment: QtCore.Qt.AlignmentFlag | None = None,
+        alignment: Qt.AlignmentFlag | None = None,
         gap: int | None = None,
-        margins: QtCore.QMargins | None = None,
+        margins: QMargins | None = None,
     ) -> None:
         super().__init__()
 
+        self._vbox = QVBoxLayout(self)
+
         if alignment is not None:
-            self.alignment.set(alignment)
+            self.alignment = alignment
         if gap is not None:
-            self.gap.set(gap)
+            self.gap = gap
         if margins is not None:
-            self.margins.set(margins)
+            self.margins = margins
 
-        self._vbox = QtWidgets.QVBoxLayout(self)
-
-    def add_widget(self, widget: QtWidgets.QWidget) -> None:
+    def add_widget(self, widget: QWidget) -> None:
         """Add a widget to the stack."""
-        self.layout().addWidget(widget)
+        self._vbox.addWidget(widget)
 
     @effect(gap, alignment, margins)
     def _update_vbox(self) -> None:
