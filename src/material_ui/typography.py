@@ -13,25 +13,20 @@ if TYPE_CHECKING:
     from qtpy.QtGui import QColor
 
 TypographyVariant = Literal[
-    "display",
-    "display-medium",
     "display-large",
-    "headline",
-    "headline-small",
-    "headline-medium",
+    "display-medium",
     "headline-large",
-    "title",
-    "title-small",
-    "title-medium",
+    "headline-medium",
+    "headline-small",
     "title-large",
-    "body",
-    "body-small",
-    "body-medium",
+    "title-medium",
+    "title-small",
     "body-large",
-    "label",
-    "label-small",
-    "label-medium",
+    "body-medium",
+    "body-small",
     "label-large",
+    "label-medium",
+    "label-small",
 ]
 
 _VARIANT_SETTINGS_MAPPING: dict[
@@ -140,11 +135,7 @@ class Typography(Component):
     def _apply_font_settings_from_variant(self) -> None:
         if not self.variant:
             return
-        variant = cast(
-            "TypographyVariant",
-            self.variant if "-" in self.variant else f"{self.variant}-medium",
-        )
-        font_family, font_size, font_weight = _VARIANT_SETTINGS_MAPPING[variant]
+        font_family, font_size, font_weight = _VARIANT_SETTINGS_MAPPING[self.variant]
         self.font_family = font_family
         self.font_size = font_size
         self.font_weight = font_weight
@@ -152,8 +143,8 @@ class Typography(Component):
     @effect(font_family, font_size, font_weight, color)
     def _apply_styles(self) -> None:
         self.sx = {
-            "font-family": resolve_token(self.font_family),
+            "font-family": cast("str", resolve_token(self.font_family)),
             "font-size": f"{resolve_token(self.font_size)}px",
-            "font-weight": resolve_token(self.font_weight),
+            "font-weight": cast("str", resolve_token(self.font_weight)),
             "color": resolve_token_or_value(self.color),
         }
