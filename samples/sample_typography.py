@@ -2,7 +2,7 @@
 
 from material_ui._component import Component
 from material_ui.layout_basics import Stack
-from material_ui.tokens import md_sys_color
+from material_ui.tokens import md_sys_color, md_sys_typescale
 from material_ui.typography import Typography
 from qtpy.QtCore import QMargins
 from qtpy.QtWidgets import QApplication
@@ -29,7 +29,9 @@ class SampleTypography(Component):
             "body-medium",
             "body-small",
             "label-large",
+            "label-large-prominent",
             "label-medium",
+            "label-medium-prominent",
             "label-small",
         ]:
             typography = Typography()

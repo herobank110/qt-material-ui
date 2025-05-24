@@ -25,7 +25,9 @@ TypographyVariant = Literal[
     "body-medium",
     "body-small",
     "label-large",
+    "label-large-prominent",
     "label-medium",
+    "label-medium-prominent",
     "label-small",
 ]
 
@@ -93,10 +95,20 @@ _VARIANT_SETTINGS_MAPPING: dict[
         md_sys_typescale.label_large_size,
         md_sys_typescale.label_large_weight,
     ),
+    "label-large-prominent": (
+        md_sys_typescale.label_large_font,
+        md_sys_typescale.label_large_size,
+        md_sys_typescale.label_large_weight_prominent,
+    ),
     "label-medium": (
         md_sys_typescale.label_medium_font,
         md_sys_typescale.label_medium_size,
         md_sys_typescale.label_medium_weight,
+    ),
+    "label-medium-prominent": (
+        md_sys_typescale.label_medium_font,
+        md_sys_typescale.label_medium_size,
+        md_sys_typescale.label_medium_weight_prominent,
     ),
     "label-small": (
         md_sys_typescale.label_small_font,
