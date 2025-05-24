@@ -92,7 +92,7 @@ class Checkbox(Component):
             self.selected = not self.selected
 
     @effect(selected, indeterminate)
-    def _apply_selected_effects(self) -> None:
+    def _apply_main_visual_states(self) -> None:
         self._tick_fade_in_value = 1.0 if self.selected else 0.0
         self._outline_width = (
             tokens.selected_outline_width
@@ -111,7 +111,7 @@ class Checkbox(Component):
         )
 
     @effect(Component.pressed)
-    def _apply_ripple_origin(self) -> None:
+    def _set_ripple_origin(self) -> None:
         if self.pressed:
             self._ripple_origin = QPointF(self.width() / 2 - 2, self.height() / 2 - 2)
         else:
@@ -130,7 +130,7 @@ class Checkbox(Component):
         self._icon_opacity_effect.setOpacityMask(grad)
 
     @effect(_outline_width)
-    def _apply_outline(self) -> None:
+    def _apply_outline_width(self) -> None:
         self._container.sx = {
             **self._container.sx,
             "border-width": self._outline_width,
