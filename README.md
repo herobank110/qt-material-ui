@@ -27,9 +27,15 @@ This library is available on PyPI and can be installed with pip:
 pip install qt-material-ui
 ```
 
-For further information, check out the
-[Get Started documentation](https://qt-material-ui.readthedocs.io/en/latest/get-started.html).
+- Continue with the [Get Started documentation](https://qt-material-ui.readthedocs.io/en/latest/get-started.html)
 
-### Qt Version
+## Sample Apps
+
+See the library in action with the included sample apps.
+
+### App 1
+
+
+## Qt Version
 
 This library has been tested with PySide 6.9.
