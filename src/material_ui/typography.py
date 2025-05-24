@@ -33,75 +33,75 @@ _VARIANT_SETTINGS_MAPPING: dict[
     TypographyVariant,
     tuple[DesignToken, DesignToken, DesignToken],
 ] = {
-    "display-medium": (
-        md_sys_typescale.display_medium_font,
-        md_sys_typescale.display_medium_size,
-        md_sys_typescale.display_medium_weight,
-    ),
     "display-large": (
         md_sys_typescale.display_large_font,
         md_sys_typescale.display_large_size,
         md_sys_typescale.display_large_weight,
     ),
-    "headline-small": (
-        md_sys_typescale.headline_small_font,
-        md_sys_typescale.headline_small_size,
-        md_sys_typescale.headline_small_weight,
-    ),
-    "headline-medium": (
-        md_sys_typescale.headline_medium_font,
-        md_sys_typescale.headline_medium_size,
-        md_sys_typescale.headline_medium_weight,
+    "display-medium": (
+        md_sys_typescale.display_medium_font,
+        md_sys_typescale.display_medium_size,
+        md_sys_typescale.display_medium_weight,
     ),
     "headline-large": (
         md_sys_typescale.headline_large_font,
         md_sys_typescale.headline_large_size,
         md_sys_typescale.headline_large_weight,
     ),
-    "title-small": (
-        md_sys_typescale.title_small_font,
-        md_sys_typescale.title_small_size,
-        md_sys_typescale.title_small_weight,
+    "headline-medium": (
+        md_sys_typescale.headline_medium_font,
+        md_sys_typescale.headline_medium_size,
+        md_sys_typescale.headline_medium_weight,
     ),
-    "title-medium": (
-        md_sys_typescale.title_medium_font,
-        md_sys_typescale.title_medium_size,
-        md_sys_typescale.title_medium_weight,
+    "headline-small": (
+        md_sys_typescale.headline_small_font,
+        md_sys_typescale.headline_small_size,
+        md_sys_typescale.headline_small_weight,
     ),
     "title-large": (
         md_sys_typescale.title_large_font,
         md_sys_typescale.title_large_size,
         md_sys_typescale.title_large_weight,
     ),
-    "body-small": (
-        md_sys_typescale.body_small_font,
-        md_sys_typescale.body_small_size,
-        md_sys_typescale.body_small_weight,
+    "title-medium": (
+        md_sys_typescale.title_medium_font,
+        md_sys_typescale.title_medium_size,
+        md_sys_typescale.title_medium_weight,
     ),
-    "body-medium": (
-        md_sys_typescale.body_medium_font,
-        md_sys_typescale.body_medium_size,
-        md_sys_typescale.body_medium_weight,
+    "title-small": (
+        md_sys_typescale.title_small_font,
+        md_sys_typescale.title_small_size,
+        md_sys_typescale.title_small_weight,
     ),
     "body-large": (
         md_sys_typescale.body_large_font,
         md_sys_typescale.body_large_size,
         md_sys_typescale.body_large_weight,
     ),
-    "label-small": (
-        md_sys_typescale.label_small_font,
-        md_sys_typescale.label_small_size,
-        md_sys_typescale.label_small_weight,
+    "body-medium": (
+        md_sys_typescale.body_medium_font,
+        md_sys_typescale.body_medium_size,
+        md_sys_typescale.body_medium_weight,
+    ),
+    "body-small": (
+        md_sys_typescale.body_small_font,
+        md_sys_typescale.body_small_size,
+        md_sys_typescale.body_small_weight,
+    ),
+    "label-large": (
+        md_sys_typescale.label_large_font,
+        md_sys_typescale.label_large_size,
+        md_sys_typescale.label_large_weight,
     ),
     "label-medium": (
         md_sys_typescale.label_medium_font,
         md_sys_typescale.label_medium_size,
         md_sys_typescale.label_medium_weight,
     ),
-    "label-large": (
-        md_sys_typescale.label_large_font,
-        md_sys_typescale.label_large_size,
-        md_sys_typescale.label_large_weight,
+    "label-small": (
+        md_sys_typescale.label_small_font,
+        md_sys_typescale.label_small_size,
+        md_sys_typescale.label_small_weight,
     ),
 }
 
