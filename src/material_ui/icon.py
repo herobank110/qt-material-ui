@@ -2,7 +2,6 @@
 
 from typing import Literal, cast
 
-from qtpy.QtCore import Qt
 from qtpy.QtGui import QColor, QFont
 from qtpy.QtWidgets import QLabel
 
