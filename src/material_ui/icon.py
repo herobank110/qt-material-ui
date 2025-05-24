@@ -38,6 +38,9 @@ class Icon(Component):
     grade = use_state(0)
     """Thickness. 0 is default, -25 is thin, 200 is thick."""
 
+    use_optical_size = use_state(True)
+    """Whether to set the optical size to match the font size."""
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -55,7 +58,7 @@ class Icon(Component):
     def _apply_icon_name(self) -> None:
         self._label.setText(self.icon_name)
 
-    @effect(icon_style, filled, font_size)
+    @effect(icon_style, filled, font_size, grade, use_optical_size)
     def _apply_font(self) -> None:
         font = QFont(
             "Material Symbols " + self.icon_style.title(),
@@ -64,5 +67,6 @@ class Icon(Component):
         )
         font.setVariableAxis(QFont.Tag("FILL"), 1 if self.filled else 0)
         font.setVariableAxis(QFont.Tag("GRAD"), self.grade)
-        font.setVariableAxis(QFont.Tag("opsz"), 24)
+        optical_size = self.font_size if self.use_optical_size else 24
+        font.setVariableAxis(QFont.Tag("opsz"), optical_size)
         self._label.setFont(font)
