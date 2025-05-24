@@ -9,17 +9,7 @@ from qtpy.QtWidgets import QLabel
 from material_ui._component import Component, effect, use_state
 from material_ui._font_utils import install_default_fonts
 from material_ui.tokens import md_sys_color
-
-# TODO: add all the icons...?
-IconName = Literal[
-    "star",
-    "arrow_drop_down",
-    "more_vert",
-    "check",
-    "close",
-    "add",
-]
-
+from material_ui.tokens._utils import DesignToken, resolve_token_or_value
 
 IconStyle = Literal[
     "outlined",
@@ -29,10 +19,14 @@ IconStyle = Literal[
 
 
 class Icon(Component):
-    """Material icon component."""
+    """Material icon component.
 
-    icon_name = use_state(cast(IconName, "star"))
-    icon_style = use_state(cast(IconStyle, "outlined"))
+    Check here for available icons: https://fonts.google.com/icons
+    """
+
+    icon_name = use_state("star")
+    icon_style = use_state(cast("IconStyle", "outlined"))
+    font_size = use_state(cast("DesignToken | int", 24))
     color = use_state(md_sys_color.on_surface)
     filled = use_state(False)
 
@@ -51,14 +45,14 @@ class Icon(Component):
         self.sx = {**self.sx, "color": self.color}
 
     @effect(icon_name)
-    def _apply_icon_name(self):
+    def _apply_icon_name(self) -> None:
         self._label.setText(self.icon_name)
 
-    @effect(icon_style, filled)
-    def _apply_font(self):
+    @effect(icon_style, filled, font_size)
+    def _apply_font(self) -> None:
         font = QFont(
             "Material Symbols " + self.icon_style.title(),
-            pointSize=24,
+            pointSize=resolve_token_or_value(self.font_size),
             weight=400,
         )
         font.setVariableAxis(QFont.Tag("FILL"), 1 if self.filled else 0)

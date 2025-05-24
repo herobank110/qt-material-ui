@@ -6,7 +6,7 @@
 from material_ui.tokens._utils import define_token as _define_token
 
 container_height = _define_token(18)
-container_shape = _define_token("SHAPE_FAMILY_ROUNDED_CORNERS")
+container_shape = _define_token("md.sys.shape.corner.extra-small")
 container_size = _define_token(18)
 container_width = _define_token(18)
 disabled_selected_icon_color = _define_token("md.sys.color.primary")
