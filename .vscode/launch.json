@@ -52,6 +52,13 @@
       "request": "launch",
       "program": "${workspaceFolder}/samples/sample_checkbox.py",
       "console": "integratedTerminal"
+    },
+    {
+      "name": "Sample - Typography",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/samples/sample_typography.py",
+      "console": "integratedTerminal"
     }
   ]
 }

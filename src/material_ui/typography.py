@@ -10,18 +10,22 @@ from material_ui.tokens import md_sys_color, md_sys_typescale
 from material_ui.tokens._utils import DesignToken
 
 TypographyVariant = Literal[
-    "display-small",
+    "display",
     "display-medium",
     "display-large",
+    "headline",
     "headline-small",
     "headline-medium",
     "headline-large",
+    "title",
     "title-small",
     "title-medium",
     "title-large",
+    "body",
     "body-small",
     "body-medium",
     "body-large",
+    "label",
     "label-small",
     "label-medium",
     "label-large",
@@ -31,11 +35,6 @@ _VARIANT_SETTINGS_MAPPING: dict[
     TypographyVariant,
     tuple[DesignToken, DesignToken, DesignToken],
 ] = {
-    "display-small": (
-        md_sys_typescale.display_small_font,
-        md_sys_typescale.display_small_size,
-        md_sys_typescale.display_small_weight,
-    ),
     "display-medium": (
         md_sys_typescale.display_medium_font,
         md_sys_typescale.display_medium_size,
@@ -138,7 +137,10 @@ class Typography(Component):
     def _apply_font_settings_from_variant(self) -> None:
         if not self.variant:
             return
-        variant = self.variant if "-" in self.variant else f"{self.variant}-medium"
+        variant = cast(
+            "TypographyVariant",
+            self.variant if "-" in self.variant else f"{self.variant}-medium",
+        )
         font_family, font_size, font_weight = _VARIANT_SETTINGS_MAPPING[variant]
         self.font_family = font_family
         self.font_size = font_size
