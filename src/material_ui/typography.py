@@ -3,6 +3,7 @@
 from typing import TYPE_CHECKING, Literal, cast
 
 from qtpy.QtCore import Qt
+from qtpy.QtGui import QFont
 from qtpy.QtWidgets import QLabel
 
 from material_ui._component import Component, effect, use_state
@@ -154,9 +155,12 @@ class Typography(Component):
 
     @effect(font_family, font_size, font_weight, color)
     def _apply_styles(self) -> None:
-        self.sx = {
-            "font-family": cast("str", resolve_token(self.font_family)),
-            "font-size": f"{resolve_token(self.font_size)}px",
-            "font-weight": cast("str", resolve_token(self.font_weight)),
-            "color": resolve_token_or_value(self.color),
-        }
+        self.sx = {"color": resolve_token_or_value(self.color)}
+
+        # font-weight is bugged in qt stylesheets, so use QFont instead.
+        font = QFont(
+            cast("str", resolve_token(self.font_family)),
+            pointSize=resolve_token_or_value(self.font_size),
+            weight=cast("int", resolve_token(self.font_weight)),
+        )
+        self._label.setFont(font)
