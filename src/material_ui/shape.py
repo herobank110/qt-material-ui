@@ -29,6 +29,8 @@ class Shape(Component):
         # TODO: make the shape non identical tokens not compare equal
         if token is md_sys_shape.corner_none:
             update = {"border-radius": 0}
+        elif token is md_sys_shape.corner_extra_extra_small:
+            update = {"border-radius": 2}
         elif token is md_sys_shape.corner_extra_small:
             update = {"border-radius": 4}
         elif token is md_sys_shape.corner_extra_small_top:

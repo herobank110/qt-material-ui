@@ -25,6 +25,7 @@ class Checkbox(Component):
 
     _icon_name = use_state("check")
     _ripple_origin = use_state(cast("QPointF | None", None))
+    _state_layer_color = use_state(tokens.unselected_hover_state_layer_color)
 
     def __init__(self) -> None:
         super().__init__()
@@ -40,7 +41,8 @@ class Checkbox(Component):
             resolve_token(tokens.container_width),
         )
         container.color = resolve_token(tokens.selected_container_color)
-        self.overlay_widget(container)
+        container.setParent(self)
+        container.move(12, 12)
 
         icon = Icon()
         icon.icon_name = self._icon_name
@@ -49,11 +51,23 @@ class Checkbox(Component):
 
         ripple = Ripple()
         ripple.ripple_origin = self._ripple_origin
+        ripple.color = tokens.error_pressed_state_layer_color
         ripple.setFixedSize(
             resolve_token(tokens.state_layer_size),
             resolve_token(tokens.state_layer_size),
         )
         ripple.setParent(self)
+
+        state_layer = Shape()
+        state_layer.setParent(self)
+        state_layer.setFixedSize(
+            resolve_token(tokens.state_layer_size),
+            resolve_token(tokens.state_layer_size),
+        )
+        state_layer.corner_shape = tokens.state_layer_shape
+        state_layer.color = self._state_layer_color
+        state_layer.opacity = tokens.unselected_hover_state_layer_opacity
+        state_layer.visible = self.hovered
 
         icon_opacity_effect = QGraphicsOpacityEffect()
         icon_opacity_effect.setOpacity(1.0)
@@ -95,14 +109,9 @@ class Checkbox(Component):
         else:
             self._icon_name = ""
 
-    def mousePressEvent(self, event: QMouseEvent) -> None:  # noqa: N802
-        """Begin ripple."""
-        if event.button() == Qt.MouseButton.LeftButton:
+    @effect(Component.pressed)
+    def _apply_ripple_origin(self) -> None:
+        if self.pressed:
             self._ripple_origin = QPointF(self.width() / 2, self.height() / 2)
-        super().mousePressEvent(event)
-
-    def mouseReleaseEvent(self, event: QMouseEvent) -> None:  # noqa: N802
-        """End ripple."""
-        if event.button() == Qt.MouseButton.LeftButton:
+        else:
             self._ripple_origin = None
-        super().mouseReleaseEvent(event)

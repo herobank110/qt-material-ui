@@ -476,7 +476,13 @@ class Component(QWidget, metaclass=_ComponentMeta):
             # ensures the derived class's constructor is finished first.
             QTimer.singleShot(0, func)
 
-    def overlay_widget(self, widget: QWidget, margins: QMargins | None = None) -> None:
+    def overlay_widget(
+        self,
+        widget: QWidget,
+        margins: QMargins | None = None,
+        *,
+        center: bool = False,
+    ) -> None:
         """Overlay a widget on top of this widget.
 
         Ownership will also be set to this widget.
@@ -489,6 +495,8 @@ class Component(QWidget, metaclass=_ComponentMeta):
         layout = QVBoxLayout(self)
         layout.setSpacing(0)
         layout.setContentsMargins(margins or QMargins())
+        if center:
+            layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(widget)
 
     def set_transition(

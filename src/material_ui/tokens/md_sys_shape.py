@@ -7,6 +7,7 @@ from material_ui.tokens._utils import define_token as _define_token
 
 corner_extra_large = _define_token("SHAPE_FAMILY_ROUNDED_CORNERS")
 corner_extra_large_top = _define_token("SHAPE_FAMILY_ROUNDED_CORNERS")
+corner_extra_extra_small = _define_token("SHAPE_FAMILY_ROUNDED_CORNERS")
 corner_extra_small = _define_token("SHAPE_FAMILY_ROUNDED_CORNERS")
 corner_extra_small_top = _define_token("SHAPE_FAMILY_ROUNDED_CORNERS")
 corner_full = _define_token("SHAPE_FAMILY_CIRCULAR")
