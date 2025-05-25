@@ -101,3 +101,6 @@ executionEnvironments = [
     # Allow tests to import private functions to test them.
     { root = "tests", reportPrivateUsage = false, reportMissingTypeStubs = false },
 ]
+
+[tool.mypy]
+files = ["src/**/*.py", "tests/**/*.py"]
