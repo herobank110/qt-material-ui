@@ -162,7 +162,8 @@ class Typography(Component):
         # Can't control font-weight in qt stylesheets, so use QFont
         # instead. This also allows controlling variable axes.
         font = QFont(cast("str", resolve_token(self.font_family)))
-        # Use pixel size instead of point size. Point size makes it look too big.
+        # Use pixel size instead of point size - point size makes it
+        # look too big. DPI scaling seems to be correct like this too.
         font.setPixelSize(cast("int", resolve_token_or_value(self.font_size)))
         # Use variable axis (Qt>=6) instead of QFont.Weight enum.
         weight_value = cast("int", resolve_token_or_value(self.font_weight))
