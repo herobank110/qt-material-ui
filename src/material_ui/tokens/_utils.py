@@ -29,7 +29,7 @@ class DesignToken:
         return hash(repr(self.value))
 
 
-def define_token(value: TokenValue) -> DesignToken:
+def define_token(value: TokenValue | Indirection) -> DesignToken:
     """Factory function for defining a token.
 
     Mainly for internal use.
