@@ -1,19 +1,16 @@
 """Main app component."""
 
-from pathlib import Path
 
 from material_ui._component import Component, Signal, effect, use_state
-from material_ui.buttons.filled_button import FilledButton
 from material_ui.icon import Icon
 from material_ui.layout_basics import Row, Stack
 from material_ui.progress_indicators.linear_progress import LinearProgress
 from material_ui.shape import Shape
 from material_ui.tokens import md_sys_color, md_sys_shape
 from material_ui.typography import Typography
-from qtpy.QtCore import QMargins, QPointF, Qt, QTimer, QUrl
-from qtpy.QtGui import QImage, QPainter, QPixmap, QRadialGradient
+from qtpy.QtCore import QMargins, Qt, QTimer
 from qtpy.QtMultimedia import QAudioOutput, QMediaPlayer
-from qtpy.QtWidgets import QLabel, QSizePolicy
+from qtpy.QtWidgets import QSizePolicy
 
 songs = [
     "https://www.freecol.org/images/fearless-sailors.ogg",
@@ -196,29 +193,3 @@ class MusicPlayerApp(Component):
             self._media_player.play()
         else:
             self._media_player.pause()
-
-
-# title = Typography()
-# title.alignment = Qt.AlignmentFlag.AlignCenter
-# title.variant = "headline-medium"
-# title.text = "Music Player"
-# stack.add_widget(title)
-
-# image_label = QLabel()
-# image_label.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
-# image_label.setFixedSize(200, 200)
-# image = QImage(200, 200, QImage.Format.Format_ARGB32_Premultiplied)
-# painter = QPainter(image)
-# painter.fillRect(image.rect(), "transparent")
-# grad = QRadialGradient(QPointF(100, 100), 100)
-# grad.setColorAt(0.0, "white")
-# grad.setColorAt(1.0, "black")
-# painter.setBrush(grad)
-# painter.drawEllipse(QPointF(100, 100), 100, 100)
-# painter.end()
-# image_label.setPixmap(QPixmap(image))
-# stack.add_widget(image_label)
-
-# play_button = FilledButton()
-# play_button.text = "Play"
-# stack.add_widget(play_button)
