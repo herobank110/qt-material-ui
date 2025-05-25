@@ -42,16 +42,16 @@ class OutlinedTextField(BaseTextField):
         self._focus_outline.setParent(self)
 
         self._resting_label.setParent(self)
-        self._resting_label.sx = {
-            "font-family": tokens.label_text_font,
-            "font-size": tokens.label_text_size,
-            "font-weight": tokens.label_text_weight,
-        }
+        self._resting_label.font_family = tokens.label_text_font
+        self._resting_label.font_size = tokens.label_text_size
+        self._resting_label.font_weight = tokens.label_text_weight
+
         self._floating_label.setParent(self)
+        self._floating_label.font_family = tokens.label_text_font
+        self._floating_label.font_size = tokens.label_text_populated_size
+        self._floating_label.font_weight = tokens.label_text_weight
         self._floating_label.sx = {
-            "font-family": tokens.label_text_font,
-            "font-size": tokens.label_text_populated_size,
-            "font-weight": tokens.label_text_weight,
+            **self._floating_label.sx,
             # TODO: split outline into 3 parts to make it all transparent
             "background-color": md_sys_color.background,
             "margin": "0 4px",
