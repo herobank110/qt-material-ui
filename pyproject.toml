@@ -30,6 +30,7 @@ dev = [
     "pytest-mock",
     "pytest-qt",
     "pyautogui",
+    "audioplayer",
 ]
 
 [project.urls]

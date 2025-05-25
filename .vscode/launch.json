@@ -67,6 +67,13 @@
       "request": "launch",
       "program": "${workspaceFolder}/samples/sample_typography.py",
       "console": "integratedTerminal"
+    },
+    {
+      "name": "Sample - Music Player",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/samples/music_player/__main__.py",
+      "console": "integratedTerminal"
     }
   ]
 }
