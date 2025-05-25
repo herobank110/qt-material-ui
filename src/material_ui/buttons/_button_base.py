@@ -34,9 +34,8 @@ class ButtonBase(Component):
     def __init__(self) -> None:
         super().__init__()
 
-        self.sx = {
-            "margin": f"{_TOUCH_AREA_Y_PADDING}px 0px",
-        }
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.sx = {"margin": f"{_TOUCH_AREA_Y_PADDING}px 0px"}
 
         self._drop_shadow = DropShadow()
         self.setGraphicsEffect(self._drop_shadow)
