@@ -144,34 +144,27 @@ class MusicPlayerApp(Component):
         audio_output.setParent(self._media_player)
         audio_output.setVolume(100.0)
         self._media_player.setAudioOutput(audio_output)
-        self._media_player.bufferProgressChanged.connect(
-            self._media_player_buffer_progress_changed,
-        )
         self._media_player.mediaStatusChanged.connect(
-            self._media_player_media_status_changed,
+            self._on_media_player_media_status_changed,
         )
-        self._media_player.errorOccurred.connect(
-            self._media_player_error_occurred,
+
+    def _on_media_player_media_status_changed(
+        self,
+        status: QMediaPlayer.MediaStatus,
+    ) -> None:
+        # Qt emits a LoadedMedia status with the old source when
+        # switching sources - filter these events out.
+        is_correct_song = (
+            self._media_player.source().toString() == songs[self._active_song_index]
         )
-    def _media_player_buffer_progress_changed(self) -> None:
-        print("buffer", self._media_player.bufferProgress())
-        if self._media_player.bufferProgress() > 0.0 and self._is_loading:
-            # Loading finished - start playing.
+        if status == QMediaPlayer.MediaStatus.LoadedMedia and is_correct_song:
+            # Media loaded, we can start playing.
             def delayed_play() -> None:
                 self._is_loading = False
                 self._is_playing = True
-            QTimer.singleShot(1000, delayed_play)
 
-    def _media_player_media_status_changed(self, status: int) -> None:
-        print("media status changed", status)
-        if status == QMediaPlayer.MediaStatus.LoadedMedia:
-            # Media loaded, we can start playing.
-            self._is_loading = False
-            self._is_playing = True
-            # self._track_name_label.text = Path(songs[self._active_song_index]).name
-
-    def _media_player_error_occurred(self, error, error_string) -> None:
-        print("media player error occurred", error, error_string)
+            # Delay otherwise Qt won't actually play anything.
+            QTimer.singleShot(0, delayed_play)
 
     def _toggle_play_pause(self) -> None:
         self._is_playing = not self._is_playing
@@ -190,23 +183,17 @@ class MusicPlayerApp(Component):
             else 0
         )
 
-    # def _media_player_has_audio_changed(self) -> None:
-    #     if self._media_player.hasAudio():
-    #         # Song ready. End the loading state and start playing.
-    #         self._is_loading = False
-    #         self._is_playing = True
-
     @effect(_active_song_index)
     def _load_song(self) -> None:
+        self._is_loading = True
+        print("is_loading", self._is_loading)
+        self._is_playing = False
         self._media_player.stop()
         self._media_player.setSource(songs[self._active_song_index])
-        self._is_loading = True
-        self._is_playing = False
 
     @effect(_is_playing)
     def _apply_media_player_play_state(self) -> None:
         if self._is_playing:
-            # self._media_player.pause()
             self._media_player.play()
         else:
             self._media_player.pause()

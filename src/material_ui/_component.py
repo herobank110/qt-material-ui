@@ -443,6 +443,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
     def __setattr__(self, name: str, value: Any) -> None:
         if state := self._find_state(name):
             if other_state := _pop_last_accessed_state(value):
+                print("bind", name, "to", other_state)
                 state.bind(other_state)
             elif state.transition:
                 state.animate_to(
