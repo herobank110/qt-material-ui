@@ -54,14 +54,18 @@ class PlaybackControls(Component):
 
         skip_previous_button = Icon()
         skip_previous_button.icon_name = "skip_previous"
+        skip_previous_button.icon_style = "rounded"
         buttons_row.add_widget(skip_previous_button)
 
         play_pause_button = Icon()
         play_pause_button.icon_name = "play_arrow"
+        play_pause_button.icon_style = "rounded"
+        play_pause_button.filled = True
         buttons_row.add_widget(play_pause_button)
 
         skip_next_button = Icon()
         skip_next_button.icon_name = "skip_next"
+        skip_next_button.icon_style = "rounded"
         buttons_row.add_widget(skip_next_button)
 
         stack.add_widget(buttons_row)
