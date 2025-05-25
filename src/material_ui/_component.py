@@ -27,7 +27,7 @@ from typing_extensions import TypeVarTuple, Unpack
 from material_ui._utils import StyleDict, convert_sx_to_qss
 from material_ui.tokens._utils import DesignToken, resolve_token_or_value
 
-_Ts = TypeVarTuple("_Ts")
+_Ts = TypeVarTuple("_Ts", default=Unpack[tuple[()]])
 
 
 # TODO: should this be a protocol?

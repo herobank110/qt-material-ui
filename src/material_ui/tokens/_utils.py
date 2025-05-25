@@ -55,7 +55,8 @@ def resolve_token(token: DesignToken) -> TokenValue:
         from material_ui.tokens import md_comp_elevated_button as tokens
         value = resolve_token(tokens.container_color)
     """
-    return find_root_token(token).value
+    # Assume the root token is a value not indirection.
+    return cast("TokenValue", find_root_token(token).value)
 
 
 _T = TypeVar("_T")
@@ -87,7 +88,8 @@ def find_root_token(token: DesignToken) -> DesignToken:
         return token
     indirection = _resolve_indirection(token.value)
     if not indirection:
-        raise ValueError(f"Unable to resolve token indirection: {token.value}")
+        msg = f"Unable to resolve token indirection: {token.value}"
+        raise ValueError(msg)
     # Continue recursively to check until a value is obtained.
     return find_root_token(indirection)
 
