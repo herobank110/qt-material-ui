@@ -140,13 +140,13 @@ def test_sample_checkbox_gif(qtbot: QtBot, controller: Controller) -> None:
         x = int(window.x() * dpr)
         y = int((window.y() + window.height() / 2 + 30) * dpr)
         controller.movements = [
-            move_to(x + 137 * dpr, y + 100 * dpr, instant=True),
+            move_to(x + 142 * dpr, y + 100 * dpr, instant=True),
             wait(2),
-            move_to(x + 137 * dpr, y),
+            move_to(x + 142 * dpr, y + 5),
             click,
             wait(1.5),
             click,
             wait(0.75),
-            move_to(x + 137 * dpr, y + 100 * dpr),
+            move_to(x + 142 * dpr, y + 100 * dpr),
         ]
         qtbot.wait(12000)
