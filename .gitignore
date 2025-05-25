@@ -176,4 +176,3 @@ cython_debug/
 node_modules/
 .vitepress/
 .venv2/
-samples/music_player/downloaded/
