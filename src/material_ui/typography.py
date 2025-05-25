@@ -7,6 +7,7 @@ from qtpy.QtGui import QFont
 from qtpy.QtWidgets import QLabel
 
 from material_ui._component import Component, effect, use_state
+from material_ui._font_utils import install_default_fonts
 from material_ui.tokens import md_sys_color, md_sys_typescale
 from material_ui.tokens._utils import DesignToken, resolve_token, resolve_token_or_value
 
@@ -133,6 +134,8 @@ class Typography(Component):
     def __init__(self) -> None:
         super().__init__()
 
+        install_default_fonts()
+
         self._label = QLabel()
         self.overlay_widget(self._label)
 
@@ -163,4 +166,6 @@ class Typography(Component):
             pointSize=resolve_token_or_value(self.font_size),
             weight=cast("int", resolve_token(self.font_weight)),
         )
+        # font.setVariableAxis(QFont.Tag("wght"), 100)
+        # font.setVariableAxis(QFont.Tag("wdth"), 75)
         self._label.setFont(font)

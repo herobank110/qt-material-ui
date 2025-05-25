@@ -34,17 +34,14 @@ class FilledTextField(BaseTextField):
         self._active_indicator.setParent(self._background)
 
         self._floating_label.setParent(self._background)
-        self._floating_label.sx = {
-            "font-family": tokens.label_text_font,
-            "font-size": tokens.label_text_populated_size,
-            "font-weight": tokens.label_text_weight,
-        }
+        self._floating_label.font_family = tokens.label_text_font
+        self._floating_label.font_size = tokens.label_text_populated_size
+        self._floating_label.font_weight = tokens.label_text_weight
+
         self._resting_label.setParent(self._background)
-        self._resting_label.sx = {
-            "font-family": tokens.label_text_font,
-            "font-size": tokens.label_text_size,
-            "font-weight": tokens.label_text_weight,
-        }
+        self._resting_label.font_family = tokens.label_text_font
+        self._resting_label.font_size = tokens.label_text_size
+        self._resting_label.font_weight = tokens.label_text_weight
 
         row = Row()
         row.gap = 16

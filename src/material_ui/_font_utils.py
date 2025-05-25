@@ -13,7 +13,10 @@ _FONT_URLS = [
     "https://raw.githubusercontent.com/google/material-design-icons/refs/heads/master/variablefont/MaterialSymbolsOutlined[FILL,GRAD,opsz,wght].ttf",
     "https://raw.githubusercontent.com/google/material-design-icons/refs/heads/master/variablefont/MaterialSymbolsRounded[FILL,GRAD,opsz,wght].ttf",
     "https://raw.githubusercontent.com/google/material-design-icons/refs/heads/master/variablefont/MaterialSymbolsSharp[FILL,GRAD,opsz,wght].ttf",
+    # Regular
     "https://fonts.gstatic.com/s/roboto/v47/KFOmCnqEu92Fr1Me5WZLCzYlKw.ttf",
+    # Italic
+    # https://fonts.gstatic.com/s/roboto/v47/KFOkCnqEu92Fr1Mu52xPKTM1K9nz.ttf
 ]
 
 
