@@ -58,18 +58,15 @@ class PlaybackControls(Component):
 
         self._skip_previous_button = Icon()
         self._skip_previous_button.icon_name = "skip_previous"
-        self._skip_previous_button.icon_style = "rounded"
         self._skip_previous_button.clicked.connect(self.on_click_skip_previous)
         buttons_row.add_widget(self._skip_previous_button)
 
         self._play_pause_button = Icon()
-        self._play_pause_button.icon_style = "rounded"
         self._play_pause_button.clicked.connect(self.on_click_play_pause)
         buttons_row.add_widget(self._play_pause_button)
 
         self._skip_next_button = Icon()
         self._skip_next_button.icon_name = "skip_next"
-        self._skip_next_button.icon_style = "rounded"
         self._skip_next_button.clicked.connect(self.on_click_skip_next)
         buttons_row.add_widget(self._skip_next_button)
 
