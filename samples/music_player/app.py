@@ -182,10 +182,9 @@ class MusicPlayerApp(Component):
 
     @effect(_active_song_index)
     def _load_song(self) -> None:
+        self._media_player.setSource(songs[self._active_song_index])
         self._is_loading = True
         self._is_playing = False
-        self._media_player.stop()
-        self._media_player.setSource(songs[self._active_song_index])
 
     @effect(_is_playing)
     def _apply_media_player_play_state(self) -> None:
