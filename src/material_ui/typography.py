@@ -158,14 +158,13 @@ class Typography(Component):
 
     @effect(font_family, font_size, font_weight, color)
     def _apply_styles(self) -> None:
-        self.sx = {"color": resolve_token_or_value(self.color)}
-
-        # font-weight is bugged in qt stylesheets, so use QFont instead.
-        font = QFont(
-            cast("str", resolve_token(self.font_family)),
-            pointSize=resolve_token_or_value(self.font_size),
-            weight=cast("int", resolve_token(self.font_weight)),
-        )
-        # font.setVariableAxis(QFont.Tag("wght"), 100)
-        # font.setVariableAxis(QFont.Tag("wdth"), 75)
+        self.sx = {**self.sx, "color": resolve_token_or_value(self.color)}
+        # Can't control font-weight in qt stylesheets, so use QFont
+        # instead. This also allows controlling variable axes.
+        font = QFont(cast("str", resolve_token(self.font_family)))
+        # Use pixel size instead of point size. Point size makes it look too big.
+        font.setPixelSize(cast("int", resolve_token_or_value(self.font_size)))
+        # Use variable axis (Qt>=6) instead of QFont.Weight enum.
+        weight_value = cast("int", resolve_token_or_value(self.font_weight))
+        font.setVariableAxis(QFont.Tag("wght"), weight_value)
         self._label.setFont(font)
