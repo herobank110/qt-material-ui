@@ -4,7 +4,7 @@ import inspect
 from collections.abc import Callable
 from dataclasses import dataclass
 from functools import partial
-from typing import Any, Generic, TypeVar, cast, get_args
+from typing import TYPE_CHECKING, Any, Generic, TypeVar, cast, get_args
 
 from qtpy.QtCore import (
     Property,  # pyright: ignore  # noqa: PGH003
@@ -426,31 +426,33 @@ class Component(QWidget, metaclass=_ComponentMeta):
                     _TransitionConfig(marker.transition, marker.easing)
                 )
 
-    def __getattribute__(self, name: str) -> Any:
-        actual_value = super().__getattribute__(name)
-        if name in {
-            Component._find_state.__name__,
-            Component.findChild.__name__,
-        }:
-            # Prevent recursion error. These are used below.
+    # Don't let type checkers think we can just get and set anything.
+    if not TYPE_CHECKING:
+        def __getattribute__(self, name: str) -> Any:
+            actual_value = super().__getattribute__(name)
+            if name in {
+                Component._find_state.__name__,
+                Component.findChild.__name__,
+            }:
+                # Prevent recursion error. These are used below.
+                return actual_value
+            state = self._find_state(name)
+            if state:
+                # A state variable was accessed. Track it for binding.
+                _track_last_accessed_state(state)
             return actual_value
-        state = self._find_state(name)
-        if state:
-            # A state variable was accessed. Track it for binding.
-            _track_last_accessed_state(state)
-        return actual_value
 
-    def __setattr__(self, name: str, value: Any) -> None:
-        if state := self._find_state(name):
-            if other_state := _pop_last_accessed_state(value):
-                state.bind(other_state)
-            elif state.transition:
-                state.animate_to(
-                    value, state.transition.duration_ms, state.transition.easing
-                )
-            else:
-                state.set_value(value)
-        super().__setattr__(name, value)
+        def __setattr__(self, name: str, value: Any) -> None:
+            if state := self._find_state(name):
+                if other_state := _pop_last_accessed_state(value):
+                    state.bind(other_state)
+                elif state.transition:
+                    state.animate_to(
+                        value, state.transition.duration_ms, state.transition.easing
+                    )
+                else:
+                    state.set_value(value)
+            super().__setattr__(name, value)
 
     def _find_state(self, name: str) -> State[Any] | None:
         """Find state variable by name."""
@@ -521,6 +523,8 @@ class Component(QWidget, metaclass=_ComponentMeta):
         sx = {**_COMPONENT_STYLESHEET_RESET, **self.sx}
         # Special handling for opacity - pass to a graphics effect.
         if (opacity := sx.pop("opacity", None)) is not None:
+            if not isinstance(opacity, (float, DesignToken)):
+                raise TypeError
             self._apply_opacity_from_sx(opacity)
         qss = convert_sx_to_qss(sx)
         self.setStyleSheet(qss)
@@ -566,7 +570,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
             w.installEventFilter(self)
 
         # Wrong Qt type annotation - should be QWidget | None.
-        return super().setFocusProxy(w)
+        return super().setFocusProxy(w)  # type: ignore[arg-type]
 
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:  # noqa: N802
         if watched is self.focusProxy():

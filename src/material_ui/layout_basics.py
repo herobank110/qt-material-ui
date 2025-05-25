@@ -7,7 +7,7 @@ from qtpy.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 
 from material_ui._component import Component, effect, use_state
 
-_DefaultAlignment = cast("Qt.AlignmentFlag", Qt.AlignmentFlag())  # type: ignore[assignment]
+_DefaultAlignment = cast("Qt.AlignmentFlag", Qt.AlignmentFlag())  # type: ignore[assignment, call-arg]
 
 
 class Row(Component):

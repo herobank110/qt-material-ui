@@ -86,7 +86,7 @@ def find_root_token(token: DesignToken) -> DesignToken:
     # other tokens, first check if the tokens is a value already.
     if not _is_indirection(token):
         return token
-    indirection = _resolve_indirection(token.value)
+    indirection = _resolve_indirection(cast("Indirection", token.value))
     if not indirection:
         msg = f"Unable to resolve token indirection: {token.value}"
         raise ValueError(msg)

@@ -52,7 +52,6 @@ class ButtonBase(Component):
 
         self._ripple = Ripple()
         self._ripple.setParent(self._container)
-        self._ripple.corner_shape = tokens.container_shape
 
         container_layout = QHBoxLayout(self._container)
         container_layout.setContentsMargins(QMargins(24, 0, 24, 0))

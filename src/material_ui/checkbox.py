@@ -45,8 +45,8 @@ class Checkbox(Component):
         self._container = Shape()
         self._container.corner_shape = tokens.container_shape
         self._container.setFixedSize(
-            resolve_token(tokens.container_height),
-            resolve_token(tokens.container_width),
+            cast("int", resolve_token(tokens.container_height)),
+            cast("int", resolve_token(tokens.container_width)),
         )
         self._container.color = tokens.selected_container_color
         self._container.opacity = self._container_fill_opacity
@@ -57,16 +57,16 @@ class Checkbox(Component):
         ripple.ripple_origin = self._ripple_origin
         ripple.color = tokens.unselected_pressed_state_layer_color
         ripple.setFixedSize(
-            resolve_token(tokens.state_layer_size),
-            resolve_token(tokens.state_layer_size),
+            cast("int", resolve_token(tokens.state_layer_size)),
+            cast("int", resolve_token(tokens.state_layer_size)),
         )
         ripple.setParent(self)
 
         state_layer = Shape()
         state_layer.setParent(self)
         state_layer.setFixedSize(
-            resolve_token(tokens.state_layer_size),
-            resolve_token(tokens.state_layer_size),
+            cast("int", resolve_token(tokens.state_layer_size)),
+            cast("int", resolve_token(tokens.state_layer_size)),
         )
         state_layer.corner_shape = tokens.state_layer_shape
         state_layer.color = self._state_layer_color

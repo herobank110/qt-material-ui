@@ -40,7 +40,7 @@ class LinearProgress(BaseProgress):
     @effect(BaseProgress.value, BaseProgress.indeterminate)
     def _apply_bar_geometry(self) -> None:
         if not self.indeterminate:
-            self._bar1_rect = QRect(0, 0, self.value * self.width(), self.height())
+            self._bar1_rect = QRect(0, 0, int(self.value * self.width()), self.height())
             self._bar2_rect = QRect()
         else:
             # Magic numbers from material-web implementation:
