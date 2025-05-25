@@ -79,7 +79,6 @@ def keypress(key: str) -> Callable[[], None]:
 
 @pytest.mark.record_gif
 def test_sample_buttons_gif(qtbot: QtBot, controller: Controller) -> None:
-    """Test the sample buttons."""
     window = SampleButtons()
     qtbot.addWidget(window)
     window.show()
