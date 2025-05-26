@@ -7,7 +7,7 @@ export default defineConfig({
   base: process.env.READTHEDOCS_CANONICAL_URL
     ? new URL(process.env.READTHEDOCS_CANONICAL_URL).pathname.replace(/\/$/, "")
     : "",
-  title: "qt-material-ui",
+  title: "Qt Material UI",
   description: "Material 3 component library for Qt Widgets",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
@@ -15,6 +15,13 @@ export default defineConfig({
       provider: "local",
     },
     sidebar: [
+      {
+        text: "Get Started",
+        items: [
+          { text: "Installation", link: "/installation" },
+          { text: "Philosophy", link: "/philosophy" },
+        ],
+      },
       {
         text: "Components",
         items: [
