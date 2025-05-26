@@ -18,8 +18,8 @@ export default defineConfig({
       {
         text: "Get Started",
         items: [
-          { text: "Installation", link: "/installation" },
-          { text: "Philosophy", link: "/philosophy" },
+          { text: "Installation", link: "/get-started/installation" },
+          { text: "Core Concepts", link: "/get-started/core-concepts" },
         ],
       },
       {

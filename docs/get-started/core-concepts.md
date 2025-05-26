@@ -1,4 +1,4 @@
-# Philosophy
+# Core Concepts
 
 The project aims to provide a set of components that make it easy to build
 modern desktop apps in Qt following the
