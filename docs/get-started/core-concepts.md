@@ -1,13 +1,15 @@
 # Core Concepts
 
-The project aims to provide a set of components that make it easy to build
-modern desktop apps in Qt following the
-[Material Design 3 system](http://m3.material.io/).
+This project aims to provide a set of components that make it easy to
+build modern desktop apps in Qt following the
+[Material Design 3](http://m3.material.io/) system.
 
-Some decisions were made to align with conventions established by modern
-frontend libraries such as MUI, rather than traditional Qt conventions.
+Various decisions are aligned more with Python conventions, with some
+inspiration also drawn from modern frontend libraries, rather than Qt
+conventions. However, Qt provides many useful concepts and well-tested
+data structures which this library uses throughout.
 
-Core inspiration:
+Inspiration from other libraries:
 
 - [Material UI (React library)](https://mui.com/)
 - [Material Web (web components)](https://material-web.dev/)
