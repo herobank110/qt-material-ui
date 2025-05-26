@@ -17,34 +17,13 @@ class IconsSample(Component):
     filled = use_state(False)
     icon_style = use_state("outlined")
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         # TODO: should it be md_sys_color.background?
         self.sx = {"background-color": md_sys_color.surface}
 
         main_row = Row()
-        main_row.gap = 20
-
-        filters_box = Stack()
-        filters_box.margins = QMargins(10, 10, 10, 10)
-        filters_box.sx = {"background-color": md_sys_color.surface_container}
-        filters_box.alignment = Qt.AlignTop | Qt.AlignRight
-
-        filled_row = Row()
-        filled_row.gap = 5
-        filled_row.alignment = Qt.AlignRight
-        filled_label = Typography()
-        filled_label.alignment = Qt.AlignCenter
-        filled_label.text = "Filled"
-        filled_row.add_widget(filled_label)
-        filled_switch = Switch()
-        filled_switch.selected = self.filled
-        filled_switch.change_requested.connect(self._find_state("filled").set_value)
-        filled_row.add_widget(filled_switch)
-        filters_box.add_widget(filled_row)
-
-        main_row.add_widget(filters_box)
 
         # TODO: make a grid widget / flex box
         icon_grid = Component()
@@ -58,7 +37,29 @@ class IconsSample(Component):
             self._icons.append(icon)
         main_row.add_widget(icon_grid)
 
-        self.overlay_widget(main_row, QMargins(10, 10, 10, 10))
+        filters_box = Stack()
+        filters_box.margins = QMargins(10, 10, 10, 10)
+        filters_box.sx = {"background-color": md_sys_color.surface_container}
+
+        filled_row = Row()
+        filled_row.gap = 5
+
+        filled_switch = Switch()
+        filled_switch.selected = self.filled
+        filled_switch.on_change.connect(self._find_state("filled").set_value)
+        filled_row.add_widget(filled_switch)
+
+        filled_label = Typography()
+        filled_label.variant = "body-large"
+        filled_label.alignment = Qt.AlignmentFlag.AlignVCenter
+        filled_label.text = "Filled"
+        filled_row.add_widget(filled_label)
+
+        filters_box.add_widget(filled_row)
+
+        main_row.add_widget(filters_box)
+
+        self.overlay_widget(main_row)
 
 
 def main() -> None:
