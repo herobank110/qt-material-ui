@@ -82,15 +82,15 @@ The full list of available variants is as follows:
 
 ### Properties
 
-| Name          | Type                                       | Default              | Description                                                  |
-| ------------- | ------------------------------------------ | -------------------- | ------------------------------------------------------------ |
-| `text`        | `str`                                      | `""`                 | The writing to display.                                      |
-| `color`       | `DesignToken` \| `QColor`                  | `on_surface`         | Text color.                                                  |
-| `variant`     | [`TypographyVariant`](#variants) \| `None` | `None`               | Typography variant to control the font values from a preset. |
-| `font_family` | `DesignToken`                              | `body_medium_font`   | Font family.                                                 |
-| `font_size `  | `DesignToken`                              | `body_medium_size`   | Font size defined by a design token. Units are in DP.        |
-| `font_weight` | `DesignToken`                              | `body_medium_weight` | Font weight defined by a design token.                       |
-| `alignment `  | `Qt.AlignmentFlag`                         | `Qt.AlignmentFlag()` | Text alignment within the widget's geometry.                 |
+| Name          | Type                                                                 | Default              | Description                                                  |
+| ------------- | -------------------------------------------------------------------- | -------------------- | ------------------------------------------------------------ |
+| `text`        | `str`                                                                | `""`                 | The writing to display.                                      |
+| `color`       | `DesignToken` \| [`QColor`](https://doc.qt.io/qt-6/qcolor.html)      | `on_surface`         | Text color.                                                  |
+| `variant`     | [`TypographyVariant`](#variants) \| `None`                           | `None`               | Typography variant to control the font values from a preset. |
+| `font_family` | `DesignToken`                                                        | `body_medium_font`   | Font family.                                                 |
+| `font_size `  | `DesignToken`                                                        | `body_medium_size`   | Font size defined by a design token. Units are in DP.        |
+| `font_weight` | `DesignToken`                                                        | `body_medium_weight` | Font weight defined by a design token.                       |
+| `alignment `  | [`AlignmentFlag`](https://doc.qt.io/qt-6/qt.html#AlignmentFlag-enum) | `0` | Text alignment within the widget's geometry.                 |
 
 ### Signals
 
