@@ -6,7 +6,7 @@ from qtpy.QtCore import QEasingCurve, QPointF, Qt
 from qtpy.QtGui import QColor, QLinearGradient
 from qtpy.QtWidgets import QGraphicsOpacityEffect
 
-from material_ui._component import Component, effect, use_state
+from material_ui._component import Component, Signal, effect, use_state
 from material_ui.icon import Icon
 from material_ui.ripple import Ripple
 from material_ui.shape import Shape
@@ -22,6 +22,9 @@ class Checkbox(Component):
 
     indeterminate = use_state(False)
     """Whether the checkbox is in an indeterminate state."""
+
+    on_change: Signal[bool]
+    """Emitted when the user toggles the checkbox."""
 
     _outline_width = use_state(tokens.unselected_outline_width)
     _container_fill_opacity = use_state(1.0)
@@ -93,6 +96,7 @@ class Checkbox(Component):
             self.selected = True
         else:
             self.selected = not self.selected
+        self.on_change.emit(not self.selected)
 
     @effect(selected, indeterminate)
     def _apply_main_visual_states(self) -> None:
