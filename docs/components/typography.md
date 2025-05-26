@@ -35,8 +35,8 @@ system:
 - line height
 - tracking
 
-As a partial workaround, you can apply padding and margins to create
-space around typography.
+As a partial workaround, it's possible to apply padding and margins to
+create space around typography.
 
 ## Variants
 
