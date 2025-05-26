@@ -102,10 +102,8 @@ class PlaybackControls(Component):
     def _apply_play_pause_icon(self) -> None:
         if self.is_playing:
             self._play_pause_button.icon_name = "pause"
-            self._play_pause_button.filled = False
         else:
             self._play_pause_button.icon_name = "play_arrow"
-            self._play_pause_button.filled = True
 
 
 class MusicPlayerApp(Component):
