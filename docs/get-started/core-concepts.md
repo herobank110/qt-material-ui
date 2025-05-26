@@ -27,16 +27,16 @@ The Q prefix is not used to help distinguish from the Qt API.
 
 ### Properties vs Getter Methods
 
-Properties can be accessed with member variables instead of a getter
+Properties can be accessed with member variables instead of getter
 methods.
 
-This saves some keyboard typing and is more Pythonic.
+This saves some keyboard typing.
 
 ```python
-# Qt style
+# Qt convention
 text = button.text()
 
-# Qt Material UI style
+# Qt Material UI convention
 text = button.text
 ```
 
@@ -49,10 +49,10 @@ This simplifies the creation of dynamic styles by enabling any Python
 expression to be used for the value without string interpolation.
 
 ```python
-# Qt style
+# Qt convention
 button.setStyleSheet("background-color: red; color: white;")
 
-# Qt Material UI style
+# Qt Material UI convention
 button.sx = {"background-color": "red", "color": "white"}
 ```
 
