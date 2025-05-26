@@ -41,8 +41,7 @@ text = button.text
 ### Style Dict vs String
 
 Styles are defined with a Python dictionary instead of a stylesheet
-string. This property is named `sx`
-([read more](https://mui.com/material-ui/customization/how-to-customize/#the-sx-prop)).
+string.
 
 This simplifies the creation of dynamic styles by enabling any Python
 expression to be used for the value without string interpolation.
