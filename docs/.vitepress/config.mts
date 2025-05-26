@@ -19,6 +19,7 @@ export default defineConfig({
                 text: 'Components',
                 items: [
                     { text: 'Buttons', link: '/components/buttons' },
+                    { text: 'Checkbox', link: '/components/checkbox' },
                     { text: 'Progress Indicators', link: '/components/progress-indicators' },
                     { text: 'Switch', link: '/components/switch' },
                     { text: 'Text Fields', link: '/components/text-fields' },
