@@ -48,3 +48,7 @@ def _stringify_sx_value(value: StyleDictValue) -> str:
     if isinstance(value, float):
         return f"{value}"
     return value
+
+
+undefined = object()
+"""A special token to indicate an undefined value."""

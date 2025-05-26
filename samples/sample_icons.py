@@ -20,7 +20,6 @@ class IconsSample(Component):
     def __init__(self) -> None:
         super().__init__()
 
-        # TODO: should it be md_sys_color.background?
         self.sx = {"background-color": md_sys_color.surface}
 
         main_row = Row()
@@ -35,6 +34,7 @@ class IconsSample(Component):
             icon.filled = self.filled
             icon_grid_layout.addWidget(icon, i // 3, i % 3)
             self._icons.append(icon)
+
         main_row.add_widget(icon_grid)
 
         filters_box = Stack()
@@ -46,7 +46,7 @@ class IconsSample(Component):
 
         filled_switch = Switch()
         filled_switch.selected = self.filled
-        filled_switch.on_change.connect(self._find_state("filled").set_value)
+        filled_switch.on_change.connect(self.set_state("filled"))
         filled_row.add_widget(filled_switch)
 
         filled_label = Typography()

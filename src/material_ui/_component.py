@@ -4,7 +4,7 @@ import inspect
 from collections.abc import Callable
 from dataclasses import dataclass
 from functools import partial
-from typing import TYPE_CHECKING, Any, Generic, TypeVar, cast, get_args
+from typing import Any, Generic, TypeVar, cast, get_args, overload
 
 from qtpy.QtCore import (
     Property,  # pyright: ignore  # noqa: PGH003
@@ -24,7 +24,7 @@ from qtpy.QtGui import QEnterEvent, QFocusEvent, QMouseEvent, QResizeEvent
 from qtpy.QtWidgets import QGraphicsOpacityEffect, QVBoxLayout, QWidget
 from typing_extensions import TypeVarTuple, Unpack
 
-from material_ui._utils import StyleDict, convert_sx_to_qss
+from material_ui._utils import StyleDict, convert_sx_to_qss, undefined
 from material_ui.tokens._utils import DesignToken, resolve_token_or_value
 
 _Ts = TypeVarTuple("_Ts", default=Unpack[tuple[()]])
@@ -459,6 +459,39 @@ class Component(QWidget, metaclass=_ComponentMeta):
             name,
             Qt.FindChildOption.FindDirectChildrenOnly,
         )
+
+    @overload
+    def set_state(self, name: str) -> Callable[[Any], None]: ...
+
+    @overload
+    def set_state(self, name: str, value: Any) -> None: ...
+
+    def set_state(
+        self,
+        name: str,
+        value: Any = undefined,
+    ) -> Callable[[Any], None] | None:
+        """Set a state variable by name.
+
+        Args:
+            name: Name of the state variable.
+            value: Value to set if needed.
+
+        Returns:
+            If no value is specified, a function is returned that can be
+            used to set the value later.
+            If a value is specified, None is returned.
+
+        Raises:
+            AttributeError: If no state with the given name exists.
+        """
+        state = self._find_state(name)
+        if state is None:
+            raise AttributeError
+        if value is undefined:
+            return state.set_value
+        state.set_value(value)
+        return None
 
     def __bind_effects(self) -> None:
         """Bind effects to the newly created variables."""
