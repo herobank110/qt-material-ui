@@ -40,9 +40,7 @@ Documentation = "https://qt-material-ui.readthedocs.io"
 packages = ["src/material_ui"]
 
 [tool.pytest.ini_options]
-markers = [
-    "record_gif: manual entry point for recording a gif",
-]
+markers = ["record_gif: manual entry point for recording a gif"]
 asyncio_default_fixture_loop_scope = "function"
 
 [tool.ruff]
@@ -54,6 +52,7 @@ indent-width = 4
 select = ["ALL"]
 ignore = [
     "ANN401", # Allow explicit Any.
+    "D100",   # Skip docstring for modules (classes are documented instead).
     "D107",   # Skip docstring for __init__.
     "TD002",  # Skip author in TODO.
     "TD003",  # Skip issue link in TODO.
@@ -76,10 +75,7 @@ docstring-code-format = true
 # Omit these from coverage since they are just generated files with a
 # big list of constants. Some of these modules are used in the
 # appropriate unit tests for the core token functionality.
-omit = [
-    "src/material_ui/tokens/md_*",
-    "tests/*"
-]
+omit = ["src/material_ui/tokens/md_*", "tests/*"]
 
 [tool.pyright]
 include = ["src", "tests"]
