@@ -67,11 +67,8 @@ class Icon(Component):
     @effect(icon_style, filled, font_size, weight, grade, use_optical_size)
     def _apply_font(self) -> None:
         font_size = resolve_token_or_value(self.font_size)
-        font = QFont(
-            "Material Symbols " + self.icon_style.title(),
-            pointSize=font_size,
-            weight=400,
-        )
+        font = QFont("Material Symbols " + self.icon_style.title())
+        font.setPixelSize(font_size)
         font.setVariableAxis(QFont.Tag("FILL"), 1 if self.filled else 0)
         font.setVariableAxis(QFont.Tag("wght"), self.weight)
         font.setVariableAxis(QFont.Tag("GRAD"), self.grade)
