@@ -40,11 +40,10 @@ create space around typography.
 
 ## Variants
 
-Typography variants are a shorthand for setting individual font
-properties from a preset.
+Individual font properties can be set using a variant as a shorthand.
 
-The variant can be set using a literal string, and is type checked with
-a `Literal` type.
+The variant uses a literal string, and is type checked using a `Literal`
+type.
 
 If a variant is specified, changing the individual font properties will
 have no effect.
