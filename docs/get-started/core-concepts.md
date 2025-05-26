@@ -40,13 +40,13 @@ text = button.text()
 text = button.text
 ```
 
-### Style Dict vs String
+### Styling In Python
 
 Styles are defined with a Python dictionary instead of a stylesheet
-string.
+string or separate QSS files.
 
-This simplifies the creation of dynamic styles by enabling any Python
-expression to be used for the value without string interpolation.
+This enables the full flexibility of Python expressions to compute the
+style without needing to manually convert values to strings.
 
 ```python
 # Qt convention
@@ -63,3 +63,40 @@ library resets the style of each component before applying any
 additional styling.
 
 This protects components from unintended 'style leaking'.
+
+### Interactive Effects
+
+Interaction states such as hovered, pressed, focused, etc. have their
+side effects defined in a more declarative way than an event driven
+way.
+
+This makes it easier to implement more interactive components.
+
+```python
+# Qt convention
+
+from qtpy.QtCore import QEvent
+from qtpy.QtGui import QEnterEvent
+from qtpy.QtWidgets import QWidget
+
+class Button(QWidget):
+    def enterEvent(self, event: QEnterEvent) -> None:
+        super().enterEvent(event)
+        self.apply_hover_style(hovered=True)
+
+    def leaveEvent(self, event: QEvent) -> None:
+        super().leaveEvent(event)
+        self.apply_hover_style(hovered=False)
+
+    def apply_hover_style(self, hovered: bool) -> None:
+        print("hovered" if hovered else "not hovered")
+
+# Qt Material UI convention
+
+from material_ui.component import Component, effect
+
+class Button(Component):
+    @effect(Component.hovered)
+    def apply_hover_style(self):
+        print("hovered" if self.hovered else "not hovered")
+```
