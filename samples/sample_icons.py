@@ -20,7 +20,7 @@ class IconsSample(Component):
     def __init__(self) -> None:
         super().__init__()
 
-        self.sx = {"background-color": md_sys_color.surface}
+        self.sx = {"background-color": md_sys_color.background}
 
         main_row = Row()
 
