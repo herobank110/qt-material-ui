@@ -16,7 +16,6 @@ Material 3 component library for Qt Widgets
 - Optional component system
 - Type annotations and PEP8 conventions
 - Documentation with previews and usage examples
-- Sample apps
 
 ## Get Started
 
