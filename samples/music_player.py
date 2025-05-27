@@ -9,7 +9,7 @@ from material_ui.tokens import md_sys_color, md_sys_shape
 from material_ui.typography import Typography
 from qtpy.QtCore import QMargins, Qt, QTimer
 from qtpy.QtMultimedia import QAudioOutput, QMediaPlayer
-from qtpy.QtWidgets import QSizePolicy
+from qtpy.QtWidgets import QApplication, QSizePolicy
 
 songs = [
     "https://www.freecol.org/images/fearless-sailors.ogg",
@@ -186,3 +186,14 @@ class MusicPlayerApp(Component):
             self._media_player.play()
         else:
             self._media_player.pause()
+
+
+def main() -> None:
+    app = QApplication()
+    window = MusicPlayerApp()
+    window.show()
+    app.exec()
+
+
+if __name__ == "__main__":
+    main()

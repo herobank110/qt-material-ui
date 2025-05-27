@@ -72,7 +72,7 @@
       "name": "Sample - Music Player",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/samples/music_player/__main__.py",
+      "program": "${workspaceFolder}/samples/music_player.py",
       "console": "integratedTerminal"
     }
   ]
