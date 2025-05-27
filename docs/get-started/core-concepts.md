@@ -103,15 +103,55 @@ from material_ui.tokens import md_sys_color
 color = md_sys_color.surface
 ```
 
+## Additional Features
+
+Some features were created during the development of this library to
+improve the development experience.
+
+There may also be additional benefit from these features by writing
+custom components. However, the library components are designed to be
+fully functional within any standard Qt widget.
+
+### Type Safe Signals
+
+Signals are defined with type annotations that enable type checkers to
+check the arguments of connected callbacks and emit calls.
+
+This improves code safety over native Qt widgets.
+
+```python
+# Qt convention
+
+from qtpy.QtCore import Signal
+from qtpy.QtWidgets import QWidget
+
+class Button(QWidget):
+    foo = Signal(str)
+
+Button().foo.emit(1)
+# mypy unable to detect any error
+
+
+# Qt Material UI convention
+
+from material_ui.component import Component, Signal
+
+class Button(Component):
+    foo: Signal[str]
+
+Button().foo.emit(1)
+
+# caught by mypy:
+# error: Argument 1 to "emit" of "Signal" has incompatible type "int"; expected "str"  [arg-type]
+```
+
 ### Reactive Effects
 
-Component states such as hovered, pressed, focused, etc. have code
-dependencies defined in a more declarative than event driven way.
+Component states such as hovered, pressed, etc. have code dependencies
+defined in a more declarative than event driven way.
 
 This reduced the boilerplate code needed to implement dynamic
 components.
-
-> It's possible to build custom components to benefit from this feature.
 
 ```python
 # Qt convention
