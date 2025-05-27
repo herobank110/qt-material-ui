@@ -108,11 +108,10 @@ color = md_sys_color.surface
 Component states such as hovered, pressed, focused, etc. have code
 dependencies defined in a more declarative than event driven way.
 
-This reduces the boilerplate code needed to implement dynamic
+This reduced the boilerplate code needed to implement dynamic
 components.
 
-> It's possible to build custom components to benefit from this feature,
-> or simply use the provided components inside any standard Qt app.
+> It's possible to build custom components to benefit from this feature.
 
 ```python
 # Qt convention

@@ -14,10 +14,10 @@ hero:
       link: /components
 
 features:
-  - title: Fresh Look
-    details: Build modern applications with a trendy design system
-  - title: Modular Components
-    details: Start with only the components you need, seamlessly integrates with your existing application
-  - title: Lightweight
-    details: Distribute cross platform desktop applications without bundling an entire web browser
+  - title: Material Design
+    details: Popular open source design system
+  - title: Modern UI building blocks
+    details: Can be used in a variety of applications
+  - title: Python Conventions
+    details: Intuitive and consistent API
 ---
