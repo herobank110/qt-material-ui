@@ -12,12 +12,11 @@ Material 3 component library for Qt Widgets
 
 - Modern UI building blocks
 - Runtime theme customization
-- Visual flair (ripples, elevations, transitions)
-- Optional reactive state system for fast app development
-- Documented with previews and usage examples
+- Visual effects (ripples, elevations, transitions)
+- Optional component system
+- Type annotations and PEP8 conventions
+- Documentation with previews and usage examples
 - Sample apps
-- Type annotations and pep8 naming conventions
-- Authentic handcrafted code - not just vibes
 
 ## Get Started
 
@@ -27,15 +26,11 @@ This library is available on PyPI and can be installed with pip:
 pip install qt-material-ui
 ```
 
-- Continue with the [Get Started documentation](https://qt-material-ui.readthedocs.io/en/latest/get-started.html)
+[Continue to documentation](https://qt-material-ui.readthedocs.io/en/latest/get-started/development-status.html)
 
-## Sample Apps
+## Development Status
 
-See the library in action with the included sample apps.
+The library is currently in beta status and under active development.
 
-### App 1
-
-
-## Qt Version
-
-This library has been tested with PySide 6.9.
+Not all components have been implemented, and some APIs may change in
+future releases.
