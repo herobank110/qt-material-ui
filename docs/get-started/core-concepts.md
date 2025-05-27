@@ -2,17 +2,15 @@
 
 ## Aim
 
-This library aims to provide a set of components that make it easy to
-build modern desktop apps in Qt following the
-[Material 3](http://m3.material.io/) design system.
+This library aims to provide a set of components for the Qt Widgets
+framework following the [Material 3](http://m3.material.io/) design
+system.
 
 ## Conventions
 
 The coding style leverages Python conventions and draws some inspiration
 from modern frontend libraries, building on the robust and
-well-established core concepts of Qt. Where decisions have been made
-that differ from Qt conventions, they are above all in service of the
-development experience.
+well-established core concepts of Qt.
 
 Inspiration from other libraries:
 
@@ -34,13 +32,13 @@ fontSize
 font_size
 ```
 
-### Properties Without Getter Methods
+### Properties With Member Variables
 
 Properties can be accessed with member variables instead of getter
 methods.
 
-This aids debugging by immediately showing variable values when
-inspecting objects.
+This means actual values are shown instead of method objects when
+debugging.
 
 ```python
 # Qt convention
@@ -89,11 +87,11 @@ child.setParent(parent)  # child won't get a border
 
 ### Design Tokens
 
-Colors and many other design aspects are defined in terms of a design
-token system instead of similar Qt concepts such as QPalette.
+Colors and some other design aspects are defined with design tokens
+instead of similar Qt concepts such as QPalette.
 
-This makes it possible to work with the wider variety of colors used in
-Material 3 and helps ensure consistency with external design tools.
+This enables support for the wider variety of styling using in Material
+Design.
 
 ```python
 # Qt convention
@@ -107,11 +105,14 @@ color = md_sys_color.surface
 
 ### Reactive Effects
 
-Interaction states such as hovered, pressed, focused, etc. have their
-dependencies defined in a more declarative way than an event driven way.
+Component states such as hovered, pressed, focused, etc. have code
+dependencies defined in a more declarative than event driven way.
 
-This reduces the boilerplate code needed to implement more dynamic
+This reduces the boilerplate code needed to implement dynamic
 components.
+
+> It's possible to build custom components with this feature, or simply
+> use the provided components inside any standard Qt app.
 
 ```python
 # Qt convention
@@ -142,6 +143,6 @@ from material_ui.component import Component, effect
 
 class Button(Component):
     @effect(Component.hovered)
-    def apply_hover_style(self):
+    def apply_hover_style(self) -> None:
         print("hovered" if self.hovered else "not hovered")
 ```

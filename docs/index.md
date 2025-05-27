@@ -8,7 +8,7 @@ hero:
   actions:
     - theme: brand
       text: Get Started
-      link: /get-started/installation
+      link: /get-started/development-status
     - theme: alt
       text: Components Reference
       link: /components

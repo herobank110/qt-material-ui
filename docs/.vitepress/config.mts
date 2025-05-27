@@ -18,6 +18,7 @@ export default defineConfig({
       {
         text: "Get Started",
         items: [
+          { text: "Development Status", link: "/get-started/development-status" },
           { text: "Installation", link: "/get-started/installation" },
           { text: "Core Concepts", link: "/get-started/core-concepts" },
         ],
