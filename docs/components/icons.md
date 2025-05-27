@@ -1,6 +1,6 @@
 # Icons
 
-**Checkboxes allow users to select one or more items from a set.**
+**Icons are small symbols to easily identify actions and categories.**
 
 ![demonstration](./icons.jpg)
 
