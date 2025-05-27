@@ -11,9 +11,7 @@ Material 3 component library for Qt Widgets
 ## Features
 
 - Modern UI building blocks
-- Runtime theme customization
 - Visual effects (ripples, elevations, transitions)
-- Optional component system
 - Type annotations and PEP8 conventions
 - Documentation with previews and usage examples
 
