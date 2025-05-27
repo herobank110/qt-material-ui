@@ -18,7 +18,10 @@ export default defineConfig({
       {
         text: "Get Started",
         items: [
-          { text: "Development Status", link: "/get-started/development-status" },
+          {
+            text: "Development Status",
+            link: "/get-started/development-status",
+          },
           { text: "Installation", link: "/get-started/installation" },
           { text: "Core Concepts", link: "/get-started/core-concepts" },
         ],
@@ -28,6 +31,7 @@ export default defineConfig({
         items: [
           { text: "Buttons", link: "/components/buttons" },
           { text: "Checkbox", link: "/components/checkbox" },
+          { text: "Icons", link: "/components/icons" },
           {
             text: "Progress Indicators",
             link: "/components/progress-indicators",
