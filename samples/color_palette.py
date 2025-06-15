@@ -4,23 +4,45 @@ from dataclasses import dataclass, replace
 
 from material_ui._component import Component, Signal, effect, use_state
 from material_ui.layout_basics import Row, Stack
+from material_ui.shape import Shape
 from material_ui.switch import Switch
-from material_ui.text_fields.outlined_text_field import OutlinedTextField
+from material_ui.text_fields.filled_text_field import FilledTextField
 from material_ui.tokens import md_sys_color
 from material_ui.typography import Typography
 from qtpy.QtCore import QMargins, Qt
-from qtpy.QtWidgets import QApplication
-
-
-class ColorGrid(Component):
-    def __init__(self) -> None:
-        super().__init__()
+from qtpy.QtWidgets import QApplication, QGridLayout
 
 
 @dataclass
 class ControlsState:
     color_hex: str = "#4181EE"
     is_dark: bool = False
+
+
+class ColorGrid(Component):
+    controls = use_state(ControlsState())
+
+    def __init__(self) -> None:
+        super().__init__()
+
+        self.sx = {"background-color": md_sys_color.background}
+
+        grid = QGridLayout()
+        grid.setContentsMargins(QMargins(40, 40, 40, 40))
+        grid.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        primary_cell = Shape()
+        primary_cell.setFixedSize(100, 100)
+        primary_cell.color = md_sys_color.primary
+        primary_label = Typography()
+        primary_label.variant = "label-large"
+        primary_label.color = md_sys_color.on_primary
+        primary_label.text = "Primary"
+        primary_label.setParent(primary_cell)
+        primary_label.move(10, 10)
+        grid.addWidget(primary_cell, 0, 0)
+
+        self.setLayout(grid)
 
 
 class Controls(Component):
@@ -30,7 +52,7 @@ class Controls(Component):
     def __init__(self) -> None:
         super().__init__()
 
-        self.sx = {"background-color": md_sys_color.background}
+        self.sx = {"background-color": md_sys_color.surface}
 
         stack = Stack()
         stack.alignment = Qt.AlignmentFlag.AlignTop
@@ -38,11 +60,11 @@ class Controls(Component):
         stack.margins = QMargins(20, 20, 20, 20)
 
         title = Typography()
-        title.variant = "title-large"
+        title.variant = "headline-medium"
         title.text = "Color Palette"
         stack.add_widget(title)
 
-        self._color_hex_textfield = OutlinedTextField()
+        self._color_hex_textfield = FilledTextField()
         self._color_hex_textfield.label = "Color (Hex)"
         self._color_hex_textfield.on_change.connect(self._on_change_color_hex)
         stack.add_widget(self._color_hex_textfield)
@@ -87,6 +109,7 @@ class DemoColorPalette(Component):
         row = Row()
 
         color_grid = ColorGrid()
+        color_grid.controls = self.controls
         row.add_widget(color_grid)
 
         controls = Controls()
@@ -95,10 +118,6 @@ class DemoColorPalette(Component):
         row.add_widget(controls)
 
         self.overlay_widget(row)
-
-    @effect(controls)
-    def _apply_color_grid(self) -> None:
-        print(f"controls changed: {self.controls}")
 
 
 def main() -> None:
