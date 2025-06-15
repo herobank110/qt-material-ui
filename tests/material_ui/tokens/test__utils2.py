@@ -17,6 +17,10 @@ from material_ui.tokens._utils import (
     find_root_token,
     resolve_token,
     to_python_name,
+    define_token,
+    override_token,
+    connect_token_change_callback,
+    disconnect_token_change_callback,
 )
 
 
@@ -80,3 +84,14 @@ def test__is_indirection_str_enum() -> None:
 def test_to_python_name() -> None:
     result = to_python_name("md.comp.elevated-button.container-color")
     assert result == "md_comp_elevated_button_container_color"
+
+def test_override_token_and_callback():
+    test_token = define_token(1, name="test_token")
+    results = []
+    def cb(name, value):
+        results.append((name, value))
+    connect_token_change_callback(cb)
+    override_token("test_token", 42)
+    assert test_token.value == 42, "Token value should be updated"
+    assert results == [("test_token", 42)], f"Callback not called correctly: {results}"
+    disconnect_token_change_callback(cb)

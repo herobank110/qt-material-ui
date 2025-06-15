@@ -29,14 +29,18 @@ class DesignToken:
         return hash(repr(self.value))
 
 
-def define_token(value: TokenValue | Indirection) -> DesignToken:
-    """Factory function for defining a token.
+_token_registry = {}
+"""Global registry for tokens, allowing constant-time access by name."""
+
+def define_token(value: TokenValue | Indirection, name: str = None) -> DesignToken:
+    """Factory function for defining a token and registering it by name.
 
     Mainly for internal use.
     """
-    # TODO: add to token registry, check stack for module and var name?
-    #   or use instance checking operator `is`?
-    return DesignToken(value)
+    token = DesignToken(value)
+    if name:
+        _token_registry[name] = token
+    return token
 
 
 def resolve_token(token: DesignToken) -> TokenValue:
@@ -124,9 +128,30 @@ def _resolve_indirection(value: Indirection) -> DesignToken | None:
     return None
 
 
+_token_change_callbacks = []
+
+
+def connect_token_change_callback(callback):
+    """Register a callback to be called when tokens are overridden."""
+    if callback not in _token_change_callbacks:
+        _token_change_callbacks.append(callback)
+
+
+def disconnect_token_change_callback(callback):
+    """Unregister a previously registered callback."""
+    if callback in _token_change_callbacks:
+        _token_change_callbacks.remove(callback)
+
+
 def override_token(token_name: str, value: TokenValue) -> None:
-    """Override a token value in the global theme."""
-    raise NotImplementedError()
+    """Override a token value in the global theme and notify listeners."""
+    token = _token_registry.get(token_name)
+    if token is not None:
+        token.value = value
+        for cb in _token_change_callbacks:
+            cb(token_name, value)
+        return
+    raise ValueError(f"Token '{token_name}' not found in registry.")
 
 
 to_python_name = partial(re.sub, r"[-\.]", "_")
