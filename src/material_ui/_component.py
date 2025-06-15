@@ -22,9 +22,10 @@ from qtpy.QtCore import (
 )
 from qtpy.QtGui import QEnterEvent, QFocusEvent, QMouseEvent, QResizeEvent
 from qtpy.QtWidgets import QGraphicsOpacityEffect, QVBoxLayout, QWidget
-from typing_extensions import TypeVarTuple, Unpack
+from typing_extensions import TypeIs, TypeVarTuple, Unpack
 
 from material_ui._utils import StyleDict, convert_sx_to_qss, undefined
+from material_ui.hook import Hook
 from material_ui.tokens._utils import DesignToken, resolve_token_or_value
 
 _Ts = TypeVarTuple("_Ts", default=Unpack[tuple[()]])
@@ -262,12 +263,16 @@ def _find_state_markers(obj: object) -> list[_StateMarker]:
     return ret_val
 
 
+_EffectDependency = _StateMarker | type[Hook]
+"""Effect dependency type."""
+
+
 @dataclass
 class _EffectMarker:
     """Marker to hold the dependencies of an effect."""
 
     name: str
-    dependencies: list[_StateMarker]
+    dependencies: list[_EffectDependency]
 
 
 _EFFECT_MARKER_KEY = "__effect_marker__"
@@ -306,7 +311,7 @@ def effect(*dependencies: Any) -> Callable[[EffectFn], EffectFn]:
 
     # Validate dependency types.
     for dependency in dependencies_list:
-        if not isinstance(dependency, _StateMarker):
+        if not _is_valid_effect_dependency(dependency):
             msg = f"Invalid dependency for effect: {dependency} ({type(dependency)})"
             raise EffectDependencyError(msg)
 
@@ -316,6 +321,10 @@ def effect(*dependencies: Any) -> Callable[[EffectFn], EffectFn]:
         return func
 
     return decorated
+
+
+def _is_valid_effect_dependency(dependency: Any) -> TypeIs[_EffectDependency]:
+    return isinstance(dependency, _StateMarker) or issubclass(dependency, Hook)
 
 
 def _find_effect_markers(obj: object) -> list[_EffectMarker]:
