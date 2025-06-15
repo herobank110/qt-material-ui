@@ -88,7 +88,7 @@ def test_Component_effect_hook_dependency(qtbot: QtBot, mocker: MockerFixture):
 
     component = MyComponent()
     qtbot.add_widget(component)
-    qtbot.wait(0)  # Let the effect be called after constructor.
+    qtbot.wait(1)  # Let the effect be called after constructor.
     assert stub.call_count == 1
 
     MyHook.get().on_change.emit()

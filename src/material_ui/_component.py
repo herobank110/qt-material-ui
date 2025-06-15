@@ -510,12 +510,17 @@ class Component(QWidget, metaclass=_ComponentMeta):
             # Get the function object from the class.
             func = getattr(self, effect_marker.name)
             for dependency in effect_marker.dependencies:
-                # Find the corresponding variable object.
-                state = self._find_state(dependency.name)
-                if not isinstance(state, State):
-                    msg = f"Invalid dependency for {dependency.name}: '{state}'"
-                    raise TypeError(msg)
-                state.changed.connect(func)
+                if isinstance(dependency, _StateMarker):
+                    # Find the corresponding variable object.
+                    state = self._find_state(dependency.name)
+                    if not isinstance(state, State):
+                        msg = f"Invalid dependency for {dependency.name}: '{state}'"
+                        raise TypeError(msg)
+                    state.changed.connect(func)
+                else:
+                    # Dependency is a hook, so connect to its on_change signal.
+                    hook_instance = dependency.get()
+                    hook_instance.on_change.connect(func)
             # Call the function to apply the initial state. The timer
             # ensures the derived class's constructor is finished first.
             QTimer.singleShot(0, func)
