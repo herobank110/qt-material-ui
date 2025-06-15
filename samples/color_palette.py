@@ -16,12 +16,6 @@ from qtpy.QtCore import QMargins, Qt
 from qtpy.QtWidgets import QApplication, QGridLayout
 
 
-@dataclass
-class ControlsState:
-    color_hex: str = "#4181EE"
-    is_dark: bool = False
-
-
 class ColorGrid(Component):
     def __init__(self) -> None:
         super().__init__()
@@ -46,9 +40,15 @@ class ColorGrid(Component):
         self.setLayout(grid)
 
 
-class Controls(Component):
-    state = use_state(ControlsState())
-    on_change: Signal[ControlsState]
+@dataclass
+class Settings:
+    color_hex: str = "#4181EE"
+    is_dark: bool = False
+
+
+class SettingsSideBar(Component):
+    settings = use_state(Settings())
+    on_change_settings: Signal[Settings]
 
     def __init__(self) -> None:
         super().__init__()
@@ -84,22 +84,22 @@ class Controls(Component):
 
         self.overlay_widget(stack)
 
-    @effect(state)
+    @effect(settings)
     def _apply_state(self) -> None:
-        self._dark_mode_switch.selected = self.state.is_dark
-        self._color_hex_textfield.value = self.state.color_hex
+        self._dark_mode_switch.selected = self.settings.is_dark
+        self._color_hex_textfield.value = self.settings.color_hex
 
     def _on_change_dark_mode(self, selected: bool) -> None:  # noqa: FBT001
-        new_state = replace(self.state, is_dark=selected)
-        self.on_change.emit(new_state)
+        new_state = replace(self.settings, is_dark=selected)
+        self.on_change_settings.emit(new_state)
 
     def _on_change_color_hex(self, value: str) -> None:
-        new_state = replace(self.state, color_hex=value)
-        self.on_change.emit(new_state)
+        new_state = replace(self.settings, color_hex=value)
+        self.on_change_settings.emit(new_state)
 
 
 class DemoColorPalette(Component):
-    controls = use_state(ControlsState())
+    settings = use_state(Settings())
 
     def __init__(self) -> None:
         super().__init__()
@@ -112,17 +112,17 @@ class DemoColorPalette(Component):
         color_grid = ColorGrid()
         row.add_widget(color_grid)
 
-        controls = Controls()
-        controls.state = self.controls
-        controls.on_change.connect(self.set_state("controls"))
-        row.add_widget(controls)
+        side_bar = SettingsSideBar()
+        side_bar.settings = self.settings
+        side_bar.on_change_settings.connect(self.set_state("controls"))
+        row.add_widget(side_bar)
 
         self.overlay_widget(row)
 
-    @effect(controls)
+    @effect(settings)
     def _apply_dynamic_color_scheme(self) -> None:
-        color_hex = self.controls.color_hex
-        is_dark = self.controls.is_dark
+        color_hex = self.settings.color_hex
+        is_dark = self.settings.is_dark
         scheme = SchemeTonalSpot(
             Hct.from_int(int(color_hex.replace("#", "0xFF"), 16)),
             is_dark=is_dark,
