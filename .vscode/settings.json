@@ -6,5 +6,6 @@
     "source.fixAll.ruff": "explicit",
     "source.unusedImports": "explicit"
   },
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "cSpell.words": ["materialyoucolor"]
 }
