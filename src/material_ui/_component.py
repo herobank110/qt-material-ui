@@ -26,6 +26,7 @@ from typing_extensions import TypeIs, TypeVarTuple, Unpack
 
 from material_ui._utils import StyleDict, convert_sx_to_qss, undefined
 from material_ui.hook import Hook
+from material_ui.theming.theme_hook import ThemeHook
 from material_ui.tokens._utils import DesignToken, resolve_token_or_value
 
 _Ts = TypeVarTuple("_Ts", default=Unpack[tuple[()]])
@@ -564,7 +565,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
         if state_obj := _pop_last_accessed_state(state):
             state_obj.set_transition(_TransitionConfig(duration_ms, easing))
 
-    @effect(sx)
+    @effect(sx, ThemeHook)
     def _apply_sx(self) -> None:
         """Apply the sx property to the widget."""
         sx = {**_COMPONENT_STYLESHEET_RESET, **self.sx}
