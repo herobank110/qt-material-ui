@@ -4,6 +4,7 @@ import pytest
 from pytest_mock import MockerFixture
 from qtpy.QtGui import QColor
 
+from material_ui.theming.theme_hook import ThemeHook
 from material_ui.tokens import (
     md_comp_switch,
     md_ref_palette,
@@ -13,7 +14,6 @@ from material_ui.tokens import (
 )
 from material_ui.tokens._utils import (
     DesignToken,
-    ThemeProvider,
     _is_indirection,
     _resolve_indirection,
     find_root_token,
@@ -87,7 +87,7 @@ def test_to_python_name() -> None:
 
 def test_override_token_value_token(mocker: MockerFixture):
     stub = mocker.stub()
-    ThemeProvider.get().on_tokens_change.connect(stub)
+    ThemeHook.get().on_tokens_change.connect(stub)
 
     override_token(md_sys_color.background, QColor("#ff0000"))
     assert stub.call_count == 1
@@ -96,7 +96,7 @@ def test_override_token_value_token(mocker: MockerFixture):
 
 def test_override_token_indirection(mocker: MockerFixture):
     stub = mocker.stub()
-    ThemeProvider.get().on_tokens_change.connect(stub)
+    ThemeHook.get().on_tokens_change.connect(stub)
 
     assert resolve_token(md_comp_switch.handle_elevation) == 1
 

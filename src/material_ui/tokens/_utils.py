@@ -4,14 +4,9 @@ import contextlib
 import re
 from dataclasses import dataclass
 from functools import partial
-from typing import TYPE_CHECKING, TypeVar, cast
+from typing import TypeVar, cast
 
-from PySide6.QtCore import QObject
-from PySide6.QtCore import Signal as QtSignal
 from qtpy.QtGui import QColor
-
-if TYPE_CHECKING:
-    from material_ui._component import Signal
 
 Indirection = str
 """Token value that is a reference to another token."""
@@ -133,23 +128,13 @@ def _resolve_indirection(value: Indirection) -> DesignToken | None:
     return None
 
 
-class ThemeProvider(QObject):
-    """Theme provider."""
-
-    @classmethod
-    def get(cls) -> "ThemeProvider":
-        """Get the singleton instance."""
-        if not hasattr(cls, "_instance"):
-            cls._instance = cls()
-        return cls._instance
-
-    on_tokens_change = cast("Signal", QtSignal())
-
-
 def override_token(token: DesignToken, value: TokenValue) -> None:
     """Override a token value in the global theme and notify listeners."""
     token.value = value
-    ThemeProvider.get().on_tokens_change.emit()
+    # Local import to avoid circular import.
+    from material_ui.theming.theme_hook import ThemeHook
+
+    ThemeHook.get().on_tokens_change.emit()
 
 
 to_python_name = partial(re.sub, r"[-\.]", "_")

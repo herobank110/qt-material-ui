@@ -9,6 +9,7 @@ However hooks may not always be the first solution, as they can obscure
 functionality through a layer of abstraction.
 """
 
+from functools import cache
 from typing import TYPE_CHECKING, cast
 
 from qtpy.QtCore import QObject
@@ -23,3 +24,9 @@ class Hook(QObject):
 
     on_change = cast("Signal", QtSignal())
     """Signal emitted when the hook's internal state has changed."""
+
+    @classmethod
+    @cache
+    def get(cls) -> "Hook":
+        """Get the singleton instance."""
+        return cls()
