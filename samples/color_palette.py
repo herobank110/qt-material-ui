@@ -5,7 +5,9 @@ from dataclasses import dataclass, replace
 from material_ui._component import Component, effect, use_state
 from material_ui.layout_basics import Row, Stack
 from material_ui.switch import Switch
+from material_ui.tokens import md_sys_color
 from material_ui.typography import Typography
+from qtpy.QtCore import QMargins, Qt
 from qtpy.QtWidgets import QApplication
 
 
@@ -26,12 +28,24 @@ class Controls(Component):
     def __init__(self) -> None:
         super().__init__()
 
+        self.sx = {"background-color": md_sys_color.background}
+
         stack = Stack()
+        stack.alignment = Qt.AlignmentFlag.AlignTop
+        stack.gap = 15
+        stack.margins = QMargins(20, 20, 20, 20)
+
+        title = Typography()
+        title.variant = "title-large"
+        title.text = "Color Palette"
+        stack.add_widget(title)
 
         dark_mode_row = Row()
+        dark_mode_row.gap = 5
         dark_mode_label = Typography()
         dark_mode_label.variant = "body-large"
         dark_mode_label.text = "Dark Mode"
+        dark_mode_label.alignment = Qt.AlignmentFlag.AlignVCenter
         dark_mode_row.add_widget(dark_mode_label)
         self._dark_mode_switch = Switch()
         self._dark_mode_switch.on_change.connect(self._on_change_dark_mode)
