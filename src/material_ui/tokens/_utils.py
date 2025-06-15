@@ -4,9 +4,14 @@ import contextlib
 import re
 from dataclasses import dataclass
 from functools import partial
-from typing import TypeVar, cast
+from typing import TYPE_CHECKING, TypeVar, cast
 
+from PySide6.QtCore import QObject
+from PySide6.QtCore import Signal as QtSignal
 from qtpy.QtGui import QColor
+
+if TYPE_CHECKING:
+    from material_ui._component import Signal
 
 Indirection = str
 """Token value that is a reference to another token."""
@@ -22,25 +27,25 @@ class DesignToken:
 
     value: Indirection | TokenValue
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         # Allow the token to be used as a dictionary key.
         # TODO: fix it to use @dataclass(unsafe_hash=True) instead
         # QColor isn't hashable, so convert to string
         return hash(repr(self.value))
 
 
-_token_registry = {}
-"""Global registry for tokens, allowing constant-time access by name."""
+_token_registry: set[DesignToken] = set()
+"""Global registry for all registered tokens."""
 
-def define_token(value: TokenValue | Indirection, name: str = None) -> DesignToken:
+
+def define_token(value: TokenValue | Indirection) -> DesignToken:
     """Factory function for defining a token and registering it by name.
 
     Mainly for internal use.
     """
-    token = DesignToken(value)
-    if name:
-        _token_registry[name] = token
-    return token
+    ret_val = DesignToken(value)
+    _token_registry.add(ret_val)
+    return ret_val
 
 
 def resolve_token(token: DesignToken) -> TokenValue:
@@ -128,30 +133,23 @@ def _resolve_indirection(value: Indirection) -> DesignToken | None:
     return None
 
 
-_token_change_callbacks = []
+class ThemeProvider(QObject):
+    """Theme provider."""
+
+    @classmethod
+    def get(cls) -> "ThemeProvider":
+        """Get the singleton instance."""
+        if not hasattr(cls, "_instance"):
+            cls._instance = cls()
+        return cls._instance
+
+    on_tokens_change = cast("Signal", QtSignal())
 
 
-def connect_token_change_callback(callback):
-    """Register a callback to be called when tokens are overridden."""
-    if callback not in _token_change_callbacks:
-        _token_change_callbacks.append(callback)
-
-
-def disconnect_token_change_callback(callback):
-    """Unregister a previously registered callback."""
-    if callback in _token_change_callbacks:
-        _token_change_callbacks.remove(callback)
-
-
-def override_token(token_name: str, value: TokenValue) -> None:
+def override_token(token: DesignToken, value: TokenValue) -> None:
     """Override a token value in the global theme and notify listeners."""
-    token = _token_registry.get(token_name)
-    if token is not None:
-        token.value = value
-        for cb in _token_change_callbacks:
-            cb(token_name, value)
-        return
-    raise ValueError(f"Token '{token_name}' not found in registry.")
+    token.value = value
+    ThemeProvider.get().on_tokens_change.emit()
 
 
 to_python_name = partial(re.sub, r"[-\.]", "_")

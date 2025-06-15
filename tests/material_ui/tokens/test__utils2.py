@@ -1,6 +1,7 @@
 """Tests for material_ui.tokens._utils.py."""
 
 import pytest
+from pytest_mock import MockerFixture
 from qtpy.QtGui import QColor
 
 from material_ui.tokens import (
@@ -12,15 +13,13 @@ from material_ui.tokens import (
 )
 from material_ui.tokens._utils import (
     DesignToken,
+    ThemeProvider,
     _is_indirection,
     _resolve_indirection,
     find_root_token,
+    override_token,
     resolve_token,
     to_python_name,
-    define_token,
-    override_token,
-    connect_token_change_callback,
-    disconnect_token_change_callback,
 )
 
 
@@ -34,7 +33,7 @@ def test_DesignToken_hash_root_tokens_match() -> None:
     # Check the hash matches after resolving the indirection.
     assert hash(md_sys_elevation.level1) != hash(md_comp_switch.handle_elevation)
     assert hash(md_sys_elevation.level1) == hash(
-        find_root_token(md_comp_switch.handle_elevation)
+        find_root_token(md_comp_switch.handle_elevation),
     )
     # The main use case is for using tokens as keys in a dict.
     config = {md_sys_elevation.level1: "foo"}
@@ -85,13 +84,11 @@ def test_to_python_name() -> None:
     result = to_python_name("md.comp.elevated-button.container-color")
     assert result == "md_comp_elevated_button_container_color"
 
-def test_override_token_and_callback():
-    test_token = define_token(1, name="test_token")
-    results = []
-    def cb(name, value):
-        results.append((name, value))
-    connect_token_change_callback(cb)
-    override_token("test_token", 42)
-    assert test_token.value == 42, "Token value should be updated"
-    assert results == [("test_token", 42)], f"Callback not called correctly: {results}"
-    disconnect_token_change_callback(cb)
+
+def test_override_token_global_token(mocker: MockerFixture):
+    stub = mocker.stub()
+    ThemeProvider.get().on_tokens_change.connect(stub)
+
+    override_token(md_sys_color.background, QColor("#ff0000"))
+    assert md_sys_color.background.value == QColor("#ff0000")
+    assert stub.call_count == 1
