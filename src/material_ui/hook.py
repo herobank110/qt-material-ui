@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, cast
 
 from qtpy.QtCore import QObject
 from qtpy.QtCore import Signal as QtSignal  # pyright: ignore[reportPrivateImportUsage]
+from typing_extensions import Self
 
 if TYPE_CHECKING:
     from material_ui._component import Signal
@@ -27,6 +28,6 @@ class Hook(QObject):
 
     @classmethod
     @cache
-    def get(cls) -> "Hook":
+    def get(cls) -> Self:
         """Get the singleton instance."""
         return cls()
