@@ -114,7 +114,7 @@ class DemoColorPalette(Component):
 
         side_bar = SettingsSideBar()
         side_bar.settings = self.settings
-        side_bar.on_change_settings.connect(self.set_state("controls"))
+        side_bar.on_change_settings.connect(self.set_state("settings"))
         row.add_widget(side_bar)
 
         self.overlay_widget(row)
