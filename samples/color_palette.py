@@ -8,7 +8,10 @@ from material_ui.shape import Shape
 from material_ui.switch import Switch
 from material_ui.text_fields.filled_text_field import FilledTextField
 from material_ui.tokens import md_sys_color
+from material_ui.tokens.dynamic_color import apply_dynamic_color_scheme
 from material_ui.typography import Typography
+from materialyoucolor.hct import Hct
+from materialyoucolor.scheme.scheme_tonal_spot import SchemeTonalSpot
 from qtpy.QtCore import QMargins, Qt
 from qtpy.QtWidgets import QApplication, QGridLayout
 
@@ -20,8 +23,6 @@ class ControlsState:
 
 
 class ColorGrid(Component):
-    controls = use_state(ControlsState())
-
     def __init__(self) -> None:
         super().__init__()
 
@@ -109,7 +110,6 @@ class DemoColorPalette(Component):
         row = Row()
 
         color_grid = ColorGrid()
-        color_grid.controls = self.controls
         row.add_widget(color_grid)
 
         controls = Controls()
@@ -118,6 +118,17 @@ class DemoColorPalette(Component):
         row.add_widget(controls)
 
         self.overlay_widget(row)
+
+    @effect(controls)
+    def _apply_dynamic_color_scheme(self) -> None:
+        color_hex = self.controls.color_hex
+        is_dark = self.controls.is_dark
+        scheme = SchemeTonalSpot(
+            Hct.from_int(int(color_hex.replace("#", "0xFF"), 16)),
+            is_dark=is_dark,
+            contrast_level=0.0,
+        )
+        apply_dynamic_color_scheme(scheme)
 
 
 def main() -> None:
