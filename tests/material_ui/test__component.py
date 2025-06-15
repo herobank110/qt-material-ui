@@ -3,6 +3,7 @@ from pytest_mock import MockerFixture
 from pytestqt.qtbot import QtBot
 
 from material_ui._component import Component, EffectDependencyError, effect, use_state
+from material_ui.hook import Hook
 
 
 def test_Component_state_bind_on_assignment(qtbot: QtBot):
@@ -72,3 +73,23 @@ def test_Component_effect_invalid_dependency_static():
             @effect(f)
             def my_effect(self) -> None:
                 pass
+
+
+def test_Component_effect_hook_dependency(qtbot: QtBot, mocker: MockerFixture):
+    stub = mocker.stub()
+
+    class MyHook(Hook):
+        pass
+
+    class MyComponent(Component):
+        @effect(MyHook)
+        def my_effect(self) -> None:
+            stub()
+
+    component = MyComponent()
+    qtbot.add_widget(component)
+    qtbot.wait(0)  # Let the effect be called after constructor.
+    assert stub.call_count == 1
+
+    MyHook.get().on_change.emit()
+    assert stub.call_count == 2
