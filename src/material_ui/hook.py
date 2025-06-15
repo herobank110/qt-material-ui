@@ -12,7 +12,7 @@ functionality through a layer of abstraction.
 from typing import TYPE_CHECKING, cast
 
 from qtpy.QtCore import QObject
-from qtpy.QtCore import Signal as QtSignal
+from qtpy.QtCore import Signal as QtSignal  # pyright: ignore[reportPrivateImportUsage]
 
 if TYPE_CHECKING:
     from material_ui._component import Signal
