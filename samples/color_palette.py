@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass, replace
 
-from material_ui._component import Component, effect, use_state
+from material_ui._component import Component, Signal, effect, use_state
 from material_ui.layout_basics import Row, Stack
 from material_ui.switch import Switch
 from material_ui.text_fields.outlined_text_field import OutlinedTextField
@@ -25,6 +25,7 @@ class ControlsState:
 
 class Controls(Component):
     state = use_state(ControlsState())
+    on_change: Signal[ControlsState]
 
     def __init__(self) -> None:
         super().__init__()
@@ -66,28 +67,38 @@ class Controls(Component):
         self._color_hex_textfield.value = self.state.color_hex
 
     def _on_change_dark_mode(self, selected: bool) -> None:  # noqa: FBT001
-        self.state = replace(self.state, is_dark=selected)
+        new_state = replace(self.state, is_dark=selected)
+        self.on_change.emit(new_state)
 
     def _on_change_color_hex(self, value: str) -> None:
-        self.state = replace(self.state, color_hex=value)
+        new_state = replace(self.state, color_hex=value)
+        self.on_change.emit(new_state)
 
 
 class DemoColorPalette(Component):
+    controls = use_state(ControlsState())
+
     def __init__(self) -> None:
         super().__init__()
 
-        row1 = Row()
-
-        color_grid = ColorGrid()
-        row1.add_widget(color_grid)
-
-        controls = Controls()
-        row1.add_widget(controls)
-
-        self.overlay_widget(row1)
-
         # Clear the focus when clicking outside any input widget.
         self.clicked.connect(lambda: self.setFocus())
+
+        row = Row()
+
+        color_grid = ColorGrid()
+        row.add_widget(color_grid)
+
+        controls = Controls()
+        controls.state = self.controls
+        controls.on_change.connect(self.set_state("controls"))
+        row.add_widget(controls)
+
+        self.overlay_widget(row)
+
+    @effect(controls)
+    def _apply_color_grid(self) -> None:
+        print(f"controls changed: {self.controls}")
 
 
 def main() -> None:
