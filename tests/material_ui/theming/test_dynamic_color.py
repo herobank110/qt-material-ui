@@ -2,9 +2,9 @@ from materialyoucolor.hct import Hct
 from materialyoucolor.scheme.scheme_tonal_spot import SchemeTonalSpot
 from qtpy.QtGui import QColor
 
+from material_ui.theming.dynamic_color import apply_dynamic_color_scheme
 from material_ui.tokens import md_sys_color
 from material_ui.tokens._utils import resolve_token
-from material_ui.tokens.dynamic_color import apply_dynamic_color_scheme
 
 
 def test_apply_dynamic_color_scheme_basic():

@@ -550,7 +550,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
         if state_obj := _pop_last_accessed_state(state):
             state_obj.set_transition(_TransitionConfig(duration_ms, easing))
 
-    @effect(sx, ThemeProvider)
+    @effect(sx)
     def _apply_sx(self) -> None:
         """Apply the sx property to the widget."""
         sx = {**_COMPONENT_STYLESHEET_RESET, **self.sx}
