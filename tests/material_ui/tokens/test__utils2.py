@@ -85,10 +85,21 @@ def test_to_python_name() -> None:
     assert result == "md_comp_elevated_button_container_color"
 
 
-def test_override_token_global_token(mocker: MockerFixture):
+def test_override_token_value_token(mocker: MockerFixture):
     stub = mocker.stub()
     ThemeProvider.get().on_tokens_change.connect(stub)
 
     override_token(md_sys_color.background, QColor("#ff0000"))
-    assert md_sys_color.background.value == QColor("#ff0000")
     assert stub.call_count == 1
+    assert resolve_token(md_sys_color.background) == QColor("#ff0000")
+
+
+def test_override_token_indirection(mocker: MockerFixture):
+    stub = mocker.stub()
+    ThemeProvider.get().on_tokens_change.connect(stub)
+
+    assert resolve_token(md_comp_switch.handle_elevation) == 1
+
+    override_token(md_sys_elevation.level1, 10)
+    assert stub.call_count == 1
+    assert resolve_token(md_comp_switch.handle_elevation) == 10
