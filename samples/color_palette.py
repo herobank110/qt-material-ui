@@ -38,7 +38,7 @@ class ColorGrid(Component):
         primary_label.text = "Primary"
         primary_label.setParent(primary_cell)
         primary_label.move(10, 10)
-        grid.addWidget(primary_cell, 0, 0)
+        grid.addWidget(primary_cell, 0, 0, 1, 15)
 
         on_primary_cell = Shape()
         on_primary_cell.setFixedSize(180, 50)
@@ -49,7 +49,7 @@ class ColorGrid(Component):
         on_primary_label.text = "On Primary"
         on_primary_label.setParent(on_primary_cell)
         on_primary_label.move(10, 10)
-        grid.addWidget(on_primary_cell, 1, 0)
+        grid.addWidget(on_primary_cell, 1, 0, 1, 15)
 
         secondary_cell = Shape()
         secondary_cell.setFixedSize(180, 100)
@@ -60,7 +60,7 @@ class ColorGrid(Component):
         secondary_label.text = "Secondary"
         secondary_label.setParent(secondary_cell)
         secondary_label.move(10, 10)
-        grid.addWidget(secondary_cell, 0, 1)
+        grid.addWidget(secondary_cell, 0, 15, 1, 15)
 
         on_secondary_cell = Shape()
         on_secondary_cell.setFixedSize(180, 50)
@@ -71,7 +71,7 @@ class ColorGrid(Component):
         on_secondary_label.text = "On Secondary"
         on_secondary_label.setParent(on_secondary_cell)
         on_secondary_label.move(10, 10)
-        grid.addWidget(on_secondary_cell, 1, 1)
+        grid.addWidget(on_secondary_cell, 1, 15, 1, 15)
 
         tertiary_cell = Shape()
         tertiary_cell.setFixedSize(180, 100)
@@ -82,7 +82,7 @@ class ColorGrid(Component):
         tertiary_label.text = "Tertiary"
         tertiary_label.setParent(tertiary_cell)
         tertiary_label.move(10, 10)
-        grid.addWidget(tertiary_cell, 0, 2)
+        grid.addWidget(tertiary_cell, 0, 30, 1, 15)
 
         on_tertiary_cell = Shape()
         on_tertiary_cell.setFixedSize(180, 50)
@@ -93,7 +93,29 @@ class ColorGrid(Component):
         on_tertiary_label.text = "On Tertiary"
         on_tertiary_label.setParent(on_tertiary_cell)
         on_tertiary_label.move(10, 10)
-        grid.addWidget(on_tertiary_cell, 1, 2)
+        grid.addWidget(on_tertiary_cell, 1, 30, 1, 15)
+
+        error_cell = Shape()
+        error_cell.setFixedSize(180, 100)
+        error_cell.color = md_sys_color.error
+        error_label = Typography()
+        error_label.variant = "label-large"
+        error_label.color = md_sys_color.on_error
+        error_label.text = "Error"
+        error_label.setParent(error_cell)
+        error_label.move(10, 10)
+        grid.addWidget(error_cell, 0, 45, 1, 15)
+
+        on_error_cell = Shape()
+        on_error_cell.setFixedSize(180, 50)
+        on_error_cell.color = md_sys_color.on_error
+        on_error_label = Typography()
+        on_error_label.variant = "label-large"
+        on_error_label.color = md_sys_color.error
+        on_error_label.text = "On Error"
+        on_error_label.setParent(on_error_cell)
+        on_error_label.move(10, 10)
+        grid.addWidget(on_error_cell, 1, 45, 1, 15)
 
         primary_container_cell = Shape()
         primary_container_cell.setFixedSize(180, 100)
@@ -104,7 +126,7 @@ class ColorGrid(Component):
         primary_container_label.text = "Primary Container"
         primary_container_label.setParent(primary_container_cell)
         primary_container_label.move(10, 10)
-        grid.addWidget(primary_container_cell, 2, 0)
+        grid.addWidget(primary_container_cell, 2, 0, 1, 15)
 
         on_primary_container_cell = Shape()
         on_primary_container_cell.setFixedSize(180, 50)
@@ -115,7 +137,7 @@ class ColorGrid(Component):
         on_primary_container_label.text = "On Primary Container"
         on_primary_container_label.setParent(on_primary_container_cell)
         on_primary_container_label.move(10, 10)
-        grid.addWidget(on_primary_container_cell, 3, 0)
+        grid.addWidget(on_primary_container_cell, 3, 0, 1, 15)
 
         secondary_container_cell = Shape()
         secondary_container_cell.setFixedSize(180, 100)
@@ -126,7 +148,7 @@ class ColorGrid(Component):
         secondary_container_label.text = "Secondary Container"
         secondary_container_label.setParent(secondary_container_cell)
         secondary_container_label.move(10, 10)
-        grid.addWidget(secondary_container_cell, 2, 1)
+        grid.addWidget(secondary_container_cell, 2, 15, 1, 15)
 
         on_secondary_container_cell = Shape()
         on_secondary_container_cell.setFixedSize(180, 50)
@@ -137,7 +159,7 @@ class ColorGrid(Component):
         on_secondary_container_label.text = "On Secondary Container"
         on_secondary_container_label.setParent(on_secondary_container_cell)
         on_secondary_container_label.move(10, 10)
-        grid.addWidget(on_secondary_container_cell, 3, 1)
+        grid.addWidget(on_secondary_container_cell, 3, 15, 1, 15)
 
         tertiary_container_cell = Shape()
         tertiary_container_cell.setFixedSize(180, 100)
@@ -148,7 +170,7 @@ class ColorGrid(Component):
         tertiary_container_label.text = "Tertiary Container"
         tertiary_container_label.setParent(tertiary_container_cell)
         tertiary_container_label.move(10, 10)
-        grid.addWidget(tertiary_container_cell, 2, 2)
+        grid.addWidget(tertiary_container_cell, 2, 30, 1, 15)
 
         on_tertiary_container_cell = Shape()
         on_tertiary_container_cell.setFixedSize(180, 50)
@@ -159,7 +181,29 @@ class ColorGrid(Component):
         on_tertiary_container_label.text = "On Tertiary Container"
         on_tertiary_container_label.setParent(on_tertiary_container_cell)
         on_tertiary_container_label.move(10, 10)
-        grid.addWidget(on_tertiary_container_cell, 3, 2)
+        grid.addWidget(on_tertiary_container_cell, 3, 30, 1, 15)
+
+        error_container_cell = Shape()
+        error_container_cell.setFixedSize(180, 100)
+        error_container_cell.color = md_sys_color.error_container
+        error_container_label = Typography()
+        error_container_label.variant = "label-large"
+        error_container_label.color = md_sys_color.on_error_container
+        error_container_label.text = "Error Container"
+        error_container_label.setParent(error_container_cell)
+        error_container_label.move(10, 10)
+        grid.addWidget(error_container_cell, 2, 45, 1, 15)
+
+        on_error_container_cell = Shape()
+        on_error_container_cell.setFixedSize(180, 50)
+        on_error_container_cell.color = md_sys_color.on_error_container
+        on_error_container_label = Typography()
+        on_error_container_label.variant = "label-large"
+        on_error_container_label.color = md_sys_color.error_container
+        on_error_container_label.text = "On Error Container"
+        on_error_container_label.setParent(on_error_container_cell)
+        on_error_container_label.move(10, 10)
+        grid.addWidget(on_error_container_cell, 3, 45, 1, 15)
 
         self.setLayout(grid)
 

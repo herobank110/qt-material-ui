@@ -16,6 +16,7 @@ def apply_dynamic_color_scheme(scheme: DynamicScheme) -> None:
     fn = partial(_apply_scheme_to_token, source_scheme=scheme)
 
     fn(md_sys_color.error, MaterialDynamicColors.error)
+    fn(md_sys_color.error_container, MaterialDynamicColors.errorContainer)
     fn(md_sys_color.inverse_on_surface, MaterialDynamicColors.inverseOnSurface)
     fn(md_sys_color.inverse_primary, MaterialDynamicColors.inversePrimary)
     fn(md_sys_color.inverse_surface, MaterialDynamicColors.inverseSurface)
@@ -27,6 +28,7 @@ def apply_dynamic_color_scheme(scheme: DynamicScheme) -> None:
     fn(md_sys_color.on_secondary_container, MaterialDynamicColors.onSecondaryContainer)
     fn(md_sys_color.on_surface, MaterialDynamicColors.onSurface)
     fn(md_sys_color.on_surface_variant, MaterialDynamicColors.onSurfaceVariant)
+    fn(md_sys_color.on_tertiary, MaterialDynamicColors.onTertiary)
     fn(md_sys_color.on_tertiary_container, MaterialDynamicColors.onTertiaryContainer)
     fn(md_sys_color.outline, MaterialDynamicColors.outline)
     fn(md_sys_color.outline_variant, MaterialDynamicColors.outlineVariant)
@@ -36,6 +38,8 @@ def apply_dynamic_color_scheme(scheme: DynamicScheme) -> None:
     fn(md_sys_color.secondary_container, MaterialDynamicColors.secondaryContainer)
     fn(md_sys_color.shadow, MaterialDynamicColors.shadow)
     fn(md_sys_color.surface, MaterialDynamicColors.surface)
+    fn(md_sys_color.surface_bright, MaterialDynamicColors.surfaceBright)
+    fn(md_sys_color.surface_dim, MaterialDynamicColors.surfaceDim)
     fn(md_sys_color.surface_container, MaterialDynamicColors.surfaceContainer)
     fn(md_sys_color.surface_container_high, MaterialDynamicColors.surfaceContainerHigh)
     fn(
