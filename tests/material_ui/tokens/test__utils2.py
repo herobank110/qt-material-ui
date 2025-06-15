@@ -87,7 +87,7 @@ def test_to_python_name() -> None:
 
 def test_override_token_value_token(mocker: MockerFixture):
     stub = mocker.stub()
-    ThemeHook.get().on_tokens_change.connect(stub)
+    ThemeHook.get().on_change.connect(stub)
 
     override_token(md_sys_color.background, QColor("#ff0000"))
     assert stub.call_count == 1
@@ -96,7 +96,7 @@ def test_override_token_value_token(mocker: MockerFixture):
 
 def test_override_token_indirection(mocker: MockerFixture):
     stub = mocker.stub()
-    ThemeHook.get().on_tokens_change.connect(stub)
+    ThemeHook.get().on_change.connect(stub)
 
     assert resolve_token(md_comp_switch.handle_elevation) == 1
 

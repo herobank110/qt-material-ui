@@ -134,7 +134,7 @@ def override_token(token: DesignToken, value: TokenValue) -> None:
     # Local import to avoid circular import.
     from material_ui.theming.theme_hook import ThemeHook
 
-    ThemeHook.get().on_tokens_change.emit()
+    ThemeHook.get().on_change.emit()
 
 
 to_python_name = partial(re.sub, r"[-\.]", "_")
