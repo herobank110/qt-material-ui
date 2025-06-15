@@ -63,6 +63,7 @@ class SettingsSideBar(Component):
         title = Typography()
         title.variant = "headline-medium"
         title.text = "Color Palette"
+        title.color = md_sys_color.on_surface
         stack.add_widget(title)
 
         self._color_hex_textfield = FilledTextField()
@@ -75,6 +76,7 @@ class SettingsSideBar(Component):
         dark_mode_label = Typography()
         dark_mode_label.variant = "body-large"
         dark_mode_label.text = "Dark Mode"
+        dark_mode_label.color = md_sys_color.on_surface
         dark_mode_label.alignment = Qt.AlignmentFlag.AlignVCenter
         dark_mode_row.add_widget(dark_mode_label)
         self._dark_mode_switch = Switch()

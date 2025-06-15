@@ -6,6 +6,7 @@ from qtpy.QtWidgets import QLabel
 
 from material_ui._component import Component, effect, use_state
 from material_ui._font_utils import install_default_fonts
+from material_ui.theming.theme_hook import ThemeHook
 from material_ui.tokens import md_sys_color, md_sys_typescale
 from material_ui.tokens._utils import DesignToken, resolve_token, resolve_token_or_value
 
@@ -167,7 +168,7 @@ class Typography(Component):
         self.font_size = font_size
         self.font_weight = font_weight
 
-    @effect(font_family, font_size, font_weight, color)
+    @effect(font_family, font_size, font_weight, color, ThemeHook)
     def _apply_styles(self) -> None:
         self.sx = {**self.sx, "color": resolve_token_or_value(self.color)}
         # Can't control font-weight in qt stylesheets, so use QFont
