@@ -74,6 +74,13 @@
       "request": "launch",
       "program": "${workspaceFolder}/samples/music_player.py",
       "console": "integratedTerminal"
+    },
+    {
+      "name": "Sample - Color Palette",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/samples/color_palette.py",
+      "console": "integratedTerminal"
     }
   ]
 }
