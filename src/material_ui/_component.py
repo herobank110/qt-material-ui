@@ -423,7 +423,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
             # Apply transition if specified.
             if marker.transition:
                 state.set_transition(
-                    _TransitionConfig(marker.transition, marker.easing)
+                    _TransitionConfig(marker.transition, marker.easing),
                 )
 
     def __getattribute__(self, name: str) -> Any:
@@ -446,7 +446,9 @@ class Component(QWidget, metaclass=_ComponentMeta):
                 state.bind(other_state)
             elif state.transition:
                 state.animate_to(
-                    value, state.transition.duration_ms, state.transition.easing
+                    value,
+                    state.transition.duration_ms,
+                    state.transition.easing,
                 )
             else:
                 state.set_value(value)
@@ -548,7 +550,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
         if state_obj := _pop_last_accessed_state(state):
             state_obj.set_transition(_TransitionConfig(duration_ms, easing))
 
-    @effect(sx)
+    @effect(sx, ThemeProvider)
     def _apply_sx(self) -> None:
         """Apply the sx property to the widget."""
         sx = {**_COMPONENT_STYLESHEET_RESET, **self.sx}
