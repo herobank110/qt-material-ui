@@ -86,6 +86,9 @@ class DemoColorPalette(Component):
 
         self.overlay_widget(row1)
 
+        # Clear the focus when clicking outside any input widget.
+        self.clicked.connect(lambda: self.setFocus())
+
 
 def main() -> None:
     app = QApplication()
