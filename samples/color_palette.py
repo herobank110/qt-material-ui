@@ -22,15 +22,17 @@ class ColorGrid(Component):
 
         self.sx = {"background-color": md_sys_color.background}
 
+        self.setFixedWidth(1200)
+
         grid = QGridLayout()
         grid.setContentsMargins(QMargins(40, 40, 40, 40))
         grid.setAlignment(Qt.AlignmentFlag.AlignTop)
-        grid.setSpacing(0)
+        grid.setSpacing(5)
 
         # TODO: cleanup repetitive quick code
 
         primary_cell = Shape()
-        primary_cell.setFixedSize(180, 100)
+        primary_cell.setFixedHeight(100)
         primary_cell.color = md_sys_color.primary
         primary_label = Typography()
         primary_label.variant = "label-large"
@@ -41,7 +43,7 @@ class ColorGrid(Component):
         grid.addWidget(primary_cell, 0, 0, 1, 15)
 
         on_primary_cell = Shape()
-        on_primary_cell.setFixedSize(180, 50)
+        on_primary_cell.setFixedHeight(50)
         on_primary_cell.color = md_sys_color.on_primary
         on_primary_label = Typography()
         on_primary_label.variant = "label-large"
@@ -52,7 +54,7 @@ class ColorGrid(Component):
         grid.addWidget(on_primary_cell, 1, 0, 1, 15)
 
         secondary_cell = Shape()
-        secondary_cell.setFixedSize(180, 100)
+        secondary_cell.setFixedHeight(100)
         secondary_cell.color = md_sys_color.secondary
         secondary_label = Typography()
         secondary_label.variant = "label-large"
@@ -63,7 +65,7 @@ class ColorGrid(Component):
         grid.addWidget(secondary_cell, 0, 15, 1, 15)
 
         on_secondary_cell = Shape()
-        on_secondary_cell.setFixedSize(180, 50)
+        on_secondary_cell.setFixedHeight(50)
         on_secondary_cell.color = md_sys_color.on_secondary
         on_secondary_label = Typography()
         on_secondary_label.variant = "label-large"
@@ -74,7 +76,7 @@ class ColorGrid(Component):
         grid.addWidget(on_secondary_cell, 1, 15, 1, 15)
 
         tertiary_cell = Shape()
-        tertiary_cell.setFixedSize(180, 100)
+        tertiary_cell.setFixedHeight(100)
         tertiary_cell.color = md_sys_color.tertiary
         tertiary_label = Typography()
         tertiary_label.variant = "label-large"
@@ -85,7 +87,7 @@ class ColorGrid(Component):
         grid.addWidget(tertiary_cell, 0, 30, 1, 15)
 
         on_tertiary_cell = Shape()
-        on_tertiary_cell.setFixedSize(180, 50)
+        on_tertiary_cell.setFixedHeight(50)
         on_tertiary_cell.color = md_sys_color.on_tertiary
         on_tertiary_label = Typography()
         on_tertiary_label.variant = "label-large"
@@ -96,7 +98,7 @@ class ColorGrid(Component):
         grid.addWidget(on_tertiary_cell, 1, 30, 1, 15)
 
         error_cell = Shape()
-        error_cell.setFixedSize(180, 100)
+        error_cell.setFixedHeight(100)
         error_cell.color = md_sys_color.error
         error_label = Typography()
         error_label.variant = "label-large"
@@ -107,7 +109,7 @@ class ColorGrid(Component):
         grid.addWidget(error_cell, 0, 45, 1, 15)
 
         on_error_cell = Shape()
-        on_error_cell.setFixedSize(180, 50)
+        on_error_cell.setFixedHeight(50)
         on_error_cell.color = md_sys_color.on_error
         on_error_label = Typography()
         on_error_label.variant = "label-large"
@@ -118,7 +120,7 @@ class ColorGrid(Component):
         grid.addWidget(on_error_cell, 1, 45, 1, 15)
 
         primary_container_cell = Shape()
-        primary_container_cell.setFixedSize(180, 100)
+        primary_container_cell.setFixedHeight(100)
         primary_container_cell.color = md_sys_color.primary_container
         primary_container_label = Typography()
         primary_container_label.variant = "label-large"
@@ -129,7 +131,7 @@ class ColorGrid(Component):
         grid.addWidget(primary_container_cell, 2, 0, 1, 15)
 
         on_primary_container_cell = Shape()
-        on_primary_container_cell.setFixedSize(180, 50)
+        on_primary_container_cell.setFixedHeight(50)
         on_primary_container_cell.color = md_sys_color.on_primary_container
         on_primary_container_label = Typography()
         on_primary_container_label.variant = "label-large"
@@ -140,7 +142,7 @@ class ColorGrid(Component):
         grid.addWidget(on_primary_container_cell, 3, 0, 1, 15)
 
         secondary_container_cell = Shape()
-        secondary_container_cell.setFixedSize(180, 100)
+        secondary_container_cell.setFixedHeight(100)
         secondary_container_cell.color = md_sys_color.secondary_container
         secondary_container_label = Typography()
         secondary_container_label.variant = "label-large"
@@ -151,7 +153,7 @@ class ColorGrid(Component):
         grid.addWidget(secondary_container_cell, 2, 15, 1, 15)
 
         on_secondary_container_cell = Shape()
-        on_secondary_container_cell.setFixedSize(180, 50)
+        on_secondary_container_cell.setFixedHeight(50)
         on_secondary_container_cell.color = md_sys_color.on_secondary_container
         on_secondary_container_label = Typography()
         on_secondary_container_label.variant = "label-large"
@@ -162,7 +164,7 @@ class ColorGrid(Component):
         grid.addWidget(on_secondary_container_cell, 3, 15, 1, 15)
 
         tertiary_container_cell = Shape()
-        tertiary_container_cell.setFixedSize(180, 100)
+        tertiary_container_cell.setFixedHeight(100)
         tertiary_container_cell.color = md_sys_color.tertiary_container
         tertiary_container_label = Typography()
         tertiary_container_label.variant = "label-large"
@@ -173,7 +175,7 @@ class ColorGrid(Component):
         grid.addWidget(tertiary_container_cell, 2, 30, 1, 15)
 
         on_tertiary_container_cell = Shape()
-        on_tertiary_container_cell.setFixedSize(180, 50)
+        on_tertiary_container_cell.setFixedHeight(50)
         on_tertiary_container_cell.color = md_sys_color.on_tertiary_container
         on_tertiary_container_label = Typography()
         on_tertiary_container_label.variant = "label-large"
@@ -184,7 +186,7 @@ class ColorGrid(Component):
         grid.addWidget(on_tertiary_container_cell, 3, 30, 1, 15)
 
         error_container_cell = Shape()
-        error_container_cell.setFixedSize(180, 100)
+        error_container_cell.setFixedHeight(100)
         error_container_cell.color = md_sys_color.error_container
         error_container_label = Typography()
         error_container_label.variant = "label-large"
@@ -195,7 +197,7 @@ class ColorGrid(Component):
         grid.addWidget(error_container_cell, 2, 45, 1, 15)
 
         on_error_container_cell = Shape()
-        on_error_container_cell.setFixedSize(180, 50)
+        on_error_container_cell.setFixedHeight(50)
         on_error_container_cell.color = md_sys_color.on_error_container
         on_error_container_label = Typography()
         on_error_container_label.variant = "label-large"
@@ -204,6 +206,138 @@ class ColorGrid(Component):
         on_error_container_label.setParent(on_error_container_cell)
         on_error_container_label.move(10, 10)
         grid.addWidget(on_error_container_cell, 3, 45, 1, 15)
+
+        surface_dim_cell = Shape()
+        surface_dim_cell.setFixedHeight(100)
+        surface_dim_cell.color = md_sys_color.surface_dim
+        surface_dim_label = Typography()
+        surface_dim_label.variant = "label-large"
+        surface_dim_label.color = md_sys_color.on_surface
+        surface_dim_label.text = "Surface Dim"
+        surface_dim_label.setParent(surface_dim_cell)
+        surface_dim_label.move(10, 10)
+        grid.addWidget(surface_dim_cell, 4, 0, 1, 20)
+
+        surface_cell = Shape()
+        surface_cell.setFixedHeight(100)
+        surface_cell.color = md_sys_color.surface
+        surface_label = Typography()
+        surface_label.variant = "label-large"
+        surface_label.color = md_sys_color.on_surface
+        surface_label.text = "Surface"
+        surface_label.setParent(surface_cell)
+        surface_label.move(10, 10)
+        grid.addWidget(surface_cell, 4, 20, 1, 20)
+
+        surface_bright_cell = Shape()
+        surface_bright_cell.setFixedHeight(100)
+        surface_bright_cell.color = md_sys_color.surface_bright
+        surface_bright_label = Typography()
+        surface_bright_label.variant = "label-large"
+        surface_bright_label.color = md_sys_color.on_surface
+        surface_bright_label.text = "Surface Bright"
+        surface_bright_label.setParent(surface_bright_cell)
+        surface_bright_label.move(10, 10)
+        grid.addWidget(surface_bright_cell, 4, 40, 1, 20)
+
+        surface_container_lowest_cell = Shape()
+        surface_container_lowest_cell.setFixedHeight(100)
+        surface_container_lowest_cell.color = md_sys_color.surface_container_lowest
+        surface_container_lowest_label = Typography()
+        surface_container_lowest_label.variant = "label-large"
+        surface_container_lowest_label.color = md_sys_color.on_surface
+        surface_container_lowest_label.text = "Surface Container Lowest"
+        surface_container_lowest_label.setParent(surface_container_lowest_cell)
+        surface_container_lowest_label.move(10, 10)
+        grid.addWidget(surface_container_lowest_cell, 5, 0, 1, 12)
+
+        surface_container_low_cell = Shape()
+        surface_container_low_cell.setFixedHeight(100)
+        surface_container_low_cell.color = md_sys_color.surface_container_low
+        surface_container_low_label = Typography()
+        surface_container_low_label.variant = "label-large"
+        surface_container_low_label.color = md_sys_color.on_surface
+        surface_container_low_label.text = "Surface Container Low"
+        surface_container_low_label.setParent(surface_container_low_cell)
+        surface_container_low_label.move(10, 10)
+        grid.addWidget(surface_container_low_cell, 5, 12, 1, 12)
+
+        surface_container_cell = Shape()
+        surface_container_cell.setFixedHeight(100)
+        surface_container_cell.color = md_sys_color.surface_container
+        surface_container_label = Typography()
+        surface_container_label.variant = "label-large"
+        surface_container_label.color = md_sys_color.on_surface
+        surface_container_label.text = "Surface Container"
+        surface_container_label.setParent(surface_container_cell)
+        surface_container_label.move(10, 10)
+        grid.addWidget(surface_container_cell, 5, 24, 1, 12)
+
+        surface_container_high_cell = Shape()
+        surface_container_high_cell.setFixedHeight(100)
+        surface_container_high_cell.color = md_sys_color.surface_container_high
+        surface_container_high_label = Typography()
+        surface_container_high_label.variant = "label-large"
+        surface_container_high_label.color = md_sys_color.on_surface
+        surface_container_high_label.text = "Surface Container High"
+        surface_container_high_label.setParent(surface_container_high_cell)
+        surface_container_high_label.move(10, 10)
+        grid.addWidget(surface_container_high_cell, 5, 36, 1, 12)
+
+        surface_container_highest_cell = Shape()
+        surface_container_highest_cell.setFixedHeight(100)
+        surface_container_highest_cell.color = md_sys_color.surface_container_highest
+        surface_container_highest_label = Typography()
+        surface_container_highest_label.variant = "label-large"
+        surface_container_highest_label.color = md_sys_color.on_surface
+        surface_container_highest_label.text = "Surface Container Highest"
+        surface_container_highest_label.setParent(surface_container_highest_cell)
+        surface_container_highest_label.move(10, 10)
+        grid.addWidget(surface_container_highest_cell, 5, 48, 1, 12)
+
+        on_surface_cell = Shape()
+        on_surface_cell.setFixedHeight(60)
+        on_surface_cell.color = md_sys_color.on_surface
+        on_surface_label = Typography()
+        on_surface_label.variant = "label-large"
+        on_surface_label.color = md_sys_color.surface
+        on_surface_label.text = "On Surface"
+        on_surface_label.setParent(on_surface_cell)
+        on_surface_label.move(10, 10)
+        grid.addWidget(on_surface_cell, 6, 0, 1, 15)
+
+        on_surface_variant_cell = Shape()
+        on_surface_variant_cell.setFixedHeight(60)
+        on_surface_variant_cell.color = md_sys_color.on_surface_variant
+        on_surface_variant_label = Typography()
+        on_surface_variant_label.variant = "label-large"
+        on_surface_variant_label.color = md_sys_color.surface_variant
+        on_surface_variant_label.text = "On Surface Variant"
+        on_surface_variant_label.setParent(on_surface_variant_cell)
+        on_surface_variant_label.move(10, 10)
+        grid.addWidget(on_surface_variant_cell, 6, 15, 1, 15)
+
+        outline_cell = Shape()
+        outline_cell.setFixedHeight(60)
+        outline_cell.color = md_sys_color.outline
+        outline_label = Typography()
+        outline_label.variant = "label-large"
+        outline_label.color = md_sys_color.surface_variant
+        outline_label.text = "Outline"
+        outline_label.setParent(outline_cell)
+        outline_label.move(10, 10)
+        grid.addWidget(outline_cell, 6, 30, 1, 15)
+
+        outline_variant_cell = Shape()
+        outline_variant_cell.setFixedHeight(60)
+        outline_variant_cell.color = md_sys_color.outline_variant
+        outline_variant_label = Typography()
+        outline_variant_label.variant = "label-large"
+        outline_variant_label.color = md_sys_color.on_surface
+        outline_variant_label.text = "Outline Variant"
+        outline_variant_label.setParent(outline_variant_cell)
+        outline_variant_label.move(10, 10)
+        grid.addWidget(outline_variant_cell, 6, 45, 1, 15)
 
         self.setLayout(grid)
 

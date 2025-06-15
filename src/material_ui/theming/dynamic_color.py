@@ -47,6 +47,10 @@ def apply_dynamic_color_scheme(scheme: DynamicScheme) -> None:
         MaterialDynamicColors.surfaceContainerHighest,
     )
     fn(md_sys_color.surface_container_low, MaterialDynamicColors.surfaceContainerLow)
+    fn(
+        md_sys_color.surface_container_lowest,
+        MaterialDynamicColors.surfaceContainerLowest,
+    )
     fn(md_sys_color.surface_tint, MaterialDynamicColors.surfaceTint)
     fn(md_sys_color.surface_variant, MaterialDynamicColors.surfaceVariant)
     fn(md_sys_color.tertiary, MaterialDynamicColors.tertiary)
