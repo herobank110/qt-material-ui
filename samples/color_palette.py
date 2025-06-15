@@ -25,9 +25,12 @@ class ColorGrid(Component):
         grid = QGridLayout()
         grid.setContentsMargins(QMargins(40, 40, 40, 40))
         grid.setAlignment(Qt.AlignmentFlag.AlignTop)
+        grid.setSpacing(0)
+
+        # TODO: cleanup repetitive quick code
 
         primary_cell = Shape()
-        primary_cell.setFixedSize(100, 100)
+        primary_cell.setFixedSize(180, 100)
         primary_cell.color = md_sys_color.primary
         primary_label = Typography()
         primary_label.variant = "label-large"
@@ -36,6 +39,127 @@ class ColorGrid(Component):
         primary_label.setParent(primary_cell)
         primary_label.move(10, 10)
         grid.addWidget(primary_cell, 0, 0)
+
+        on_primary_cell = Shape()
+        on_primary_cell.setFixedSize(180, 50)
+        on_primary_cell.color = md_sys_color.on_primary
+        on_primary_label = Typography()
+        on_primary_label.variant = "label-large"
+        on_primary_label.color = md_sys_color.primary
+        on_primary_label.text = "On Primary"
+        on_primary_label.setParent(on_primary_cell)
+        on_primary_label.move(10, 10)
+        grid.addWidget(on_primary_cell, 1, 0)
+
+        secondary_cell = Shape()
+        secondary_cell.setFixedSize(180, 100)
+        secondary_cell.color = md_sys_color.secondary
+        secondary_label = Typography()
+        secondary_label.variant = "label-large"
+        secondary_label.color = md_sys_color.on_secondary
+        secondary_label.text = "Secondary"
+        secondary_label.setParent(secondary_cell)
+        secondary_label.move(10, 10)
+        grid.addWidget(secondary_cell, 0, 1)
+
+        on_secondary_cell = Shape()
+        on_secondary_cell.setFixedSize(180, 50)
+        on_secondary_cell.color = md_sys_color.on_secondary
+        on_secondary_label = Typography()
+        on_secondary_label.variant = "label-large"
+        on_secondary_label.color = md_sys_color.secondary
+        on_secondary_label.text = "On Secondary"
+        on_secondary_label.setParent(on_secondary_cell)
+        on_secondary_label.move(10, 10)
+        grid.addWidget(on_secondary_cell, 1, 1)
+
+        tertiary_cell = Shape()
+        tertiary_cell.setFixedSize(180, 100)
+        tertiary_cell.color = md_sys_color.tertiary
+        tertiary_label = Typography()
+        tertiary_label.variant = "label-large"
+        tertiary_label.color = md_sys_color.on_tertiary
+        tertiary_label.text = "Tertiary"
+        tertiary_label.setParent(tertiary_cell)
+        tertiary_label.move(10, 10)
+        grid.addWidget(tertiary_cell, 0, 2)
+
+        on_tertiary_cell = Shape()
+        on_tertiary_cell.setFixedSize(180, 50)
+        on_tertiary_cell.color = md_sys_color.on_tertiary
+        on_tertiary_label = Typography()
+        on_tertiary_label.variant = "label-large"
+        on_tertiary_label.color = md_sys_color.tertiary
+        on_tertiary_label.text = "On Tertiary"
+        on_tertiary_label.setParent(on_tertiary_cell)
+        on_tertiary_label.move(10, 10)
+        grid.addWidget(on_tertiary_cell, 1, 2)
+
+        primary_container_cell = Shape()
+        primary_container_cell.setFixedSize(180, 100)
+        primary_container_cell.color = md_sys_color.primary_container
+        primary_container_label = Typography()
+        primary_container_label.variant = "label-large"
+        primary_container_label.color = md_sys_color.on_primary_container
+        primary_container_label.text = "Primary Container"
+        primary_container_label.setParent(primary_container_cell)
+        primary_container_label.move(10, 10)
+        grid.addWidget(primary_container_cell, 2, 0)
+
+        on_primary_container_cell = Shape()
+        on_primary_container_cell.setFixedSize(180, 50)
+        on_primary_container_cell.color = md_sys_color.on_primary_container
+        on_primary_container_label = Typography()
+        on_primary_container_label.variant = "label-large"
+        on_primary_container_label.color = md_sys_color.primary_container
+        on_primary_container_label.text = "On Primary Container"
+        on_primary_container_label.setParent(on_primary_container_cell)
+        on_primary_container_label.move(10, 10)
+        grid.addWidget(on_primary_container_cell, 3, 0)
+
+        secondary_container_cell = Shape()
+        secondary_container_cell.setFixedSize(180, 100)
+        secondary_container_cell.color = md_sys_color.secondary_container
+        secondary_container_label = Typography()
+        secondary_container_label.variant = "label-large"
+        secondary_container_label.color = md_sys_color.on_secondary_container
+        secondary_container_label.text = "Secondary Container"
+        secondary_container_label.setParent(secondary_container_cell)
+        secondary_container_label.move(10, 10)
+        grid.addWidget(secondary_container_cell, 2, 1)
+
+        on_secondary_container_cell = Shape()
+        on_secondary_container_cell.setFixedSize(180, 50)
+        on_secondary_container_cell.color = md_sys_color.on_secondary_container
+        on_secondary_container_label = Typography()
+        on_secondary_container_label.variant = "label-large"
+        on_secondary_container_label.color = md_sys_color.secondary_container
+        on_secondary_container_label.text = "On Secondary Container"
+        on_secondary_container_label.setParent(on_secondary_container_cell)
+        on_secondary_container_label.move(10, 10)
+        grid.addWidget(on_secondary_container_cell, 3, 1)
+
+        tertiary_container_cell = Shape()
+        tertiary_container_cell.setFixedSize(180, 100)
+        tertiary_container_cell.color = md_sys_color.tertiary_container
+        tertiary_container_label = Typography()
+        tertiary_container_label.variant = "label-large"
+        tertiary_container_label.color = md_sys_color.on_tertiary_container
+        tertiary_container_label.text = "Tertiary Container"
+        tertiary_container_label.setParent(tertiary_container_cell)
+        tertiary_container_label.move(10, 10)
+        grid.addWidget(tertiary_container_cell, 2, 2)
+
+        on_tertiary_container_cell = Shape()
+        on_tertiary_container_cell.setFixedSize(180, 50)
+        on_tertiary_container_cell.color = md_sys_color.on_tertiary_container
+        on_tertiary_container_label = Typography()
+        on_tertiary_container_label.variant = "label-large"
+        on_tertiary_container_label.color = md_sys_color.tertiary_container
+        on_tertiary_container_label.text = "On Tertiary Container"
+        on_tertiary_container_label.setParent(on_tertiary_container_cell)
+        on_tertiary_container_label.move(10, 10)
+        grid.addWidget(on_tertiary_container_cell, 3, 2)
 
         self.setLayout(grid)
 

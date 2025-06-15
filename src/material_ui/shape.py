@@ -6,6 +6,7 @@ from qtpy.QtCore import Qt
 from qtpy.QtGui import QColor
 
 from material_ui._component import Component, effect, use_state
+from material_ui.theming.theme_hook import ThemeHook
 from material_ui.tokens import md_sys_color, md_sys_shape
 from material_ui.tokens._utils import (
     DesignToken,
@@ -62,7 +63,7 @@ class Shape(Component):
     def _apply_visible(self) -> None:
         self.setVisible(self.visible)
 
-    @effect(color, opacity)
+    @effect(color, opacity, ThemeHook)
     def _apply_background_color(self) -> None:
         color = resolve_token_or_value(self.color)
         opacity = resolve_token_or_value(self.opacity)
