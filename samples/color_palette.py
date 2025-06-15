@@ -7,8 +7,8 @@ from material_ui.layout_basics import Row, Stack
 from material_ui.shape import Shape
 from material_ui.switch import Switch
 from material_ui.text_fields.filled_text_field import FilledTextField
+from material_ui.theming.dynamic_color import apply_dynamic_color_scheme
 from material_ui.tokens import md_sys_color
-from material_ui.tokens.dynamic_color import apply_dynamic_color_scheme
 from material_ui.typography import Typography
 from materialyoucolor.hct import Hct
 from materialyoucolor.scheme.scheme_tonal_spot import SchemeTonalSpot
