@@ -11,4 +11,5 @@ ignore = [
     "D100",    # Skip docstring in module.
     "D101",    # Skip docstring in class.
     "SLF001",  # Allow private member access.
+    "PT011",   # Allow expecting any kind of generic exceptions.
 ]
