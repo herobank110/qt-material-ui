@@ -1,8 +1,10 @@
 """Tests for material_ui.tokens._utils.py."""
 
 import pytest
+from pytest_mock import MockerFixture
 from qtpy.QtGui import QColor
 
+from material_ui.theming.theme_hook import ThemeHook
 from material_ui.tokens import (
     md_comp_switch,
     md_ref_palette,
@@ -15,6 +17,7 @@ from material_ui.tokens._utils import (
     _is_indirection,
     _resolve_indirection,
     find_root_token,
+    override_token,
     resolve_token,
     to_python_name,
 )
@@ -30,7 +33,7 @@ def test_DesignToken_hash_root_tokens_match() -> None:
     # Check the hash matches after resolving the indirection.
     assert hash(md_sys_elevation.level1) != hash(md_comp_switch.handle_elevation)
     assert hash(md_sys_elevation.level1) == hash(
-        find_root_token(md_comp_switch.handle_elevation)
+        find_root_token(md_comp_switch.handle_elevation),
     )
     # The main use case is for using tokens as keys in a dict.
     config = {md_sys_elevation.level1: "foo"}
@@ -80,3 +83,23 @@ def test__is_indirection_str_enum() -> None:
 def test_to_python_name() -> None:
     result = to_python_name("md.comp.elevated-button.container-color")
     assert result == "md_comp_elevated_button_container_color"
+
+
+def test_override_token_value_token(mocker: MockerFixture):
+    stub = mocker.stub()
+    ThemeHook.get().on_change.connect(stub)
+
+    override_token(md_sys_color.background, QColor("#ff0000"))
+    assert stub.call_count == 1
+    assert resolve_token(md_sys_color.background) == QColor("#ff0000")
+
+
+def test_override_token_indirection(mocker: MockerFixture):
+    stub = mocker.stub()
+    ThemeHook.get().on_change.connect(stub)
+
+    assert resolve_token(md_comp_switch.handle_elevation) == 1
+
+    override_token(md_sys_elevation.level1, 10)
+    assert stub.call_count == 1
+    assert resolve_token(md_comp_switch.handle_elevation) == 10

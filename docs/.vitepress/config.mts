@@ -24,6 +24,7 @@ export default defineConfig({
           },
           { text: "Installation", link: "/get-started/installation" },
           { text: "Core Concepts", link: "/get-started/core-concepts" },
+          { text: "Theming", link: "/get-started/theming" },
         ],
       },
       {

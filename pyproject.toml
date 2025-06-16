@@ -29,6 +29,7 @@ dev = [
     "pytest-asyncio",
     "pytest-mock",
     "pytest-qt",
+    "pytest-order",
     "pyautogui",
 ]
 
@@ -96,6 +97,7 @@ reportMatchNotExhaustive = false
 executionEnvironments = [
     # Allow tests to import private functions to test them.
     { root = "tests", reportPrivateUsage = false, reportMissingTypeStubs = false },
+    { root = "samples", reportMissingTypeStubs = false },
 ]
 
 [tool.mypy]

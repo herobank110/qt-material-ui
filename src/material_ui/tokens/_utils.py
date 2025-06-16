@@ -22,21 +22,25 @@ class DesignToken:
 
     value: Indirection | TokenValue
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         # Allow the token to be used as a dictionary key.
         # TODO: fix it to use @dataclass(unsafe_hash=True) instead
         # QColor isn't hashable, so convert to string
         return hash(repr(self.value))
 
 
+_token_registry: set[DesignToken] = set()
+"""Global registry for all registered tokens."""
+
+
 def define_token(value: TokenValue | Indirection) -> DesignToken:
-    """Factory function for defining a token.
+    """Factory function for defining a token and registering it by name.
 
     Mainly for internal use.
     """
-    # TODO: add to token registry, check stack for module and var name?
-    #   or use instance checking operator `is`?
-    return DesignToken(value)
+    ret_val = DesignToken(value)
+    _token_registry.add(ret_val)
+    return ret_val
 
 
 def resolve_token(token: DesignToken) -> TokenValue:
@@ -124,9 +128,13 @@ def _resolve_indirection(value: Indirection) -> DesignToken | None:
     return None
 
 
-def override_token(token_name: str, value: TokenValue) -> None:
-    """Override a token value in the global theme."""
-    raise NotImplementedError()
+def override_token(token: DesignToken, value: TokenValue) -> None:
+    """Override a token value in the global theme and notify listeners."""
+    token.value = value
+    # Local import to avoid circular import.
+    from material_ui.theming.theme_hook import ThemeHook
+
+    ThemeHook.get().on_change.emit()
 
 
 to_python_name = partial(re.sub, r"[-\.]", "_")

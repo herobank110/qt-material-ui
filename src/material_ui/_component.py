@@ -22,9 +22,11 @@ from qtpy.QtCore import (
 )
 from qtpy.QtGui import QEnterEvent, QFocusEvent, QMouseEvent, QResizeEvent
 from qtpy.QtWidgets import QGraphicsOpacityEffect, QVBoxLayout, QWidget
-from typing_extensions import TypeVarTuple, Unpack
+from typing_extensions import TypeIs, TypeVarTuple, Unpack
 
 from material_ui._utils import StyleDict, convert_sx_to_qss, undefined
+from material_ui.hook import Hook
+from material_ui.theming.theme_hook import ThemeHook
 from material_ui.tokens._utils import DesignToken, resolve_token_or_value
 
 _Ts = TypeVarTuple("_Ts", default=Unpack[tuple[()]])
@@ -262,12 +264,16 @@ def _find_state_markers(obj: object) -> list[_StateMarker]:
     return ret_val
 
 
+_EffectDependency = _StateMarker | type[Hook]
+"""Effect dependency type."""
+
+
 @dataclass
 class _EffectMarker:
     """Marker to hold the dependencies of an effect."""
 
     name: str
-    dependencies: list[_StateMarker]
+    dependencies: list[_EffectDependency]
 
 
 _EFFECT_MARKER_KEY = "__effect_marker__"
@@ -306,7 +312,7 @@ def effect(*dependencies: Any) -> Callable[[EffectFn], EffectFn]:
 
     # Validate dependency types.
     for dependency in dependencies_list:
-        if not isinstance(dependency, _StateMarker):
+        if not _is_valid_effect_dependency(dependency):
             msg = f"Invalid dependency for effect: {dependency} ({type(dependency)})"
             raise EffectDependencyError(msg)
 
@@ -316,6 +322,12 @@ def effect(*dependencies: Any) -> Callable[[EffectFn], EffectFn]:
         return func
 
     return decorated
+
+
+def _is_valid_effect_dependency(dependency: Any) -> TypeIs[_EffectDependency]:
+    return isinstance(dependency, _StateMarker) or (
+        isinstance(dependency, type) and issubclass(dependency, Hook)
+    )
 
 
 def _find_effect_markers(obj: object) -> list[_EffectMarker]:
@@ -423,7 +435,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
             # Apply transition if specified.
             if marker.transition:
                 state.set_transition(
-                    _TransitionConfig(marker.transition, marker.easing)
+                    _TransitionConfig(marker.transition, marker.easing),
                 )
 
     def __getattribute__(self, name: str) -> Any:
@@ -446,7 +458,9 @@ class Component(QWidget, metaclass=_ComponentMeta):
                 state.bind(other_state)
             elif state.transition:
                 state.animate_to(
-                    value, state.transition.duration_ms, state.transition.easing
+                    value,
+                    state.transition.duration_ms,
+                    state.transition.easing,
                 )
             else:
                 state.set_value(value)
@@ -499,12 +513,17 @@ class Component(QWidget, metaclass=_ComponentMeta):
             # Get the function object from the class.
             func = getattr(self, effect_marker.name)
             for dependency in effect_marker.dependencies:
-                # Find the corresponding variable object.
-                state = self._find_state(dependency.name)
-                if not isinstance(state, State):
-                    msg = f"Invalid dependency for {dependency.name}: '{state}'"
-                    raise TypeError(msg)
-                state.changed.connect(func)
+                if isinstance(dependency, _StateMarker):
+                    # Find the corresponding variable object.
+                    state = self._find_state(dependency.name)
+                    if not isinstance(state, State):
+                        msg = f"Invalid dependency for {dependency.name}: '{state}'"
+                        raise TypeError(msg)
+                    state.changed.connect(func)
+                else:
+                    # Dependency is a hook, so connect to its on_change signal.
+                    hook_instance = dependency.get()
+                    hook_instance.on_change.connect(func)
             # Call the function to apply the initial state. The timer
             # ensures the derived class's constructor is finished first.
             QTimer.singleShot(0, func)
@@ -548,7 +567,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
         if state_obj := _pop_last_accessed_state(state):
             state_obj.set_transition(_TransitionConfig(duration_ms, easing))
 
-    @effect(sx)
+    @effect(sx, ThemeHook)
     def _apply_sx(self) -> None:
         """Apply the sx property to the widget."""
         sx = {**_COMPONENT_STYLESHEET_RESET, **self.sx}
