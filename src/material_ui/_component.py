@@ -325,7 +325,9 @@ def effect(*dependencies: Any) -> Callable[[EffectFn], EffectFn]:
 
 
 def _is_valid_effect_dependency(dependency: Any) -> TypeIs[_EffectDependency]:
-    return isinstance(dependency, _StateMarker) or issubclass(dependency, Hook)
+    return isinstance(dependency, _StateMarker) or (
+        isinstance(dependency, type) and issubclass(dependency, Hook)
+    )
 
 
 def _find_effect_markers(obj: object) -> list[_EffectMarker]:
