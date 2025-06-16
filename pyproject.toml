@@ -29,6 +29,7 @@ dev = [
     "pytest-asyncio",
     "pytest-mock",
     "pytest-qt",
+    "pytest-order",
     "pyautogui",
 ]
 
