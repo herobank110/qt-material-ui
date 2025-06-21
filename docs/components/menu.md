@@ -12,17 +12,17 @@ menu = Menu()
 item1 = MenuItem()
 item1.text = "Item 1"
 item1.on_click.connect(lambda: print("Item 1 clicked"))
-menu.add_widget(item1)
+item1.setParent(menu)
 
 item2 = MenuItem()
 item2.text = "Item 2"
 item2.on_click.connect(lambda: print("Item 2 clicked"))
-menu.add_widget(item2)
+item2.setParent(menu)
 
 item3 = MenuItem()
 item3.text = "Item 3"
 item3.on_click.connect(lambda: print("Item 3 clicked"))
-menu.add_widget(item3)
+item3.setParent(menu)
 ```
 
 ## API

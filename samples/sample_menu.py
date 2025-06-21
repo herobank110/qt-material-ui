@@ -3,10 +3,10 @@
 from material_ui._component import Component, effect, use_state
 from material_ui.buttons import FilledButton
 from material_ui.layout_basics import Stack
-from material_ui.menu import Menu
+from material_ui.menu import Menu, MenuItem
 from material_ui.tokens import md_sys_color
 from material_ui.typography import Typography
-from qtpy.QtCore import QMargins, QPoint, Qt
+from qtpy.QtCore import QMargins, Qt
 from qtpy.QtWidgets import QApplication
 
 
@@ -19,37 +19,47 @@ class SampleMenu(Component):
 
         stack = Stack()
         stack.gap = 20
-        stack.margins = QMargins(20, 20, 20, 20)
+        stack.margins = QMargins(40, 40, 40, 40)
         stack.alignment = Qt.AlignmentFlag.AlignCenter
         self.overlay_widget(stack)
 
-        self._menu_button = FilledButton()
-        self._menu_button.text = "Open Menu"
-        self._menu_button.clicked.connect(self._show_menu)
-        stack.add_widget(self._menu_button)
+        self._show_menu_button = FilledButton()
+        self._show_menu_button.text = "Open Menu"
+        self._show_menu_button.clicked.connect(self._on_click_show_menu_button)
+        stack.add_widget(self._show_menu_button)
 
         self._selected_label = Typography()
+        self._selected_label.alignment = Qt.AlignmentFlag.AlignCenter
         stack.add_widget(self._selected_label)
 
-        # Create the menu
-        self.menu = Menu()
-        self.menu.items = ["Home", "Profile", "Settings", "Help", "About", "Logout"]
-        self.menu.item_icons = ["home", "person", "settings", "help", "info", "logout"]
-        self.menu.on_selection_change.connect(self._on_selection_change)
+    def _on_click_show_menu_button(self) -> None:
+        menu = Menu()
 
-    def _show_menu(self) -> None:
-        """Show the menu below the button."""
-        # Calculate position below the button
-        global_pos = self._menu_button.mapToGlobal(
-            QPoint(0, self._menu_button.height()),
-        )
-        self.menu.show_at(global_pos)
+        item1 = MenuItem()
+        item1.text = "Item 1"
+        item1.on_click.connect(self._on_click_item1)
+        menu.add_menu_item(item1)
 
-    def _on_selection_change(self, index: int) -> None:
-        """Handle menu selection change."""
-        if 0 <= index < len(self.menu.items):
-            self.selected_item = self.menu.items[index]
-            print(f"Selected item: {self.menu.items[index]}")
+        item2 = MenuItem()
+        item2.text = "Item 2"
+        item2.on_click.connect(self._on_click_item2)
+        menu.add_menu_item(item2)
+
+        item3 = MenuItem()
+        item3.text = "Item 3"
+        item3.on_click.connect(self._on_click_item3)
+        menu.add_menu_item(item3)
+
+        menu.popup(anchor_widget=self._show_menu_button)
+
+    def _on_click_item1(self) -> None:
+        self.selected_item = "Item 1"
+
+    def _on_click_item2(self) -> None:
+        self.selected_item = "Item 2"
+
+    def _on_click_item3(self) -> None:
+        self.selected_item = "Item 3"
 
     @effect(selected_item)
     def _apply_selected_label_text(self) -> None:

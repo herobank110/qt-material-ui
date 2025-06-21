@@ -1,6 +1,14 @@
 """Menu component.
 
 A popup menu that opens at a specific location and displays a list of selectable items.
+
+
+
+        # Calculate position below the button
+        # global_pos = self._show_menu_button.mapToGlobal(
+        #     QPoint(0, self._show_menu_button.height()),
+        # )
+        # self.menu.show_at(global_pos)
 """
 
 from typing import cast
