@@ -1,47 +1,35 @@
 """Sample of using the menu component."""
 
-from material_ui._component import Component
+from material_ui._component import Component, effect, use_state
 from material_ui.buttons import FilledButton
-from material_ui.layout_basics import Row, Stack
+from material_ui.layout_basics import Stack
 from material_ui.menu import Menu
+from material_ui.tokens import md_sys_color
+from material_ui.typography import Typography
 from qtpy.QtCore import QMargins, QPoint, Qt
 from qtpy.QtWidgets import QApplication
 
 
 class SampleMenu(Component):
-    """Sample menu demonstration."""
+    selected_item = use_state("")
 
     def __init__(self) -> None:
         super().__init__()
-        self.setWindowTitle("Menu Sample")
-        self.resize(400, 300)  # Set up the main layout
-        main_layout = Stack()
-        main_layout.sx = {"background-color": "white"}
-        main_layout.gap = 20
-        main_layout.margins = QMargins(20, 20, 20, 20)
-        self.overlay_widget(main_layout)
+        self.sx = {"background-color": md_sys_color.background}
 
-        # Create a row for the button
-        button_row = Row()
-        button_row.alignment = Qt.AlignmentFlag.AlignCenter
-        main_layout.add_widget(button_row)
+        stack = Stack()
+        stack.gap = 20
+        stack.margins = QMargins(20, 20, 20, 20)
+        stack.alignment = Qt.AlignmentFlag.AlignCenter
+        self.overlay_widget(stack)
 
-        # Create a button to open the menu
-        self.menu_button = FilledButton()
-        self.menu_button.text = "Open Menu"
-        self.menu_button.clicked.connect(self._show_menu)
-        button_row.add_widget(self.menu_button)
+        self._menu_button = FilledButton()
+        self._menu_button.text = "Open Menu"
+        self._menu_button.clicked.connect(self._show_menu)
+        stack.add_widget(self._menu_button)
 
-        # Create an information row
-        info_row = Row()
-        info_row.alignment = Qt.AlignmentFlag.AlignCenter
-        main_layout.add_widget(info_row)
-
-        # Selected item display
-        self.selected_item = FilledButton()
-        self.selected_item.text = "No selection"
-        self.selected_item.setEnabled(False)
-        info_row.add_widget(self.selected_item)
+        self._selected_label = Typography()
+        stack.add_widget(self._selected_label)
 
         # Create the menu
         self.menu = Menu()
@@ -52,18 +40,28 @@ class SampleMenu(Component):
     def _show_menu(self) -> None:
         """Show the menu below the button."""
         # Calculate position below the button
-        global_pos = self.menu_button.mapToGlobal(QPoint(0, self.menu_button.height()))
+        global_pos = self._menu_button.mapToGlobal(
+            QPoint(0, self._menu_button.height()),
+        )
         self.menu.show_at(global_pos)
 
     def _on_selection_change(self, index: int) -> None:
         """Handle menu selection change."""
         if 0 <= index < len(self.menu.items):
-            self.selected_item.text = f"Selected: {self.menu.items[index]}"
+            self.selected_item = self.menu.items[index]
             print(f"Selected item: {self.menu.items[index]}")
+
+    @effect(selected_item)
+    def _apply_selected_label_text(self) -> None:
+        new_text = (
+            "No selection"
+            if not self.selected_item
+            else f"Selected: {self.selected_item}"
+        )
+        self._selected_label.text = new_text
 
 
 def main() -> None:
-    """Run the sample application."""
     app = QApplication()
     window = SampleMenu()
     window.show()
