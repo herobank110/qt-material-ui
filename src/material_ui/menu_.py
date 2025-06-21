@@ -17,6 +17,123 @@ from material_ui.tokens._utils import resolve_token
 from material_ui.typography import Typography
 
 
+class MenuItem(Component):
+    """A single menu item with optional icon."""
+
+    text = use_state("")
+    """Text displayed in the menu item."""
+
+    icon_name = use_state("")
+    """Name of the material icon to display next to the text. Empty means no icon."""
+
+    selected = use_state(False)
+    """Whether this item is currently selected."""
+
+    def __init__(self) -> None:
+        super().__init__()
+
+        self.clicked.connect(self._on_clicked)
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+
+        # Container layout
+        container_layout = QVBoxLayout(self)
+        container_layout.setContentsMargins(0, 0, 0, 0)
+        container_layout.setSpacing(0)
+
+        # Item content
+        self._content = QWidget()
+        container_layout.addWidget(self._content)
+
+        # Content layout with padding
+        content_layout = QHBoxLayout(self._content)
+        content_layout.setContentsMargins(16, 0, 16, 0)
+        content_layout.setSpacing(12)
+
+        # Icon (if provided)
+        self._icon = Icon()
+        self._icon.icon_name = self.icon_name
+        self._icon.font_size = tokens.list_item_with_leading_icon_leading_icon_size
+        content_layout.addWidget(self._icon)
+
+        # Text label
+        self._label = Typography()
+        self._label.text = self.text
+        self._label.alignment = Qt.AlignmentFlag.AlignVCenter
+        content_layout.addWidget(self._label)
+
+        # State layer for hover/press effects
+        self._state_layer = Shape()
+        self._state_layer.setParent(self)
+        self._state_layer.corner_shape = tokens.container_shape
+
+        self.setFixedHeight(
+            cast("int", resolve_token(tokens.list_item_container_height)),
+        )
+        self._update_styles()
+
+    @effect(selected, Component.hovered, Component.pressed)
+    def _update_styles(self) -> None:
+        """Update styles based on current state."""
+        self._state_layer.resize(self.size())
+
+        # Base styles
+        state_layer_opacity = 0.0
+        text_color = tokens.list_item_label_text_color
+
+        # Selected state takes precedence
+        if self.selected:
+            self._content.setStyleSheet(f"""
+                background-color: {resolve_token(tokens.list_item_selected_container_color)};
+            """)
+            text_color = tokens.list_item_selected_label_text_color
+            if self.icon_name:
+                self._icon.color = (
+                    tokens.list_item_selected_with_leading_icon_leading_icon_color
+                )
+        else:
+            self._content.setStyleSheet("")
+            if self.icon_name:
+                self._icon.color = tokens.list_item_with_leading_icon_leading_icon_color
+
+            # Apply hover/press state
+            if self._pressed:
+                state_layer_opacity = tokens.list_item_pressed_state_layer_opacity
+                text_color = tokens.list_item_pressed_label_text_color
+                if self.icon_name:
+                    self._icon.color = (
+                        tokens.list_item_with_leading_icon_pressed_icon_color
+                    )
+            elif self._hovered:
+                state_layer_opacity = tokens.list_item_hover_state_layer_opacity
+                text_color = tokens.list_item_hover_label_text_color
+                if self.icon_name:
+                    self._icon.color = (
+                        tokens.list_item_with_leading_icon_hover_icon_color
+                    )
+
+        # Apply text color
+        self._label.sx = {
+            "color": resolve_token(text_color),
+            "font": resolve_token(tokens.list_item_label_text_font),
+            "font-size": f"{resolve_token(tokens.list_item_label_text_size)}px",
+            "font-weight": resolve_token(tokens.list_item_label_text_weight),
+            "line-height": f"{resolve_token(tokens.list_item_label_text_line_height)}px",
+        }
+
+        # Apply state layer opacity
+        self._state_layer.sx = {
+            "background-color": resolve_token(tokens.list_item_hover_state_layer_color),
+            "opacity": state_layer_opacity,
+        }
+
+    @effect(icon_name)
+    def _update_icon(self) -> None:
+        """Update icon visibility and name."""
+        self._icon.icon_name = self.icon_name
+        self._icon.setVisible(bool(self.icon_name))
+        self._update_styles()
+
+
 class Menu(Component):
     """A popup menu that displays a list of selectable items."""
 
@@ -29,7 +146,7 @@ class Menu(Component):
     selected_index = use_state(-1)
     """The currently selected item index, or -1 if nothing is selected."""
 
-    on_selection_change: Signal[str]
+    on_selection_change: Signal[int]
     """Emitted when a menu item is selected. Provides the new selected index."""
     _position = use_state(QPoint(0, 0))
     _visible = use_state(False)
@@ -176,120 +293,3 @@ class Menu(Component):
                 self._visible = False
         else:
             super().keyPressEvent(event)
-
-
-class MenuItem(Component):
-    """A single menu item with optional icon."""
-
-    text = use_state("")
-    """Text displayed in the menu item."""
-
-    icon_name = use_state("")
-    """Name of the material icon to display next to the text. Empty means no icon."""
-
-    selected = use_state(False)
-    """Whether this item is currently selected."""
-
-    def __init__(self) -> None:
-        super().__init__()
-
-        self.clicked.connect(self._on_clicked)
-        self.setCursor(Qt.CursorShape.PointingHandCursor)
-
-        # Container layout
-        container_layout = QVBoxLayout(self)
-        container_layout.setContentsMargins(0, 0, 0, 0)
-        container_layout.setSpacing(0)
-
-        # Item content
-        self._content = QWidget()
-        container_layout.addWidget(self._content)
-
-        # Content layout with padding
-        content_layout = QHBoxLayout(self._content)
-        content_layout.setContentsMargins(16, 0, 16, 0)
-        content_layout.setSpacing(12)
-
-        # Icon (if provided)
-        self._icon = Icon()
-        self._icon.icon_name = self.icon_name
-        self._icon.font_size = tokens.list_item_with_leading_icon_leading_icon_size
-        content_layout.addWidget(self._icon)
-
-        # Text label
-        self._label = Typography()
-        self._label.text = self.text
-        self._label.alignment = Qt.AlignmentFlag.AlignVCenter
-        content_layout.addWidget(self._label)
-
-        # State layer for hover/press effects
-        self._state_layer = Shape()
-        self._state_layer.setParent(self)
-        self._state_layer.corner_shape = tokens.container_shape
-
-        self.setFixedHeight(
-            cast("int", resolve_token(tokens.list_item_container_height)),
-        )
-        self._update_styles()
-
-    @effect(selected, Component.hovered, Component.pressed)
-    def _update_styles(self) -> None:
-        """Update styles based on current state."""
-        self._state_layer.resize(self.size())
-
-        # Base styles
-        state_layer_opacity = 0.0
-        text_color = tokens.list_item_label_text_color
-
-        # Selected state takes precedence
-        if self.selected:
-            self._content.setStyleSheet(f"""
-                background-color: {resolve_token(tokens.list_item_selected_container_color)};
-            """)
-            text_color = tokens.list_item_selected_label_text_color
-            if self.icon_name:
-                self._icon.color = (
-                    tokens.list_item_selected_with_leading_icon_leading_icon_color
-                )
-        else:
-            self._content.setStyleSheet("")
-            if self.icon_name:
-                self._icon.color = tokens.list_item_with_leading_icon_leading_icon_color
-
-            # Apply hover/press state
-            if self._pressed:
-                state_layer_opacity = tokens.list_item_pressed_state_layer_opacity
-                text_color = tokens.list_item_pressed_label_text_color
-                if self.icon_name:
-                    self._icon.color = (
-                        tokens.list_item_with_leading_icon_pressed_icon_color
-                    )
-            elif self._hovered:
-                state_layer_opacity = tokens.list_item_hover_state_layer_opacity
-                text_color = tokens.list_item_hover_label_text_color
-                if self.icon_name:
-                    self._icon.color = (
-                        tokens.list_item_with_leading_icon_hover_icon_color
-                    )
-
-        # Apply text color
-        self._label.sx = {
-            "color": resolve_token(text_color),
-            "font": resolve_token(tokens.list_item_label_text_font),
-            "font-size": f"{resolve_token(tokens.list_item_label_text_size)}px",
-            "font-weight": resolve_token(tokens.list_item_label_text_weight),
-            "line-height": f"{resolve_token(tokens.list_item_label_text_line_height)}px",
-        }
-
-        # Apply state layer opacity
-        self._state_layer.sx = {
-            "background-color": resolve_token(tokens.list_item_hover_state_layer_color),
-            "opacity": state_layer_opacity,
-        }
-
-    @effect(icon_name)
-    def _update_icon(self) -> None:
-        """Update icon visibility and name."""
-        self._icon.icon_name = self.icon_name
-        self._icon.setVisible(bool(self.icon_name))
-        self._update_styles()
