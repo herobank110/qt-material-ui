@@ -5,8 +5,8 @@ A popup menu that opens at a specific location and displays a list of selectable
 
 from typing import cast
 
-from qtpy.QtCore import QEvent, QPoint, Qt
-from qtpy.QtGui import QEnterEvent, QFocusEvent, QKeyEvent, QMouseEvent, QShowEvent
+from qtpy.QtCore import QPoint, Qt
+from qtpy.QtGui import QKeyEvent, QShowEvent
 from qtpy.QtWidgets import QFrame, QHBoxLayout, QScrollArea, QVBoxLayout, QWidget
 
 from material_ui._component import Component, Signal, effect, use_state
@@ -20,9 +20,6 @@ from material_ui.typography import Typography
 class MenuItem(Component):
     """A single menu item with optional icon."""
 
-    clicked: Signal
-    """Emitted when the menu item is clicked."""
-
     text = use_state("")
     """Text displayed in the menu item."""
 
@@ -31,9 +28,6 @@ class MenuItem(Component):
 
     selected = use_state(False)
     """Whether this item is currently selected."""
-
-    _hovered = use_state(False)
-    _pressed = use_state(False)
 
     def __init__(self) -> None:
         super().__init__()
@@ -77,10 +71,7 @@ class MenuItem(Component):
         )
         self._update_styles()
 
-    def _on_clicked(self) -> None:
-        pass  # This will be connected to by the Menu component
-
-    @effect(selected, _hovered, _pressed)
+    @effect(selected, Component.hovered, Component.pressed)
     def _update_styles(self) -> None:
         """Update styles based on current state."""
         self._state_layer.resize(self.size())
@@ -141,31 +132,6 @@ class MenuItem(Component):
         self._icon.icon_name = self.icon_name
         self._icon.setVisible(bool(self.icon_name))
         self._update_styles()
-
-    def enterEvent(self, event: QEnterEvent) -> None:  # noqa: N802
-        """Handle mouse enter event."""
-        self._hovered = True
-        super().enterEvent(event)
-
-    def leaveEvent(self, event: QEvent) -> None:  # noqa: N802
-        """Handle mouse leave event."""
-        self._hovered = False
-        self._pressed = False
-        super().leaveEvent(event)
-
-    def mousePressEvent(self, event: QMouseEvent) -> None:  # noqa: N802
-        """Handle mouse press event."""
-        if event.button() == Qt.MouseButton.LeftButton:
-            self._pressed = True
-        super().mousePressEvent(event)
-
-    def mouseReleaseEvent(self, event: QMouseEvent) -> None:  # noqa: N802
-        """Handle mouse release event."""
-        was_pressed = self._pressed
-        self._pressed = False
-        if event.button() == Qt.MouseButton.LeftButton and was_pressed:
-            self.clicked.emit()
-        super().mouseReleaseEvent(event)
 
 
 class Menu(Component):
@@ -302,11 +268,6 @@ class Menu(Component):
         """Show the menu at the specified position."""
         self._position = position
         self._visible = True
-
-    def focusOutEvent(self, event: QFocusEvent) -> None:  # noqa: N802
-        """Hide the menu when focus is lost."""
-        self._visible = False
-        super().focusOutEvent(event)
 
     def keyPressEvent(self, event: QKeyEvent) -> None:  # noqa: N802
         """Handle keyboard navigation."""
