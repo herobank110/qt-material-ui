@@ -33,6 +33,7 @@ export default defineConfig({
           { text: "Buttons", link: "/components/buttons" },
           { text: "Checkbox", link: "/components/checkbox" },
           { text: "Icons", link: "/components/icons" },
+          { text: "Menu", link: "/components/menu" },
           {
             text: "Progress Indicators",
             link: "/components/progress-indicators",
