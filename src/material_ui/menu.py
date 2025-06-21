@@ -13,6 +13,14 @@ class Menu(Component):
     def __init__(self) -> None:
         super().__init__()
 
+    def open(self, anchor_widget: Component) -> None:
+        """Open the menu anchored to a specific widget.
+
+        Args:
+            anchor_widget: The widget to anchor the menu to.
+        """
+        raise NotImplementedError
+
 
 class MenuItem(Component):
     """A single menu item."""

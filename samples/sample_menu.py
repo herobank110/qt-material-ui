@@ -50,7 +50,7 @@ class SampleMenu(Component):
         item3.on_click.connect(self._on_click_item3)
         item3.setParent(menu)
 
-        menu.popup(anchor_widget=self._show_menu_button)
+        menu.open(anchor_widget=self._show_menu_button)
 
     def _on_click_item1(self) -> None:
         self.selected_item = "Item 1"
