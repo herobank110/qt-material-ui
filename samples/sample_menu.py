@@ -38,17 +38,17 @@ class SampleMenu(Component):
         item1 = MenuItem()
         item1.text = "Item 1"
         item1.on_click.connect(self._on_click_item1)
-        menu.add_menu_item(item1)
+        item1.setParent(menu)
 
         item2 = MenuItem()
         item2.text = "Item 2"
         item2.on_click.connect(self._on_click_item2)
-        menu.add_menu_item(item2)
+        item2.setParent(menu)
 
         item3 = MenuItem()
         item3.text = "Item 3"
         item3.on_click.connect(self._on_click_item3)
-        menu.add_menu_item(item3)
+        item3.setParent(menu)
 
         menu.popup(anchor_widget=self._show_menu_button)
 
