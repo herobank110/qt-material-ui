@@ -4,14 +4,18 @@ A popup menu that opens at a specific location and displays a list of
 selectable items.
 """
 
+from typing import cast
+
 from PySide6.QtGui import QMouseEvent
 from qtpy.QtCore import QEasingCurve, QMargins, QPoint, Qt, QTimer
 
 from material_ui._component import Component, effect, use_state
 from material_ui._lab import DropShadow
+from material_ui.icon import Icon
 from material_ui.layout_basics import Row, Stack
 from material_ui.ripple import Ripple
 from material_ui.shape import Shape
+from material_ui.theming.theme_hook import ThemeHook
 from material_ui.tokens import md_comp_menu as tokens
 from material_ui.tokens._utils import resolve_token, resolve_token_or_value
 from material_ui.typography import Typography
@@ -29,6 +33,7 @@ _DIVIDER_MARGINS = QMargins(0, 8, 0, 8)
 _CONTAINER_WIDTH_MIN = 112
 _CONTAINER_WIDTH_MAX = 280
 _LEFT_RIGHT_PADDING = 12
+_GAP_BETWEEN_ELEMENTS_IN_ITEM = 12
 
 
 class Menu(Component):
@@ -99,6 +104,9 @@ class MenuItem(Component):
     text = use_state("")
     """Text displayed in the menu item."""
 
+    leading_icon = use_state(cast("Icon | None", None))
+    """Icon to go at the start of the item."""
+
     _state_layer_opacity = use_state(
         0.0,
         transition=70,
@@ -110,15 +118,12 @@ class MenuItem(Component):
         self.setFixedHeight(resolve_token(tokens.list_item_container_height))
 
         row = Row()
-        row.alignment = Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter
-        row.margins = QMargins(
-            _LEFT_RIGHT_PADDING,
-            0,
-            _LEFT_RIGHT_PADDING,
-            0,
-        )
+        row.alignment = Qt.AlignmentFlag.AlignLeading | Qt.AlignmentFlag.AlignVCenter
+        row.margins = QMargins(_LEFT_RIGHT_PADDING, 0, _LEFT_RIGHT_PADDING, 0)
+        row.gap = _GAP_BETWEEN_ELEMENTS_IN_ITEM
 
-        # TODO: add leading and trailing icons to row
+        self._leading_icon_wrapper = Component()
+        row.add_widget(self._leading_icon_wrapper)
 
         self._label = Typography()
         self._label.text = self.text
@@ -168,3 +173,30 @@ class MenuItem(Component):
         if event.button() == Qt.MouseButton.LeftButton:
             self._ripple.ripple_origin = None
         return super().mouseReleaseEvent(event)
+
+    @effect(leading_icon)
+    def _place_leading_icon(self) -> None:
+        """Place the leading icon in the menu item."""
+        # Delete previous icon if exists.
+        if prev_icon := self._leading_icon_wrapper.findChild(Icon):
+            prev_icon.setParent(None)
+        if self.leading_icon is None:
+            # No icon needed.
+            # self._leading_icon_wrapper.hide()
+            return
+        # Show new icon.
+        self._leading_icon_wrapper.overlay_widget(self.leading_icon)
+
+    @effect(leading_icon, ThemeHook)
+    def _apply_leading_icon_properties(self) -> None:
+        icon = self.leading_icon
+        if icon is None:
+            return
+        icon.font_size = tokens.list_item_with_leading_icon_leading_icon_size
+        icon.color = tokens.list_item_with_leading_icon_leading_icon_color
+        # icon.setParent(self._leading_icon_wrapper)
+        # self._leading_icon_wrapper.resize(icon.size)
+        # self._leading_icon_wrapper.move(
+        #     0,
+        #     (self.height() - icon.height()) // 2,
+        # )
