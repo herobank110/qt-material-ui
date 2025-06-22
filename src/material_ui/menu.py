@@ -145,4 +145,5 @@ class MenuItem(Component):
 
     @effect(_state_layer_opacity)
     def f(self):
-        print(self._state_layer_opacity)
+        pass
+        # print(self._state_layer_opacity)
