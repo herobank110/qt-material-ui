@@ -17,6 +17,9 @@ class Ripple(Component):
     color = use_state(md_sys_color.primary)
     opacity = use_state(md_sys_state.pressed_state_layer_opacity)
 
+    clip_half_rounded = use_state(True)
+    """Whether to clip the ripple to a half-rounded rectangle."""
+
     _opacity_value = use_state(0.0)
     _draw_origin = use_state(QPointF(0, 0))
     _scale = use_state(0.0)
@@ -40,22 +43,27 @@ class Ripple(Component):
             return
         self._draw_origin = QPointF(origin)  # copy not bind
         self._find_state("_opacity_value").animate_to(
-            resolve_token(self.opacity), 50, QEasingCurve.Type.OutCubic
+            resolve_token(self.opacity),
+            50,
+            QEasingCurve.Type.OutCubic,
         )
         self._scale = 1.0
         ripple_total_scale = max(self.width(), self.height()) * 2
         self._find_state("_scale").animate_to(
-            ripple_total_scale, 1200, QEasingCurve.Type.OutCubic
+            ripple_total_scale,
+            1200,
+            QEasingCurve.Type.OutCubic,
         )
 
     def paintEvent(self, event: QPaintEvent) -> None:  # noqa: N802
         """Draw the ripple effect."""
         super().paintEvent(event)
         painter = QPainter(self)
-        clip_path = QPainterPath()
-        half_size = min(self.width(), self.height()) // 2
-        clip_path.addRoundedRect(self.rect(), half_size, half_size)
-        painter.setClipPath(clip_path)
+        if self.clip_half_rounded:
+            clip_path = QPainterPath()
+            half_size = min(self.width(), self.height()) // 2
+            clip_path.addRoundedRect(self.rect(), half_size, half_size)
+            painter.setClipPath(clip_path)
         painter.setPen(Qt.PenStyle.NoPen)
         color = QColor(resolve_token(self.color))
         color.setAlphaF(self._opacity_value)

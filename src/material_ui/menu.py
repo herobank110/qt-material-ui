@@ -122,6 +122,7 @@ class MenuItem(Component):
         self._state_layer.opacity = self._state_layer_opacity
 
         self._ripple = Ripple()
+        self._ripple.clip_half_rounded = False
         self._state_layer.overlay_widget(self._ripple)
 
         self.overlay_widget(row)
