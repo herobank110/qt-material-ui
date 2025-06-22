@@ -6,7 +6,7 @@ selectable items.
 
 from qtpy.QtCore import QEasingCurve, QMargins, QPoint, Qt
 
-from material_ui._component import Component, Signal, effect, use_state
+from material_ui._component import Component, effect, use_state
 from material_ui._lab import DropShadow
 from material_ui.layout_basics import Row, Stack
 from material_ui.shape import Shape
@@ -87,12 +87,9 @@ class MenuItem(Component):
     text = use_state("")
     """Text displayed in the menu item."""
 
-    on_click: Signal
-    """Emitted with the menu item is clicked."""
-
     _state_layer_opacity = use_state(
         0.0,
-        transition=200,
+        transition=70,
         easing=QEasingCurve.Type.InOutCubic,
     )
 
@@ -142,8 +139,3 @@ class MenuItem(Component):
             if self.hovered
             else 0.0,
         )
-
-    @effect(_state_layer_opacity)
-    def f(self):
-        pass
-        # print(self._state_layer_opacity)
