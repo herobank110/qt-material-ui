@@ -7,7 +7,8 @@ from functools import partial
 from typing import TYPE_CHECKING, Any, Generic, TypeVar, cast, get_args, overload
 
 from qtpy.QtCore import (
-    Property,  # pyright: ignore  # noqa: PGH003
+    Property,
+    QChildEvent,  # pyright: ignore  # noqa: PGH003
     QEasingCurve,
     QEvent,
     QMargins,
@@ -410,6 +411,9 @@ class Component(QWidget, metaclass=_ComponentMeta):
     _size = use_state(QSize())
     """Internal state for Qt `size` property."""
 
+    _children = use_state([])
+    """Internal state for Qt `children` property."""
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -664,3 +668,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
     def leaveEvent(self, event: QEvent) -> None:  # noqa: N802
         self.hovered = False
         return super().leaveEvent(event)
+
+    def childEvent(self, event: QChildEvent) -> None:  # noqa: N802
+        print(self, event, self.children())
+        super().childEvent(event)
