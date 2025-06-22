@@ -11,6 +11,9 @@ from material_ui._lab import DropShadow
 from material_ui.shape import Shape
 from material_ui.tokens import md_comp_menu as tokens
 
+_CONTAINER_DROP_SHADOW_SPACE = 10
+"""Extra space around the menu container to accommodate the drop shadow."""
+
 
 class Menu(Component):
     """A popup menu that displays a list of selectable items."""
@@ -23,11 +26,6 @@ class Menu(Component):
             | Qt.WindowType.FramelessWindowHint,
         )
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
-        # self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
-        # self.setAttribute(Qt.WidgetAttribute.WA_NoSystemBackground)
-        # self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)  # Main container
-        # self.sx = {"background-color": "transparent"}
-        # self.sx = {"background-color": "red"}
 
         container = Shape()
         container.color = tokens.container_color
@@ -38,11 +36,13 @@ class Menu(Component):
         drop_shadow.setParent(container)
         container.setGraphicsEffect(drop_shadow)
         # Margin to contain the drop shadow.
-        self.overlay_widget(container, margins=QMargins(5, 5, 5, 5))
-
-    # def nativeEvent(self, event_type: str, message: object) -> tuple[bool, object]:
-    #     print(f"Native event: {event_type}, message: {message}")
-    #     return super().nativeEvent(event_type, message)
+        drop_shadow_margin = QMargins(
+            _CONTAINER_DROP_SHADOW_SPACE,
+            _CONTAINER_DROP_SHADOW_SPACE,
+            _CONTAINER_DROP_SHADOW_SPACE,
+            _CONTAINER_DROP_SHADOW_SPACE,
+        )
+        self.overlay_widget(container, margins=drop_shadow_margin)
 
     def open(self, anchor_widget: Component) -> None:
         """Open the menu anchored to a specific widget.
@@ -50,10 +50,8 @@ class Menu(Component):
         Args:
             anchor_widget: The widget to anchor the menu to.
         """
-        pos = anchor_widget.mapToGlobal(QPoint(0, anchor_widget.height())) - QPoint(
-            0,
-            5,
-        )
+        pos = anchor_widget.mapToGlobal(QPoint(0, anchor_widget.height()))
+        pos -= QPoint(0, _CONTAINER_DROP_SHADOW_SPACE)
         self.move(pos)
         self.resize(100, 100)
         self.show()
