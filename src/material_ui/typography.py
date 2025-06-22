@@ -171,17 +171,18 @@ class Typography(Component):
     @effect(font_family, font_size, font_weight, color, ThemeHook)
     def _apply_styles(self) -> None:
         self.sx = {**self.sx, "color": resolve_token_or_value(self.color)}
-
+        self._label.setFont(self._get_font())
+    
+    def _get_font(self) -> QFont:
         # Can't control font-weight in qt stylesheets, so use QFont
         # instead. This also allows controlling variable axes.
-        font = QFont(cast("str", resolve_token(self.font_family)))
+        ret_val = QFont(cast("str", resolve_token(self.font_family)))
         # Use pixel size instead of point size - point size makes it
         # look too big. DPI scaling seems to be correct like this too.
-        font.setPixelSize(cast("int", resolve_token_or_value(self.font_size)))
+        ret_val.setPixelSize(cast("int", resolve_token_or_value(self.font_size)))
         # Use variable axis (Qt>=6) instead of QFont.Weight enum.
         weight_value = cast("int", resolve_token_or_value(self.font_weight))
-        font.setVariableAxis(QFont.Tag("wght"), weight_value)
+        ret_val.setVariableAxis(QFont.Tag("wght"), weight_value)
         # Fix blurriness - see https://stackoverflow.com/a/61858057
-        font.setHintingPreference(QFont.HintingPreference.PreferNoHinting)
-
-        self._label.setFont(font)
+        ret_val.setHintingPreference(QFont.HintingPreference.PreferNoHinting)
+        return ret_val
