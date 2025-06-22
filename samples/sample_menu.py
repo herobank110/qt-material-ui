@@ -2,6 +2,7 @@
 
 from material_ui._component import Component, effect, use_state
 from material_ui.buttons import FilledButton
+from material_ui.icon import Icon
 from material_ui.layout_basics import Stack
 from material_ui.menu import Menu, MenuItem
 from material_ui.tokens import md_sys_color
@@ -37,6 +38,9 @@ class SampleMenu(Component):
 
         item1 = MenuItem()
         item1.text = "Item 1"
+        item1_icon = Icon()
+        item1_icon.icon_name = "cut"
+        item1.leading_icon = item1_icon
         item1.clicked.connect(self._on_click_item1)
         item1.setParent(menu)
 

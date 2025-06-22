@@ -130,6 +130,9 @@ class MenuItem(Component):
         self._label.font_family = tokens.list_item_label_text_font
         self._label.font_size = tokens.list_item_label_text_size
         self._label.font_weight = tokens.list_item_label_text_weight
+        self._label.alignment = (
+            Qt.AlignmentFlag.AlignLeading | Qt.AlignmentFlag.AlignVCenter
+        )
         row.add_widget(self._label)
 
         self._state_layer = Shape()
@@ -179,6 +182,9 @@ class MenuItem(Component):
         """Place the leading icon in the menu item."""
         # Delete previous icon if exists.
         if prev_icon := self._leading_icon_wrapper.findChild(Icon):
+            if prev_icon is self.leading_icon:
+                # Is this a bug?
+                return
             prev_icon.setParent(None)
         if self.leading_icon is None:
             # No icon needed.
