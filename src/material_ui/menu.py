@@ -4,11 +4,13 @@ A popup menu that opens at a specific location and displays a list of
 selectable items.
 """
 
+from PySide6.QtGui import QMouseEvent
 from qtpy.QtCore import QEasingCurve, QMargins, QPoint, Qt
 
 from material_ui._component import Component, effect, use_state
 from material_ui._lab import DropShadow
 from material_ui.layout_basics import Row, Stack
+from material_ui.ripple import Ripple
 from material_ui.shape import Shape
 from material_ui.tokens import md_comp_menu as tokens
 from material_ui.tokens._utils import resolve_token, resolve_token_or_value
@@ -119,6 +121,9 @@ class MenuItem(Component):
         self._state_layer.setParent(self)
         self._state_layer.opacity = self._state_layer_opacity
 
+        self._ripple = Ripple()
+        self._state_layer.overlay_widget(self._ripple)
+
         self.overlay_widget(row)
 
     @effect(Component.size)
@@ -139,3 +144,15 @@ class MenuItem(Component):
             if self.hovered
             else 0.0,
         )
+
+    def mousePressEvent(self, event: QMouseEvent) -> None:  # noqa: N802
+        """Override to handle ripple."""
+        if event.button() == Qt.MouseButton.LeftButton:
+            self._ripple.ripple_origin = event.position()
+        return super().mousePressEvent(event)
+
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None:  # noqa: N802
+        """Override to handle ripple."""
+        if event.button() == Qt.MouseButton.LeftButton:
+            self._ripple.ripple_origin = None
+        return super().mouseReleaseEvent(event)

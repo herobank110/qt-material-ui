@@ -37,17 +37,17 @@ class SampleMenu(Component):
 
         item1 = MenuItem()
         item1.text = "Item 1"
-        item1.on_click.connect(self._on_click_item1)
+        item1.clicked.connect(self._on_click_item1)
         item1.setParent(menu)
 
         item2 = MenuItem()
         item2.text = "Item 2"
-        item2.on_click.connect(self._on_click_item2)
+        item2.clicked.connect(self._on_click_item2)
         item2.setParent(menu)
 
         item3 = MenuItem()
         item3.text = "Item 3"
-        item3.on_click.connect(self._on_click_item3)
+        item3.clicked.connect(self._on_click_item3)
         item3.setParent(menu)
 
         menu.open(anchor_widget=self._show_menu_button)
