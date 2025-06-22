@@ -4,14 +4,14 @@ A popup menu that opens at a specific location and displays a list of
 selectable items.
 """
 
-from qtpy.QtCore import QMargins, QPoint, Qt
+from qtpy.QtCore import QEasingCurve, QMargins, QPoint, Qt
 
 from material_ui._component import Component, Signal, effect, use_state
 from material_ui._lab import DropShadow
 from material_ui.layout_basics import Row, Stack
 from material_ui.shape import Shape
 from material_ui.tokens import md_comp_menu as tokens
-from material_ui.tokens._utils import resolve_token
+from material_ui.tokens._utils import resolve_token, resolve_token_or_value
 from material_ui.typography import Typography
 
 _CONTAINER_DROP_SHADOW_SPACE = 10
@@ -90,6 +90,12 @@ class MenuItem(Component):
     on_click: Signal
     """Emitted with the menu item is clicked."""
 
+    _state_layer_opacity = use_state(
+        0.0,
+        transition=200,
+        easing=QEasingCurve.Type.InOutCubic,
+    )
+
     def __init__(self) -> None:
         super().__init__()
         self.setFixedHeight(resolve_token(tokens.list_item_container_height))
@@ -103,6 +109,8 @@ class MenuItem(Component):
             0,
         )
 
+        # TODO: add leading and trailing icons to row
+
         self._label = Typography()
         self._label.text = self.text
         self._label.font_family = tokens.list_item_label_text_font
@@ -110,4 +118,31 @@ class MenuItem(Component):
         self._label.font_weight = tokens.list_item_label_text_weight
         row.add_widget(self._label)
 
+        self._state_layer = Shape()
+        self._state_layer.setParent(self)
+        self._state_layer.opacity = self._state_layer_opacity
+
         self.overlay_widget(row)
+
+    @effect(Component.size)
+    def _apply_state_label_size(self) -> None:
+        self._state_layer.resize(self.size())
+
+    @effect(Component.hovered, Component.pressed)
+    def _apply_state_layer_color(self) -> None:
+        self._state_layer.color = (
+            tokens.list_item_pressed_state_layer_color
+            if self.pressed
+            else tokens.list_item_hover_state_layer_color
+        )
+        self._state_layer_opacity = resolve_token_or_value(
+            tokens.list_item_pressed_state_layer_opacity
+            if self.pressed
+            else tokens.list_item_hover_state_layer_opacity
+            if self.hovered
+            else 0.0,
+        )
+
+    @effect(_state_layer_opacity)
+    def f(self):
+        print(self._state_layer_opacity)
