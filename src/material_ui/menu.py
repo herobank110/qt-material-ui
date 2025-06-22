@@ -5,7 +5,7 @@ selectable items.
 """
 
 from PySide6.QtGui import QMouseEvent
-from qtpy.QtCore import QEasingCurve, QMargins, QPoint, Qt
+from qtpy.QtCore import QEasingCurve, QMargins, QPoint, Qt, QTimer
 
 from material_ui._component import Component, effect, use_state
 from material_ui._lab import DropShadow
@@ -73,6 +73,10 @@ class Menu(Component):
         self.move(pos)
         self.show()
 
+    def close_menu(self) -> None:
+        """Close the menu."""
+        self.destroy()
+
     @effect(Component.children)
     def _layout_menu_items(self) -> None:
         items = self.findChildren(
@@ -80,7 +84,13 @@ class Menu(Component):
             options=Qt.FindChildOption.FindDirectChildrenOnly,
         )
         for item in items:
+            item.clicked.connect(self._on_click_menu_item)
             self._stack.add_widget(item)
+
+    def _on_click_menu_item(self) -> None:
+        """Close menu when clicked something."""
+        # Put a delay so the ripple can be enjoyed.
+        QTimer.singleShot(50, self.close_menu)
 
 
 class MenuItem(Component):
@@ -122,6 +132,7 @@ class MenuItem(Component):
         self._state_layer.opacity = self._state_layer_opacity
 
         self._ripple = Ripple()
+        self._ripple.color = tokens.list_item_pressed_state_layer_color
         self._ripple.clip_half_rounded = False
         self._state_layer.overlay_widget(self._ripple)
 
