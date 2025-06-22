@@ -306,6 +306,8 @@ def effect(*dependencies: Any) -> Callable[[EffectFn], EffectFn]:
         if isinstance(x, _StateMarker)
         else _StateMarker(name="_size", default_value=QSize())
         if x is QWidget.size
+        else _StateMarker(name="_children", default_value=[])
+        if x is QObject.children
         else x
         for x in dependencies
     ]
