@@ -171,6 +171,7 @@ class Typography(Component):
     @effect(font_family, font_size, font_weight, color, ThemeHook)
     def _apply_styles(self) -> None:
         self.sx = {**self.sx, "color": resolve_token_or_value(self.color)}
+
         # Can't control font-weight in qt stylesheets, so use QFont
         # instead. This also allows controlling variable axes.
         font = QFont(cast("str", resolve_token(self.font_family)))
@@ -180,4 +181,7 @@ class Typography(Component):
         # Use variable axis (Qt>=6) instead of QFont.Weight enum.
         weight_value = cast("int", resolve_token_or_value(self.font_weight))
         font.setVariableAxis(QFont.Tag("wght"), weight_value)
+        # Fix blurriness - see https://stackoverflow.com/a/61858057
+        font.setHintingPreference(QFont.HintingPreference.PreferNoHinting)
+
         self._label.setFont(font)
