@@ -670,5 +670,5 @@ class Component(QWidget, metaclass=_ComponentMeta):
         return super().leaveEvent(event)
 
     def childEvent(self, event: QChildEvent) -> None:  # noqa: N802
-        print(self, event, self.children())
+        self._children = self.children()
         super().childEvent(event)

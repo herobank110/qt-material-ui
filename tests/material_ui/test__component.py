@@ -98,18 +98,17 @@ def test_Component_effect_hook_dependency(qtbot: QtBot, mocker: MockerFixture):
 def test_Component_effect_children_dependency(qtbot: QtBot, mocker: MockerFixture):
     stub = mocker.stub()
 
-    class MyComponent(Component):
+    class TestComponent(Component):
         @effect(Component.children)
         def my_effect(self) -> None:
             stub()
 
-    component = MyComponent()
-    qtbot.add_widget(component)
+    parent = TestComponent()
+    child = Component()
+    qtbot.add_widget(parent)
     qtbot.wait(1)  # Let the effect be called after constructor.
     assert stub.call_count == 1
 
-    # qtbot.wait(1)  # Let the effect be called after constructor.
-    child1 = Component()
-    child1.setParent(component)
+    child.setParent(parent)
 
     assert stub.call_count == 2
