@@ -115,6 +115,7 @@ class MenuItem(Component):
 
     def __init__(self) -> None:
         super().__init__()
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setFixedHeight(resolve_token(tokens.list_item_container_height))
 
         row = Row()
