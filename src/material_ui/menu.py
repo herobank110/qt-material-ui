@@ -6,13 +6,27 @@ selectable items.
 
 from qtpy.QtCore import QMargins, QPoint, Qt
 
-from material_ui._component import Component, Signal, use_state
+from material_ui._component import Component, Signal, effect, use_state
 from material_ui._lab import DropShadow
+from material_ui.layout_basics import Row, Stack
 from material_ui.shape import Shape
 from material_ui.tokens import md_comp_menu as tokens
+from material_ui.tokens._utils import resolve_token
+from material_ui.typography import Typography
 
 _CONTAINER_DROP_SHADOW_SPACE = 10
 """Extra space around the menu container to accommodate the drop shadow."""
+
+_DROP_SHADOW_MARGIN = QMargins(
+    _CONTAINER_DROP_SHADOW_SPACE,
+    _CONTAINER_DROP_SHADOW_SPACE,
+    _CONTAINER_DROP_SHADOW_SPACE,
+    _CONTAINER_DROP_SHADOW_SPACE,
+)
+"""Margin to contain the drop shadow."""
+
+_DIVIDER_MARGINS = QMargins(0, 8, 0, 8)
+"""Margins for the menu item divider."""
 
 
 class Menu(Component):
@@ -21,11 +35,13 @@ class Menu(Component):
     def __init__(self) -> None:
         super().__init__()
         self.setWindowFlags(
-            Qt.WindowType.Popup
-            | Qt.WindowType.NoDropShadowWindowHint
-            | Qt.WindowType.FramelessWindowHint,
+            Qt.WindowType.Popup  # automatically closed on click outside
+            | Qt.WindowType.NoDropShadowWindowHint  # use custom drop shadow
+            | Qt.WindowType.FramelessWindowHint,  # prevent border
         )
-        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.setAttribute(
+            Qt.WidgetAttribute.WA_TranslucentBackground,
+        )
 
         container = Shape()
         container.color = tokens.container_color
@@ -35,14 +51,11 @@ class Menu(Component):
         drop_shadow.elevation = tokens.container_elevation
         drop_shadow.setParent(container)
         container.setGraphicsEffect(drop_shadow)
-        # Margin to contain the drop shadow.
-        drop_shadow_margin = QMargins(
-            _CONTAINER_DROP_SHADOW_SPACE,
-            _CONTAINER_DROP_SHADOW_SPACE,
-            _CONTAINER_DROP_SHADOW_SPACE,
-            _CONTAINER_DROP_SHADOW_SPACE,
-        )
-        self.overlay_widget(container, margins=drop_shadow_margin)
+
+        self._stack = Stack(margins=_DIVIDER_MARGINS)
+        container.overlay_widget(self._stack)
+
+        self.overlay_widget(container, margins=_DROP_SHADOW_MARGIN)
 
     def open(self, anchor_widget: Component) -> None:
         """Open the menu anchored to a specific widget.
@@ -53,8 +66,16 @@ class Menu(Component):
         pos = anchor_widget.mapToGlobal(QPoint(0, anchor_widget.height()))
         pos -= QPoint(0, _CONTAINER_DROP_SHADOW_SPACE)
         self.move(pos)
-        self.resize(100, 100)
         self.show()
+
+    @effect(Component.children)
+    def _layout_menu_items(self) -> None:
+        items = self.findChildren(
+            MenuItem,
+            options=Qt.FindChildOption.FindDirectChildrenOnly,
+        )
+        for item in items:
+            self._stack.add_widget(item)
 
 
 class MenuItem(Component):
@@ -68,3 +89,15 @@ class MenuItem(Component):
 
     def __init__(self) -> None:
         super().__init__()
+        self.setFixedHeight(resolve_token(tokens.list_item_container_height))
+
+        row = Row()
+
+        self._label = Typography()
+        self._label.text = self.text
+        self._label.font_family = tokens.list_item_label_text_font
+        self._label.font_size = tokens.list_item_label_text_size
+        self._label.font_weight = tokens.list_item_label_text_weight
+        row.add_widget(self._label)
+
+        self.overlay_widget(row)
