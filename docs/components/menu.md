@@ -2,6 +2,8 @@
 
 **Menus display a list of choices on a temporary surface**
 
+![demonstration](./menu.jpg)
+
 ## Usage
 
 ```python
