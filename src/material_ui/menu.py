@@ -23,10 +23,10 @@ _DROP_SHADOW_MARGIN = QMargins(
     _CONTAINER_DROP_SHADOW_SPACE,
     _CONTAINER_DROP_SHADOW_SPACE,
 )
-"""Margin to contain the drop shadow."""
-
 _DIVIDER_MARGINS = QMargins(0, 8, 0, 8)
-"""Margins for the menu item divider."""
+_CONTAINER_WIDTH_MIN = 112
+_CONTAINER_WIDTH_MAX = 280
+_LEFT_RIGHT_PADDING = 12
 
 
 class Menu(Component):
@@ -42,10 +42,13 @@ class Menu(Component):
         self.setAttribute(
             Qt.WidgetAttribute.WA_TranslucentBackground,
         )
+        self.setMinimumWidth(_CONTAINER_WIDTH_MIN)
+        self.setMaximumWidth(_CONTAINER_WIDTH_MAX)
 
         container = Shape()
         container.color = tokens.container_color
         container.corner_shape = tokens.container_shape
+
         drop_shadow = DropShadow()
         drop_shadow.shadow_color = tokens.container_shadow_color
         drop_shadow.elevation = tokens.container_elevation
@@ -92,6 +95,13 @@ class MenuItem(Component):
         self.setFixedHeight(resolve_token(tokens.list_item_container_height))
 
         row = Row()
+        row.alignment = Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter
+        row.margins = QMargins(
+            _LEFT_RIGHT_PADDING,
+            0,
+            _LEFT_RIGHT_PADDING,
+            0,
+        )
 
         self._label = Typography()
         self._label.text = self.text
