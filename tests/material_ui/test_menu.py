@@ -1,13 +1,44 @@
+from pytest_mock import MockerFixture
 from pytestqt.qtbot import QtBot
+from qtpy.QtCore import Qt
 
+from material_ui.icon import Icon
 from material_ui.menu import Menu, MenuItem
 
 
-def test_Menu_basic_api(qtbot: QtBot):
+def test_Menu_clicking_item_closes_menu(qtbot: QtBot, mocker: MockerFixture):
     menu = Menu()
+    qtbot.addWidget(menu)
 
     item1 = MenuItem()
-    item1.text = "Item 1"
+    item1.text = "Item"
     item1.setParent(menu)
 
-    qtbot.addWidget(menu)
+    menu.open(menu)
+
+    close_menu_spy = mocker.spy(menu, "close_menu")
+    qtbot.mouseClick(item1, Qt.MouseButton.LeftButton)
+    qtbot.wait(100)  # Wait for the menu to close
+    assert close_menu_spy.call_count == 1
+
+
+def test_MenuItem_with_icon(qtbot: QtBot):
+    item = MenuItem()
+    item.text = "Item"
+    icon = Icon()
+    icon.icon_name = "check"
+    item.leading_icon = icon
+    assert item._leading_icon_wrapper.findChild(Icon) is not None
+    qtbot.addWidget(item)
+
+
+def test_MenuItem_with_icon_then_none(qtbot: QtBot):
+    item = MenuItem()
+    item.text = "Item"
+    icon = Icon()
+    icon.icon_name = "check"
+    item.leading_icon = icon
+    assert item._leading_icon_wrapper.findChild(Icon) is not None
+    item.leading_icon = None
+    assert item._leading_icon_wrapper.findChild(Icon) is None
+    qtbot.addWidget(item)
