@@ -33,8 +33,8 @@ class Checkbox(Component):
     _state_layer_color = use_state(tokens.unselected_hover_state_layer_color)
     _tick_fade_in_value = use_state(
         0.0,
-        transition=100,
-        easing=QEasingCurve.Type.InCubic,
+        transition=400,
+        easing=QEasingCurve.Type.InQuad,
     )
 
     def __init__(self) -> None:
