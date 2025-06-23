@@ -40,7 +40,6 @@ class MenuItem(Component):
     def __init__(self) -> None:
         super().__init__()
 
-        self.clicked.connect(self._on_clicked)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
 
         # Container layout
