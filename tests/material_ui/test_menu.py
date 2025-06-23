@@ -18,8 +18,7 @@ def test_Menu_clicking_item_closes_menu(qtbot: QtBot, mocker: MockerFixture):
 
     close_menu_spy = mocker.spy(menu, "close_menu")
     qtbot.mouseClick(item1, Qt.MouseButton.LeftButton)
-    qtbot.wait(100)  # Wait for the menu to close
-    assert close_menu_spy.call_count == 1
+    qtbot.wait_until(lambda: close_menu_spy.call_count == 1, timeout=100)
 
 
 def test_MenuItem_with_icon(qtbot: QtBot):
