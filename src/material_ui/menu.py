@@ -189,7 +189,6 @@ class MenuItem(Component):
             prev_icon.setParent(None)
         if self.leading_icon is None:
             # No icon needed.
-            # self._leading_icon_wrapper.hide()
             return
         # Show new icon.
         self._leading_icon_wrapper.overlay_widget(self.leading_icon)
@@ -201,9 +200,3 @@ class MenuItem(Component):
             return
         icon.font_size = tokens.list_item_with_leading_icon_leading_icon_size
         icon.color = tokens.list_item_with_leading_icon_leading_icon_color
-        # icon.setParent(self._leading_icon_wrapper)
-        # self._leading_icon_wrapper.resize(icon.size)
-        # self._leading_icon_wrapper.move(
-        #     0,
-        #     (self.height() - icon.height()) // 2,
-        # )
