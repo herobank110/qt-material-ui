@@ -4,10 +4,11 @@ import inspect
 from collections.abc import Callable
 from dataclasses import dataclass
 from functools import partial
-from typing import Any, Generic, TypeVar, cast, get_args, overload
+from typing import TYPE_CHECKING, Any, Generic, TypeVar, cast, get_args, overload
 
 from qtpy.QtCore import (
-    Property,  # pyright: ignore  # noqa: PGH003
+    Property,
+    QChildEvent,  # pyright: ignore  # noqa: PGH003
     QEasingCurve,
     QEvent,
     QMargins,
@@ -306,6 +307,8 @@ def effect(*dependencies: Any) -> Callable[[EffectFn], EffectFn]:
         if isinstance(x, _StateMarker)
         else _StateMarker(name="_size", default_value=QSize())
         if x is QWidget.size
+        else _StateMarker(name="_children", default_value=[])
+        if x is QObject.children
         else x
         for x in dependencies
     ]
@@ -408,6 +411,9 @@ class Component(QWidget, metaclass=_ComponentMeta):
     _size = use_state(QSize())
     """Internal state for Qt `size` property."""
 
+    _children = use_state([])
+    """Internal state for Qt `children` property."""
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -438,33 +444,36 @@ class Component(QWidget, metaclass=_ComponentMeta):
                     _TransitionConfig(marker.transition, marker.easing),
                 )
 
-    def __getattribute__(self, name: str) -> Any:
-        actual_value = super().__getattribute__(name)
-        if name in {
-            Component._find_state.__name__,
-            Component.findChild.__name__,
-        }:
-            # Prevent recursion error. These are used below.
-            return actual_value
-        state = self._find_state(name)
-        if state:
-            # A state variable was accessed. Track it for binding.
-            _track_last_accessed_state(state)
-        return actual_value
+    # Prevent IDEs from showing misspelled variables as valid.
+    if not TYPE_CHECKING:
 
-    def __setattr__(self, name: str, value: Any) -> None:
-        if state := self._find_state(name):
-            if other_state := _pop_last_accessed_state(value):
-                state.bind(other_state)
-            elif state.transition:
-                state.animate_to(
-                    value,
-                    state.transition.duration_ms,
-                    state.transition.easing,
-                )
-            else:
-                state.set_value(value)
-        super().__setattr__(name, value)
+        def __getattribute__(self, name: str) -> Any:
+            actual_value = super().__getattribute__(name)
+            if name in {
+                Component._find_state.__name__,
+                Component.findChild.__name__,
+            }:
+                # Prevent recursion error. These are used below.
+                return actual_value
+            state = self._find_state(name)
+            if state:
+                # A state variable was accessed. Track it for binding.
+                _track_last_accessed_state(state)
+            return actual_value
+
+        def __setattr__(self, name: str, value: Any) -> None:
+            if state := self._find_state(name):
+                if other_state := _pop_last_accessed_state(value):
+                    state.bind(other_state)
+                elif state.transition:
+                    state.animate_to(
+                        value,
+                        state.transition.duration_ms,
+                        state.transition.easing,
+                    )
+                else:
+                    state.set_value(value)
+            super().__setattr__(name, value)
 
     def _find_state(self, name: str) -> State[Any] | None:
         """Find state variable by name."""
@@ -659,3 +668,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
     def leaveEvent(self, event: QEvent) -> None:  # noqa: N802
         self.hovered = False
         return super().leaveEvent(event)
+
+    def childEvent(self, event: QChildEvent) -> None:  # noqa: N802
+        self._children = self.children()
+        super().childEvent(event)

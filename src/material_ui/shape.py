@@ -15,6 +15,12 @@ from material_ui.tokens._utils import (
     resolve_token_or_value,
 )
 
+_OPACITY_MIN_THRESHOLD = 1.0e-2
+"""Minimum opacity value for backgrounds.
+
+If not checking this threshold, Qt will just go full opaque...
+"""
+
 
 class Shape(Component):
     """A blank component with common shape features."""
@@ -67,6 +73,8 @@ class Shape(Component):
     def _apply_background_color(self) -> None:
         color = resolve_token_or_value(self.color)
         opacity = resolve_token_or_value(self.opacity)
+        if opacity < _OPACITY_MIN_THRESHOLD:
+            opacity = 0.0
         # Make a copy to keep the design token's value unmodified.
         color = QColor(color)
         color.setAlphaF(opacity)

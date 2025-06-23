@@ -13,6 +13,13 @@
       "justMyCode": false
     },
     {
+      "name": "Sample - Menu",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/samples/sample_menu.py",
+      "console": "integratedTerminal"
+    },
+    {
       "name": "Sample - Switch",
       "type": "debugpy",
       "request": "launch",
