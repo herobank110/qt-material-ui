@@ -184,8 +184,7 @@ class MenuItem(Component):
         # Delete previous icon if exists.
         if prev_icon := self._leading_icon_wrapper.findChild(Icon):
             if prev_icon is self.leading_icon:
-                # Is this a bug?
-                return
+                return  # Nothing to do.
             prev_icon.setParent(None)
         if self.leading_icon is None:
             # No icon needed.
