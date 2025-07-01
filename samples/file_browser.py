@@ -1,6 +1,8 @@
 """File browser demo app."""
 
-from material_ui._component import Component
+from pathlib import Path
+
+from material_ui._component import Component, use_state
 from material_ui.layout_basics import Stack
 from qtpy.QtCore import QMargins, Qt
 from qtpy.QtWidgets import QApplication
@@ -35,6 +37,8 @@ MOCK_FILE_SYSTEM = {
 
 
 class FileBrowserApp(Component):
+    current_path = use_state(Path())
+
     def __init__(self) -> None:
         super().__init__()
 
