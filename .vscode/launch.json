@@ -88,6 +88,14 @@
       "request": "launch",
       "program": "${workspaceFolder}/samples/color_palette.py",
       "console": "integratedTerminal"
+    },
+    {
+      "name": "Sample - File Browser",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/samples/file_browser.py",
+      "console": "integratedTerminal",
+      "guiEventLoop": "qt"
     }
   ]
 }
