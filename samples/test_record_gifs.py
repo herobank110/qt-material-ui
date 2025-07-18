@@ -13,6 +13,7 @@ from pytestqt.qtbot import QtBot
 
 from sample_buttons import SampleButtons
 from sample_checkbox import SampleCheckbox
+from sample_combobox import SampleComboBox
 from sample_text_fields import SampleTextFields
 
 
@@ -128,6 +129,30 @@ def test_sample_text_fields_gif(qtbot: QtBot, controller: Controller) -> None:
             move_to(x + 350 * dpr, y + 100 * dpr),
         ]
         qtbot.wait(14000)
+
+
+@pytest.mark.record_gif
+def test_sample_combobox_gif(qtbot: QtBot, controller: Controller) -> None:
+    window = SampleComboBox()
+    window.setFixedHeight(500)
+    qtbot.addWidget(window)
+    window.show()
+    with qtbot.wait_exposed(window):
+        dpr = window.devicePixelRatioF()
+        x = int(window.x() * dpr)
+        y = int((window.y() + window.height() / 2 + 30) * dpr)
+        controller.movements = [
+            move_to(x + 100 * dpr, y - 150 * dpr, instant=True),
+            wait(2),
+            move_to(x + 100 * dpr, y),
+            wait(0.5),
+            click,
+            move_to(x + 100 * dpr, y + 50 * dpr),
+            click,
+            wait(1),
+            move_to(x + 100 * dpr, y + 100 * dpr),
+        ]
+        qtbot.wait(8000)
 
 
 @pytest.mark.record_gif
