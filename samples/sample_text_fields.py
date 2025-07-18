@@ -1,6 +1,7 @@
 """Sample usage of Text Field components."""
 
 from material_ui import Component
+from material_ui.icon import Icon
 from material_ui.layout_basics import Row
 from material_ui.text_fields import FilledTextField, OutlinedTextField
 from material_ui.tokens import md_sys_color
@@ -30,6 +31,25 @@ class SampleTextFields(Component):
         outlined.label = "Outlined"
         outlined.value = ""
         row.add_widget(outlined)
+
+        # Add text fields with trailing icons
+        filled_with_icon = FilledTextField()
+        filled_with_icon.label = "Search"
+        filled_with_icon.value = ""
+        
+        search_icon = Icon()
+        search_icon.icon_name = "search"
+        filled_with_icon.trailing_icon = search_icon
+        row.add_widget(filled_with_icon)
+
+        outlined_with_icon = OutlinedTextField()
+        outlined_with_icon.label = "Clear"
+        outlined_with_icon.value = ""
+        
+        clear_icon = Icon()
+        clear_icon.icon_name = "clear"
+        outlined_with_icon.trailing_icon = clear_icon
+        row.add_widget(outlined_with_icon)
 
         # Take the initial focus away from the first text field.
         self.setFocus()
