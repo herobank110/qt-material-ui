@@ -1,12 +1,14 @@
 """Outlined text field component."""
 
-from qtpy.QtCore import QMargins, QPoint
+from qtpy.QtCore import QMargins, QPoint, Qt
 
 from material_ui._component import Component, effect
+from material_ui.layout_basics import Row
 from material_ui.shape import Shape
 from material_ui.text_fields._base_text_field import BaseTextField
 from material_ui.tokens import md_comp_outlined_text_field as tokens
 from material_ui.tokens import md_sys_color
+from material_ui.theming.theme_hook import ThemeHook
 
 _LINE_EDIT_POS = QPoint(16, 18)
 
@@ -67,6 +69,9 @@ class OutlinedTextField(BaseTextField):
         line_edit_wrapper.move(_LINE_EDIT_POS)
         self._line_edit.setParent(line_edit_wrapper)
 
+        # Set up trailing icon wrapper position
+        self._trailing_icon_wrapper.setParent(self._container)
+
     @effect(Component.hovered)
     def _apply_container_border(self) -> None:
         color = tokens.hover_outline_color if self.hovered else tokens.outline_color
@@ -78,6 +83,31 @@ class OutlinedTextField(BaseTextField):
         self._container.move(QPoint(0, self._TOP_SPACE))
         self._focus_outline.resize(self._container.size())
         self._focus_outline.move(QPoint(0, self._TOP_SPACE))
+        
+        # Position trailing icon if present
+        if self.trailing_icon is not None:
+            icon_size = tokens.trailing_icon_size
+            icon_margin = 16  # Distance from right edge
+            icon_x = self._container.width() - icon_size - icon_margin
+            icon_y = (self._container.height() - icon_size) // 2
+            self._trailing_icon_wrapper.setFixedSize(icon_size, icon_size)
+            self._trailing_icon_wrapper.move(icon_x, icon_y)
+
+    @effect(BaseTextField.trailing_icon, ThemeHook)
+    def _apply_trailing_icon_properties(self) -> None:
+        """Apply styling to trailing icon based on current state."""
+        icon = self.trailing_icon
+        if icon is None:
+            return
+        icon.font_size = tokens.trailing_icon_size
+        
+        # Apply state-based color
+        if self.focused:
+            icon.color = tokens.focus_trailing_icon_color
+        elif self.hovered:
+            icon.color = tokens.hover_trailing_icon_color
+        else:
+            icon.color = tokens.trailing_icon_color
 
     @effect(Component.focused)
     def _apply_label_color(self) -> None:
@@ -86,3 +116,16 @@ class OutlinedTextField(BaseTextField):
         )
         self._floating_label.sx = {**self._floating_label.sx, "color": color}
         self._resting_label.sx = {**self._resting_label.sx, "color": color}
+
+    @effect(Component.focused, Component.hovered)
+    def _update_trailing_icon_color(self) -> None:
+        """Update trailing icon color when focus or hover state changes."""
+        if self.trailing_icon is None:
+            return
+        # Apply state-based color
+        if self.focused:
+            self.trailing_icon.color = tokens.focus_trailing_icon_color
+        elif self.hovered:
+            self.trailing_icon.color = tokens.hover_trailing_icon_color
+        else:
+            self.trailing_icon.color = tokens.trailing_icon_color

@@ -7,6 +7,7 @@ from material_ui.layout_basics import Row
 from material_ui.shape import Line, Shape
 from material_ui.text_fields._base_text_field import BaseTextField
 from material_ui.tokens import md_comp_filled_text_field as tokens
+from material_ui.theming.theme_hook import ThemeHook
 
 
 class FilledTextField(BaseTextField):
@@ -61,6 +62,9 @@ class FilledTextField(BaseTextField):
         line_edit_wrapper.overlay_widget(self._line_edit)
         row.add_widget(line_edit_wrapper)
 
+        # Add trailing icon wrapper to the row
+        row.add_widget(self._trailing_icon_wrapper)
+
     @effect(Component.size)
     def _apply_size(self) -> None:
         self._background.resize(
@@ -91,3 +95,32 @@ class FilledTextField(BaseTextField):
         )
         self._floating_label.sx = {**self._floating_label.sx, "color": color}
         self._resting_label.sx = {**self._resting_label.sx, "color": color}
+
+    @effect(BaseTextField.trailing_icon, ThemeHook)
+    def _apply_trailing_icon_properties(self) -> None:
+        """Apply styling to trailing icon based on current state."""
+        icon = self.trailing_icon
+        if icon is None:
+            return
+        icon.font_size = tokens.trailing_icon_size
+        
+        # Apply state-based color
+        if self.focused:
+            icon.color = tokens.focus_trailing_icon_color
+        elif self.hovered:
+            icon.color = tokens.hover_trailing_icon_color
+        else:
+            icon.color = tokens.trailing_icon_color
+
+    @effect(Component.focused, Component.hovered)
+    def _update_trailing_icon_color(self) -> None:
+        """Update trailing icon color when focus or hover state changes."""
+        if self.trailing_icon is None:
+            return
+        # Apply state-based color
+        if self.focused:
+            self.trailing_icon.color = tokens.focus_trailing_icon_color
+        elif self.hovered:
+            self.trailing_icon.color = tokens.hover_trailing_icon_color
+        else:
+            self.trailing_icon.color = tokens.trailing_icon_color
