@@ -7,6 +7,7 @@ from materialyoucolor.dynamiccolor.material_dynamic_colors import MaterialDynami
 from materialyoucolor.scheme.dynamic_scheme import DynamicScheme
 from qtpy.QtGui import QColor
 
+from material_ui.theming.theme_hook import ThemeHook
 from material_ui.tokens import md_sys_color
 from material_ui.tokens._utils import DesignToken, override_token
 
@@ -14,7 +15,6 @@ from material_ui.tokens._utils import DesignToken, override_token
 def apply_dynamic_color_scheme(scheme: DynamicScheme) -> None:
     """Apply the dynamic color scheme to the application."""
     fn = partial(_apply_scheme_to_token, source_scheme=scheme)
-
     fn(md_sys_color.error, MaterialDynamicColors.error)
     fn(md_sys_color.error_container, MaterialDynamicColors.errorContainer)
     fn(md_sys_color.inverse_on_surface, MaterialDynamicColors.inverseOnSurface)
@@ -57,6 +57,9 @@ def apply_dynamic_color_scheme(scheme: DynamicScheme) -> None:
     fn(md_sys_color.tertiary_container, MaterialDynamicColors.tertiaryContainer)
     fn(md_sys_color.background, MaterialDynamicColors.background)
 
+    # Notify at end. All other changes are done silently.
+    ThemeHook.get().on_change.emit()
+
 
 def _apply_scheme_to_token(
     target_token: DesignToken,
@@ -66,4 +69,5 @@ def _apply_scheme_to_token(
     """Apply the dynamic color scheme to a specific token."""
     argb = source_color.get_argb(source_scheme)
     qt_color = QColor(argb & 0x00FFFFFF)
-    override_token(target_token, qt_color)
+    # Set value silently to avoid multiple notifications and unnecessary redraws.
+    override_token(target_token, qt_color, silent=True)
