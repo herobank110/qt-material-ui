@@ -17,6 +17,9 @@ class ComboBox(Component):
     def __init__(self) -> None:
         super().__init__()
 
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.clicked.connect(self._show_menu)
+
         self._text_field = OutlinedTextField()
         # Don't let the textfield itself get focused.
         self._text_field.setAttribute(
@@ -24,8 +27,6 @@ class ComboBox(Component):
             on=True,
         )
         self._text_field.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.clicked.connect(self._show_menu)
         self.overlay_widget(self._text_field)
 
     def _show_menu(self) -> None:
