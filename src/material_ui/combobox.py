@@ -19,12 +19,13 @@ class ComboBox(Component):
 
         self._text_field = OutlinedTextField()
         # Don't let the textfield itself get focused.
+        self._text_field.setAttribute(
+            Qt.WidgetAttribute.WA_TransparentForMouseEvents,
+            on=True,
+        )
         self._text_field.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self._text_field._line_edit.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self._text_field._line_edit.setReadOnly(True)
-        self._text_field.setCursor(Qt.CursorShape.PointingHandCursor)
-        self._text_field._line_edit.setCursor(Qt.CursorShape.PointingHandCursor)
-        self._text_field.clicked.connect(lambda: self._show_menu())
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.clicked.connect(self._show_menu)
         self.overlay_widget(self._text_field)
 
     def _show_menu(self) -> None:
