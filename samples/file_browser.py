@@ -2,6 +2,7 @@
 
 from functools import reduce
 from pathlib import Path
+from typing import Any
 
 from material_ui._component import Component, Signal, effect, use_state
 from material_ui.buttons.text_button import TextButton
@@ -99,17 +100,17 @@ class FileBrowserApp(Component):
 
 def listdir(path: Path) -> list[Path]:
     """List directory contents as concatenated paths."""
-    last_directory = reduce(
-        lambda x, y: z if (z := x[y]) is not FILE else x,
-        path.parts,
-        MOCK_FILE_SYSTEM,
-    )
-    return [path / name for name in last_directory]
+    last_directory = resolve_path(path)
+    return [path / name for name in last_directory]  # type: ignore  # noqa
 
 
 def isfile(path: Path) -> bool:
     """Check if the path is a file."""
-    return reduce(lambda x, y: x[y], path.parts, MOCK_FILE_SYSTEM) is FILE
+    return resolve_path(path) is FILE
+
+
+def resolve_path(path: Path) -> dict[str, Any] | object:
+    return reduce(lambda x, y: x[y], path.parts, MOCK_FILE_SYSTEM)
 
 
 def test_file_system() -> None:
