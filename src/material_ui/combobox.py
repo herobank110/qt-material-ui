@@ -2,7 +2,7 @@ from typing import cast
 
 from qtpy.QtCore import Qt
 
-from material_ui._component import Component, effect, use_state
+from material_ui._component import Component, Signal, effect, use_state
 from material_ui.menu import Menu, MenuItem
 from material_ui.text_fields.outlined_text_field import OutlinedTextField
 
@@ -11,8 +11,16 @@ class ComboBox(Component):
     """Select a string from multiple options."""
 
     label = use_state("")
+    """Label for the textfield of the combobox."""
+
     value = use_state("")
+    """Currently selected value."""
+
     items = use_state(cast("list[str]", []))
+    """List of items to select from."""
+
+    on_change: Signal[str]
+    """Called when the value is changed."""
 
     def __init__(self) -> None:
         super().__init__()
