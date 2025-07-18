@@ -150,9 +150,9 @@ def test_sample_combobox_gif(qtbot: QtBot, controller: Controller) -> None:
             move_to(x + 100 * dpr, y + 50 * dpr),
             click,
             wait(1),
-            move_to(x + 100 * dpr, y + 100 * dpr),
+            move_to(x + 100 * dpr, y - 150 * dpr),
         ]
-        qtbot.wait(8000)
+        qtbot.wait(10000)
 
 
 @pytest.mark.record_gif
