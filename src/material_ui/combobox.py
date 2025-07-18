@@ -27,11 +27,7 @@ class ComboBox(Component):
         super().__init__()
 
         self.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.setSizePolicy(
-            # self.SizePolicy.Policy.Preferred,
-            QSizePolicy.Policy.Expanding,
-            QSizePolicy.Policy.Fixed,
-        )
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         self.clicked.connect(self._show_menu)
 
         self._text_field = OutlinedTextField()
