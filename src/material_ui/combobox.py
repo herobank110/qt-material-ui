@@ -31,7 +31,7 @@ class ComboBox(Component):
         self.clicked.connect(self._show_menu)
 
         self._text_field = OutlinedTextField()
-        # Don't let the textfield itself get focused.
+        # # Don't let the textfield itself get focused.
         self._text_field.setAttribute(
             Qt.WidgetAttribute.WA_TransparentForMouseEvents,
             on=True,
@@ -58,3 +58,9 @@ class ComboBox(Component):
     @effect(value)
     def _apply_value(self) -> None:
         self._text_field.value = self.value
+
+    @effect(Component.hovered)
+    def _propagate_hovered(self) -> None:
+        # Forward the hover state manually because we made it
+        # transparent for mouse events.
+        self._text_field.hovered = self.hovered
