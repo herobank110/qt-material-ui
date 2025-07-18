@@ -13,52 +13,10 @@
       "justMyCode": false
     },
     {
-      "name": "Sample - Menu",
-      "type": "debugpy",
-      "request": "launch",
-      "program": "${workspaceFolder}/samples/sample_menu.py",
-      "console": "integratedTerminal"
-    },
-    {
-      "name": "Sample - Switch",
-      "type": "debugpy",
-      "request": "launch",
-      "program": "${workspaceFolder}/samples/sample_switch.py",
-      "console": "integratedTerminal"
-    },
-    {
       "name": "Sample - Buttons",
       "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/samples/sample_buttons.py",
-      "console": "integratedTerminal"
-    },
-    {
-      "name": "Sample - Elevation",
-      "type": "debugpy",
-      "request": "launch",
-      "program": "${workspaceFolder}/samples/sample_elevation.py",
-      "console": "integratedTerminal"
-    },
-    {
-      "name": "Sample - Icons",
-      "type": "debugpy",
-      "request": "launch",
-      "program": "${workspaceFolder}/samples/sample_icons.py",
-      "console": "integratedTerminal"
-    },
-    {
-      "name": "Sample - Text Fields",
-      "type": "debugpy",
-      "request": "launch",
-      "program": "${workspaceFolder}/samples/sample_text_fields.py",
-      "console": "integratedTerminal"
-    },
-    {
-      "name": "Sample - Progress Indicators",
-      "type": "debugpy",
-      "request": "launch",
-      "program": "${workspaceFolder}/samples/sample_progress_indicators.py",
       "console": "integratedTerminal"
     },
     {
@@ -69,10 +27,39 @@
       "console": "integratedTerminal"
     },
     {
-      "name": "Sample - Typography",
+      "name": "Sample - Color Palette",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/samples/sample_typography.py",
+      "program": "${workspaceFolder}/samples/color_palette.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Sample - Elevation",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/samples/sample_elevation.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Sample - File Browser",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/samples/file_browser.py",
+      "console": "integratedTerminal",
+      "guiEventLoop": "qt"
+    },
+    {
+      "name": "Sample - Icons",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/samples/sample_icons.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Sample - Menu",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/samples/sample_menu.py",
       "console": "integratedTerminal"
     },
     {
@@ -83,19 +70,32 @@
       "console": "integratedTerminal"
     },
     {
-      "name": "Sample - Color Palette",
+      "name": "Sample - Progress Indicators",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/samples/color_palette.py",
+      "program": "${workspaceFolder}/samples/sample_progress_indicators.py",
       "console": "integratedTerminal"
     },
     {
-      "name": "Sample - File Browser",
+      "name": "Sample - Switch",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/samples/file_browser.py",
-      "console": "integratedTerminal",
-      "guiEventLoop": "qt"
+      "program": "${workspaceFolder}/samples/sample_switch.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Sample - Text Fields",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/samples/sample_text_fields.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Sample - Typography",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/samples/sample_typography.py",
+      "console": "integratedTerminal"
     }
   ]
 }
