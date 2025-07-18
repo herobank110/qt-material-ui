@@ -6,7 +6,10 @@ from qtpy.QtCore import QPoint, QSize, Qt
 from qtpy.QtWidgets import QLineEdit, QSizePolicy
 
 from material_ui._component import Component, Signal, effect, use_state
+from material_ui._utils import convert_sx_to_qss
+from material_ui.theming.theme_hook import ThemeHook
 from material_ui.tokens import md_comp_filled_text_field as tokens
+from material_ui.tokens import md_sys_color
 from material_ui.tokens._utils import resolve_token
 from material_ui.typography import Typography
 
@@ -134,3 +137,13 @@ class BaseTextField(Component):
     @effect(_floating_label_pos)
     def _apply_floating_label_pos(self) -> None:
         self._floating_label.move(self._floating_label_pos)
+
+    @effect(ThemeHook)
+    def _apply_line_edit_selection_color(self) -> None:
+        """Apply the selection color to the line edit."""
+        sx = {
+            "selection-color": md_sys_color.on_primary,
+            "selection-background-color": md_sys_color.primary,
+        }
+        qss = convert_sx_to_qss(sx)
+        self._line_edit.setStyleSheet(qss)
