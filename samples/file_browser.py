@@ -43,7 +43,7 @@ MOCK_FILE_SYSTEM = {
 class DirectoryItem(Component):
     """A component representing a directory item in the file browser."""
 
-    label = use_state("hi")
+    label = use_state("")
     on_click: Signal
 
     def __init__(self) -> None:
@@ -69,7 +69,7 @@ class FileBrowserApp(Component):
         self.stack = Stack(
             alignment=Qt.AlignmentFlag.AlignTop,
             margins=QMargins(20, 20, 20, 20),
-            gap=10,
+            gap=3,
         )
         self.overlay_widget(self.stack)
 
@@ -82,11 +82,19 @@ class FileBrowserApp(Component):
         )
         for child in prev_children:
             child.setParent(None)
+        # Create .. item to go up one directory.
+        if self.current_path != Path():
+            parent_path = self.current_path.parent
+            item = DirectoryItem()
+            item.label = ".."
+            item.on_click.connect(lambda: self.set_state("current_path", parent_path))
+            self.stack.add_widget(item)
         # Create new items.
         for path in listdir(self.current_path):
             item = DirectoryItem()
             item.label = path.name
-            item.on_click = lambda p=path: self.set_state("current_path", p)
+            if not isfile(path):
+                item.on_click.connect(lambda p=path: self.set_state("current_path", p))
             self.stack.add_widget(item)
 
 
