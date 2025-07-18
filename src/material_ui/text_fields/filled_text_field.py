@@ -102,7 +102,8 @@ class FilledTextField(BaseTextField):
         icon = self.trailing_icon
         if icon is None:
             return
-        icon.font_size = tokens.trailing_icon_size
+        from material_ui.tokens._utils import resolve_token
+        icon.font_size = resolve_token(tokens.trailing_icon_size)
         
         # Apply state-based color
         if self.focused:

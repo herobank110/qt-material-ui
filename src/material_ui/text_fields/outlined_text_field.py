@@ -77,7 +77,7 @@ class OutlinedTextField(BaseTextField):
         color = tokens.hover_outline_color if self.hovered else tokens.outline_color
         self._container.sx = {**self._container.sx, "border-color": color}
 
-    @effect(Component.size)
+    @effect(Component.size, BaseTextField.trailing_icon)
     def _resize_elements(self) -> None:
         self._container.resize(self.size().shrunkBy(QMargins(0, self._TOP_SPACE, 0, 0)))
         self._container.move(QPoint(0, self._TOP_SPACE))
@@ -86,7 +86,8 @@ class OutlinedTextField(BaseTextField):
         
         # Position trailing icon if present
         if self.trailing_icon is not None:
-            icon_size = tokens.trailing_icon_size
+            from material_ui.tokens._utils import resolve_token
+            icon_size = resolve_token(tokens.trailing_icon_size)
             icon_margin = 16  # Distance from right edge
             icon_x = self._container.width() - icon_size - icon_margin
             icon_y = (self._container.height() - icon_size) // 2
@@ -99,7 +100,8 @@ class OutlinedTextField(BaseTextField):
         icon = self.trailing_icon
         if icon is None:
             return
-        icon.font_size = tokens.trailing_icon_size
+        from material_ui.tokens._utils import resolve_token
+        icon.font_size = resolve_token(tokens.trailing_icon_size)
         
         # Apply state-based color
         if self.focused:
