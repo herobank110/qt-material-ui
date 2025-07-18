@@ -128,7 +128,12 @@ def _resolve_indirection(value: Indirection) -> DesignToken | None:
     return None
 
 
-def override_token(token: DesignToken, value: TokenValue, *, silent=False) -> None:
+def override_token(
+    token: DesignToken,
+    value: TokenValue,
+    *,
+    silent: bool = False,
+) -> None:
     """Override a token value in the global theme and notify listeners.
 
     Args:
