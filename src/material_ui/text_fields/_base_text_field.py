@@ -6,7 +6,10 @@ from qtpy.QtCore import QPoint, QSize, Qt
 from qtpy.QtWidgets import QLineEdit, QSizePolicy
 
 from material_ui._component import Component, Signal, effect, use_state
+from material_ui._utils import StyleDict, convert_sx_to_qss
+from material_ui.theming.theme_hook import ThemeHook
 from material_ui.tokens import md_comp_filled_text_field as tokens
+from material_ui.tokens import md_sys_color
 from material_ui.tokens._utils import resolve_token
 from material_ui.typography import Typography
 
@@ -24,6 +27,9 @@ class BaseTextField(Component):
 
     on_change: Signal[str]
     """Emitted when the value changed."""
+
+    _line_edit_sx = use_state(cast("StyleDict", {}))
+    """Style to apply to line edit widget."""
 
     def __init__(self) -> None:
         super().__init__()
@@ -134,3 +140,18 @@ class BaseTextField(Component):
     @effect(_floating_label_pos)
     def _apply_floating_label_pos(self) -> None:
         self._floating_label.move(self._floating_label_pos)
+
+    @effect()
+    def _apply_line_edit_selection_color(self) -> None:
+        # Set indirectly to a state in case we need to merge multiple
+        # styles.
+        self._line_edit_sx = {
+            **self._line_edit_sx,
+            "selection-color": md_sys_color.on_primary,
+            "selection-background-color": md_sys_color.primary,
+        }
+
+    @effect(_line_edit_sx, ThemeHook)
+    def _apply_line_edit_sx(self) -> None:
+        qss = convert_sx_to_qss(self._line_edit_sx)
+        self._line_edit.setStyleSheet(qss)
