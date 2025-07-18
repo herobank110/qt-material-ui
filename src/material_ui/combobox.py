@@ -31,7 +31,11 @@ class ComboBox(Component):
         self.clicked.connect(self._show_menu)
 
         self._text_field = OutlinedTextField()
-        # # Don't let the textfield itself get focused.
+        # TODO: trailing icon
+        # drop_down_icon = Icon()
+        # drop_down_icon.icon_name = "arrow_drop_down"
+        # self._text_field.trailing_icon = drop_down_icon
+        # Don't let the textfield itself get focused.
         self._text_field.setAttribute(
             Qt.WidgetAttribute.WA_TransparentForMouseEvents,
             on=True,
