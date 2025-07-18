@@ -128,13 +128,20 @@ def _resolve_indirection(value: Indirection) -> DesignToken | None:
     return None
 
 
-def override_token(token: DesignToken, value: TokenValue) -> None:
-    """Override a token value in the global theme and notify listeners."""
-    token.value = value
-    # Local import to avoid circular import.
-    from material_ui.theming.theme_hook import ThemeHook
+def override_token(token: DesignToken, value: TokenValue, *, silent=False) -> None:
+    """Override a token value in the global theme and notify listeners.
 
-    ThemeHook.get().on_change.emit()
+    Args:
+        token: The token to override.
+        value: The new value to set for the token.
+        silent: If True, do not emit change notifications.
+    """
+    token.value = value
+    if not silent:
+        # Local import to avoid circular import.
+        from material_ui.theming.theme_hook import ThemeHook
+
+        ThemeHook.get().on_change.emit()
 
 
 to_python_name = partial(re.sub, r"[-\.]", "_")
