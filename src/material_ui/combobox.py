@@ -49,6 +49,7 @@ class ComboBox(Component):
         for item_text in self.items:
             menu_item = MenuItem()
             menu_item.text = item_text
+            menu_item.selected = item_text == self.value
             menu_item.clicked.connect(
                 lambda text=item_text: self.set_state("value", text),
             )

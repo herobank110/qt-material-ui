@@ -116,6 +116,9 @@ class MenuItem(Component):
     leading_icon = use_state(cast("Icon | None", None))
     """Icon to go at the start of the item."""
 
+    selected = use_state(False)
+    """Whether the item is selected."""
+
     _state_layer_opacity = use_state(
         0.0,
         transition=70,
@@ -208,3 +211,12 @@ class MenuItem(Component):
             return
         icon.font_size = tokens.list_item_with_leading_icon_leading_icon_size
         icon.color = tokens.list_item_with_leading_icon_leading_icon_color
+
+    @effect(ThemeHook, selected)
+    def _apply_bg(self) -> None:
+        background_color = (
+            tokens.list_item_selected_container_color
+            if self.selected
+            else tokens.container_color
+        )
+        self.sx = {**self.sx, "background-color": background_color}
