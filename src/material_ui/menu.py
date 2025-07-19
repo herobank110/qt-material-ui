@@ -74,7 +74,7 @@ class Menu(Component):
             anchor_widget: The widget to anchor the menu to.
         """
         pos = anchor_widget.mapToGlobal(QPoint(0, anchor_widget.height()))
-        pos -= QPoint(0, _CONTAINER_DROP_SHADOW_SPACE)
+        pos -= QPoint(_CONTAINER_DROP_SHADOW_SPACE, _CONTAINER_DROP_SHADOW_SPACE)
         self.move(pos)
         self.show()
 
