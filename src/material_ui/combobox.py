@@ -1,3 +1,4 @@
+from functools import partial
 from typing import cast
 
 from qtpy.QtCore import Qt
@@ -50,7 +51,7 @@ class ComboBox(Component):
             menu_item = MenuItem()
             menu_item.text = item
             menu_item.selected = item == self.value
-            menu_item.clicked.connect(lambda item_=item: self._on_click_item(item_))
+            menu_item.clicked.connect(partial(self._on_click_item, item))
             menu_item.setParent(menu)
         menu.open(anchor_widget=self._text_field, stretch_width=True)
 
