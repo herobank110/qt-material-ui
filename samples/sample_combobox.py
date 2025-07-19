@@ -15,6 +15,7 @@ class SampleComboBox(Component):
         cb = ComboBox()
         cb.items = ["Option 1", "Option 2", "Option 3"]
         cb.label = "Label"
+        cb.on_change.connect(lambda item: print(f"selected: {item}"))
 
         self.overlay_widget(cb, QMargins(40, 40, 40, 40))
 
