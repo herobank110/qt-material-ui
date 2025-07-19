@@ -164,7 +164,7 @@ class BaseTextField(Component):
         self._line_edit.setStyleSheet(qss)
 
     @effect(trailing_icon)
-    def _place_leading_icon(self) -> None:
+    def _insert_trailing_icon(self) -> None:
         # Delete previous icon if exists.
         if prev_icon := self._trailing_icon_wrapper.findChild(Icon):
             if prev_icon is self.trailing_icon:
@@ -175,9 +175,23 @@ class BaseTextField(Component):
         # Show new icon.
         self._trailing_icon_wrapper.overlay_widget(self.trailing_icon)
 
-    @effect(trailing_icon, ThemeHook)
+    @effect(trailing_icon, Component.hovered, ThemeHook)
     def _apply_trailing_icon_properties(self) -> None:
-        if icon := self.trailing_icon is None:
+        if (icon := self.trailing_icon) is None:
             return
         icon.font_size = tokens.trailing_icon_size
-        icon.color = tokens.trailing_icon_color
+        icon.color = (
+            tokens.hover_trailing_icon_color
+            if self.hovered
+            else tokens.trailing_icon_color
+        )
+
+    @effect(Component.size)
+    def _place_trailing_icon_wrapper(self) -> None:
+        # TODO: have an anchor system for overlaying multiple widgets?
+        icon_size = cast("int", resolve_token(tokens.trailing_icon_size))
+        new_pos = QPoint(
+            self.width() - icon_size * 1.5,
+            (self.height() - icon_size) // 2,
+        )
+        self._trailing_icon_wrapper.move(new_pos)
