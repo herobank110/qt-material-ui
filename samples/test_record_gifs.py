@@ -145,12 +145,12 @@ def test_sample_combobox_gif(qtbot: QtBot, controller: Controller) -> None:
             move_to(x + 100 * dpr, y - 150 * dpr, instant=True),
             wait(2),
             move_to(x + 100 * dpr, y),
-            wait(0.5),
-            click,
-            move_to(x + 100 * dpr, y + 50 * dpr),
             click,
             wait(1),
-            move_to(x + 100 * dpr, y - 150 * dpr),
+            move_to(x + 100 * dpr, y + 70 * dpr),
+            click,
+            wait(1),
+            move_to(x + 100 * dpr, y + 250 * dpr),
         ]
         qtbot.wait(10000)
 
