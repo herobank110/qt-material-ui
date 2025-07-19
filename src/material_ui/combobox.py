@@ -46,15 +46,18 @@ class ComboBox(Component):
     def _show_menu(self) -> None:
         """Open the selection menu."""
         menu = Menu()
-        for item_text in self.items:
+        for item in self.items:
             menu_item = MenuItem()
-            menu_item.text = item_text
-            menu_item.selected = item_text == self.value
-            menu_item.clicked.connect(
-                lambda text=item_text: self.set_state("value", text),
-            )
+            menu_item.text = item
+            menu_item.selected = item == self.value
+            menu_item.clicked.connect(lambda item_=item: self._on_click_item(item_))
             menu_item.setParent(menu)
         menu.open(anchor_widget=self._text_field, stretch_width=True)
+
+    def _on_click_item(self, item: str) -> None:
+        if self.value != item:
+            self.value = item
+            self.on_change.emit(item)
 
     @effect(label)
     def _apply_label(self) -> None:
