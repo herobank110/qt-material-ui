@@ -53,7 +53,7 @@ class ComboBox(Component):
                 lambda text=item_text: self.set_state("value", text),
             )
             menu_item.setParent(menu)
-        menu.open(anchor_widget=self._text_field)
+        menu.open(anchor_widget=self._text_field, stretch_width=True)
 
     @effect(label)
     def _apply_label(self) -> None:

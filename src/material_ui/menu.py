@@ -67,15 +67,24 @@ class Menu(Component):
 
         self.overlay_widget(container, margins=_DROP_SHADOW_MARGIN)
 
-    def open(self, anchor_widget: Component) -> None:
+    def open(
+        self,
+        anchor_widget: Component,
+        *,
+        stretch_width: bool = False,
+    ) -> None:
         """Open the menu anchored to a specific widget.
 
         Args:
             anchor_widget: The widget to anchor the menu to.
+            stretch_width: Whether to fit the width of the anchor
+                widget.
         """
         pos = anchor_widget.mapToGlobal(QPoint(0, anchor_widget.height()))
         pos -= QPoint(_CONTAINER_DROP_SHADOW_SPACE, _CONTAINER_DROP_SHADOW_SPACE)
         self.move(pos)
+        if stretch_width:
+            self.setFixedWidth(anchor_widget.width() + _CONTAINER_DROP_SHADOW_SPACE * 2)
         self.show()
 
     def close_menu(self) -> None:
