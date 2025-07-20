@@ -656,7 +656,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
 
     hovered = use_state(False)
     pressed = use_state(False)
-    clicked: Signal
+    clicked: Signal = field(init=False)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:  # noqa: N802
         if event.button() == Qt.MouseButton.LeftButton:
