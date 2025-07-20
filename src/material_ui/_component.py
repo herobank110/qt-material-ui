@@ -4,7 +4,16 @@ import inspect
 from collections.abc import Callable
 from dataclasses import dataclass
 from functools import partial
-from typing import TYPE_CHECKING, Any, Generic, TypeVar, cast, get_args, overload
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Generic,
+    TypeVar,
+    cast,
+    dataclass_transform,
+    get_args,
+    overload,
+)
 
 from qtpy.QtCore import (
     Property,
@@ -179,22 +188,6 @@ def _find_signal_annotations(attrs: dict[str, Any]) -> dict[str, int]:
             num_args = len(get_args(value))
             ret_val[key] = num_args
     return ret_val
-
-
-class _ComponentMeta(type(QObject)):  # type: ignore[misc]
-    """Meta class for all widgets."""
-
-    def __new__(cls, name: str, bases: Any, attrs: Any) -> type:
-        # Convert Signal annotations to actual Qt Signal objects.
-        # Use QVariant to avoid runtime type checking by Qt. Can't
-        # remember exact examples but it may fail for certain types.
-        attrs.update(
-            {
-                key: QtSignal(*["QVariant"] * num_args)
-                for key, num_args in _find_signal_annotations(attrs).items()
-            },
-        )
-        return super().__new__(cls, name, bases, attrs)
 
 
 @dataclass
@@ -393,6 +386,23 @@ def _pop_last_accessed_state(value: _T) -> State[_T] | None:
     if state and isinstance(state, State) and state.get_value() is value:
         return cast("State[_T]", state)
     return None
+
+
+@dataclass_transform(kw_only_default=True)  # , field_specifiers=(use_state,))
+class _ComponentMeta(type(QObject)):  # type: ignore[misc]
+    """Meta class for all widgets."""
+
+    def __new__(cls, name: str, bases: Any, attrs: Any) -> type:
+        # Convert Signal annotations to actual Qt Signal objects.
+        # Use QVariant to avoid runtime type checking by Qt. Can't
+        # remember exact examples but it may fail for certain types.
+        attrs.update(
+            {
+                key: QtSignal(*["QVariant"] * num_args)
+                for key, num_args in _find_signal_annotations(attrs).items()
+            },
+        )
+        return super().__new__(cls, name, bases, attrs)
 
 
 class Component(QWidget, metaclass=_ComponentMeta):
