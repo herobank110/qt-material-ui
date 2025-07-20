@@ -423,7 +423,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
     _size = use_state(QSize())
     """Internal state for Qt `size` property."""
 
-    _children = use_state([])
+    _children = use_state(cast("list[QObject]", []))
     """Internal state for Qt `children` property."""
 
     def __init__(self) -> None:
