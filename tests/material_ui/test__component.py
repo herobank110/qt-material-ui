@@ -28,6 +28,18 @@ def test_Component_state_bind_on_assignment(qtbot: QtBot):
     assert c2.a == "hi"
 
 
+def test_Component_state_kw_args_init(qtbot: QtBot):
+    class C(Component):
+        a: str = use_state("")
+
+    c1 = C(a="hi")
+    assert c1.a == "hi"
+    qtbot.add_widget(c1)
+
+    c2 = C(parent=c1)
+    assert c2.parent is c1
+
+
 def test_Component_effect_called_initially_and_on_change(
     qtbot: QtBot,
     mocker: MockerFixture,

@@ -2,7 +2,7 @@
 
 import inspect
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import partial
 from typing import (
     TYPE_CHECKING,
@@ -407,6 +407,8 @@ class _ComponentMeta(type(QObject)):  # type: ignore[misc]
 
 class Component(QWidget, metaclass=_ComponentMeta):
     """Base class for all widgets."""
+
+    parent: QObject | None = use_state(None)  # type: ignore[assignment]
 
     sx = use_state(cast("StyleDict", {}))
 
