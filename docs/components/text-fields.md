@@ -16,10 +16,11 @@ FilledTextField(label="Name")
 
 ### Properties
 
-| Name    | Type  | Default | Description                      |
-| ------- | ----- | ------- | -------------------------------- |
-| `label` | `str` | `""`    | Floating label text.             |
-| `value` | `str` | `""`    | Current value of the text field. |
+| Name            | Type           | Default | Description                         |
+| --------------- | -------------- | ------- | ----------------------------------- |
+| `label`         | `str`          | `""`    | Floating label text.                |
+| `value`         | `str`          | `""`    | Current value of the text field.    |
+| `trailing_icon` | `Icon \| None` | `None`  | Icon to show in the trailing space. |
 
 ### Signals
 

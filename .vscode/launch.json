@@ -27,6 +27,13 @@
       "console": "integratedTerminal"
     },
     {
+      "name": "Sample - ComboBox",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/samples/sample_combobox.py",
+      "console": "integratedTerminal"
+    },
+    {
       "name": "Sample - Color Palette",
       "type": "debugpy",
       "request": "launch",
