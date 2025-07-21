@@ -18,7 +18,7 @@ spinner.value = 0.6
 spinner.value = 1.0
 
 
-LinearProgress(indeterminate = True)
+LinearProgress(indeterminate=True)
 ```
 
 ## API
