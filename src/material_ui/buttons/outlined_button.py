@@ -7,8 +7,8 @@ from material_ui.tokens import md_comp_outlined_button as tokens
 class OutlinedButton(ButtonBase):
     """OutlinedButton."""
 
-    def __init__(self) -> None:
-        super().__init__()
+    def _create(self) -> None:
+        super()._create()
         self._container.sx = {
             **self._container.sx,
             "border-color": tokens.outline_color,

@@ -32,8 +32,8 @@ class LinearProgress(BaseProgress):
     _bar2_translate = use_state(0.0)
     _bar2_scale = use_state(0.0)
 
-    def __init__(self) -> None:
-        super().__init__()
+    def _create(self) -> None:
+        super()._create()
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         self.setFixedHeight(cast("int", resolve_token(tokens.track_height)))
 

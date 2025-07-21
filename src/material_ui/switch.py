@@ -1,5 +1,7 @@
 """Switch component."""
 
+from dataclasses import field
+
 from qtpy.QtCore import QEasingCurve, QRect
 from qtpy.QtGui import QColor
 
@@ -22,7 +24,10 @@ _PRESSED_HANDLE_WIDTH = 28
 _SELECTED_HANDLE_WIDTH = 24
 
 _TRACK_GEOMETRY = QRect(
-    _STATE_LAYER_MARGIN, _STATE_LAYER_MARGIN, _TRACK_WIDTH, _TRACK_HEIGHT
+    _STATE_LAYER_MARGIN,
+    _STATE_LAYER_MARGIN,
+    _TRACK_WIDTH,
+    _TRACK_HEIGHT,
 )
 _UNSELECTED_HANDLE_GEOMETRY = QRect(
     _STATE_LAYER_MARGIN + (_TRACK_HEIGHT - _UNSELECTED_HANDLE_WIDTH) // 2,
@@ -68,8 +73,8 @@ _SELECTED_STATE_LAYER_GEOMETRY = QRect(
 class Switch(Component):
     """Switches toggle the selection of an item on or off."""
 
-    selected = use_state(False)
-    disabled = use_state(False)
+    selected: bool = use_state(False)
+    disabled: bool = use_state(False)
 
     # Create states for the animated properties.
     _handle_geometry = use_state(
@@ -85,31 +90,29 @@ class Switch(Component):
         easing=QEasingCurve.Type.InOutCubic,
     )
 
-    on_change: Signal[bool]
+    on_change: Signal[bool] = field(init=False)
     """Emitted when the user toggles the switch."""
 
-    def __init__(self) -> None:
-        super().__init__()
-
+    def _create(self) -> None:
         self.setFixedSize(_SWITCH_WIDTH, _SWITCH_HEIGHT)
         self.clicked.connect(self._on_click)
         self.should_propagate_click = False
 
-        self._track = Shape()
-        self._track.corner_shape = tokens.track_shape
+        self._track = Shape(parent=self, corner_shape=tokens.track_shape)
         self._track.setGeometry(_TRACK_GEOMETRY)
-        self._track.setParent(self)
 
-        self._state_layer = Shape()
-        self._state_layer.color = tokens.unselected_focus_state_layer_color
-        self._state_layer.opacity = tokens.unselected_focus_state_layer_opacity
-        self._state_layer.corner_shape = tokens.state_layer_shape
-        self._state_layer.visible = self.hovered
-        self._state_layer.setParent(self)
+        self._state_layer = Shape(
+            parent=self,
+            color=tokens.unselected_focus_state_layer_color,
+            opacity=tokens.unselected_focus_state_layer_opacity,
+            corner_shape=tokens.state_layer_shape,
+            visible=self.hovered,
+        )
 
-        self._handle = Shape()
-        self._handle.corner_shape = tokens.handle_shape
-        self._handle.setParent(self)
+        self._handle = Shape(
+            parent=self,
+            corner_shape=tokens.handle_shape,
+        )
 
     def _on_click(self) -> None:
         """Handle click events to toggle the switch."""

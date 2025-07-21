@@ -6,7 +6,7 @@ from qtpy.QtCore import QMargins, QSize, Qt
 from qtpy.QtGui import QMouseEvent
 from qtpy.QtWidgets import QHBoxLayout
 
-from material_ui._component import Component, Signal, effect, use_state
+from material_ui._component import Component, effect, use_state
 from material_ui._lab import DropShadow
 from material_ui.ripple import Ripple
 from material_ui.shape import Shape
@@ -24,41 +24,31 @@ _TOUCH_AREA_MARGINS = QMargins(0, _TOUCH_AREA_Y_PADDING, 0, _TOUCH_AREA_Y_PADDIN
 class ButtonBase(Component):
     """Base class for button variants."""
 
-    clicked: Signal
+    text: str = use_state("")
 
-    text = use_state("")
-
-    hovered = use_state(False)
-    pressed = use_state(False)
-
-    def __init__(self) -> None:
-        super().__init__()
-
+    def _create(self) -> None:
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.sx = {"margin": f"{_TOUCH_AREA_Y_PADDING}px 0px"}
 
         self._drop_shadow = DropShadow()
         self.setGraphicsEffect(self._drop_shadow)
 
-        self._container = Shape()
-        self._container.corner_shape = tokens.container_shape
-        self._container.setParent(self)
+        self._container = Shape(parent=self, corner_shape=tokens.container_shape)
         self._container.move(0, _TOUCH_AREA_Y_PADDING)
 
-        self._state_layer = Shape()
-        self._state_layer.setParent(self._container)
-        self._state_layer.corner_shape = tokens.container_shape
+        self._state_layer = Shape(
+            parent=self._container,
+            corner_shape=tokens.container_shape,
+        )
 
-        self._ripple = Ripple()
-        self._ripple.setParent(self._container)
+        self._ripple = Ripple(parent=self._container)
 
         container_layout = QHBoxLayout(self._container)
         container_layout.setContentsMargins(QMargins(24, 0, 24, 0))
         container_layout.setSpacing(0)
 
-        self._label = Typography()
-        self._label.text = self.text
-        self._label.alignment = Qt.AlignmentFlag.AlignCenter
+        self._label = Typography(alignment=Qt.AlignmentFlag.AlignCenter)
+        self._label.text = self.text  # bind
         container_layout.addWidget(self._label)
 
     def sizeHint(self) -> QSize:  # noqa: N802
@@ -79,7 +69,7 @@ class ButtonBase(Component):
         self._state_layer.resize(container_size)
         self._ripple.resize(container_size)
 
-    @effect(hovered)
+    @effect(Component.hovered)
     def _update_state_layer(self) -> None:
         self._state_layer.color = tokens.hover_state_layer_color
         self._state_layer.opacity = (

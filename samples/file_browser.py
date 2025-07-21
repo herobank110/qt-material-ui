@@ -43,13 +43,11 @@ MOCK_FILE_SYSTEM = {
 class DirectoryItem(Component):
     """A component representing a directory item in the file browser."""
 
-    label = use_state("")
+    label: str = use_state("")
     on_click: Signal
 
-    def __init__(self) -> None:
-        super().__init__()
-        self._button = TextButton()
-        self._button.clicked.connect(self.on_click)
+    def _create(self) -> None:
+        self._button = TextButton(clicked=self.on_click)
         self.overlay_widget(self._button)
 
     @effect(label)
@@ -60,9 +58,7 @@ class DirectoryItem(Component):
 class FileBrowserApp(Component):
     current_path = use_state(Path())
 
-    def __init__(self) -> None:
-        super().__init__()
-
+    def _create(self) -> None:
         self.resize(300, 400)
         self.sx = {"background-color": md_sys_color.background}
 
@@ -85,16 +81,21 @@ class FileBrowserApp(Component):
         # Create .. item to go up one directory.
         if self.current_path != Path():
             parent_path = self.current_path.parent
-            item = DirectoryItem()
-            item.label = ".."
-            item.on_click.connect(lambda: self.set_state("current_path", parent_path))
+            item = DirectoryItem(
+                label="..",
+                on_click=lambda: self.set_state("current_path", parent_path),
+            )
             self.stack.add_widget(item)
         # Create new items.
         for path in listdir(self.current_path):
-            item = DirectoryItem()
-            item.label = path.name
-            if not isfile(path):
-                item.on_click.connect(lambda p=path: self.set_state("current_path", p))
+            item = DirectoryItem(
+                label=path.name,
+                on_click=(
+                    (lambda p=path: self.set_state("current_path", p))
+                    if not isfile(path)
+                    else lambda: None
+                ),
+            )
             self.stack.add_widget(item)
 
 

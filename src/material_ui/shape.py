@@ -25,10 +25,12 @@ If not checking this threshold, Qt will just go full opaque...
 class Shape(Component):
     """A blank component with common shape features."""
 
-    visible = use_state(True)
-    corner_shape = use_state(md_sys_shape.corner_none)
-    color = use_state(cast("QColor | DesignToken", QColor("transparent")))
-    opacity = use_state(cast("float | DesignToken", 1.0))
+    visible: bool = use_state(True)
+    corner_shape: DesignToken = use_state(md_sys_shape.corner_none)
+    color: QColor | DesignToken = use_state(
+        cast("QColor | DesignToken", QColor("transparent")),
+    )
+    opacity: float | DesignToken = use_state(cast("float | DesignToken", 1.0))
 
     @effect(corner_shape, Component.size)
     def _apply_corner_shape(self) -> None:
@@ -84,9 +86,9 @@ class Shape(Component):
 class Line(Component):
     """A straight line."""
 
-    color = use_state(md_sys_color.outline)
-    thickness = use_state(cast("int | DesignToken", 1))
-    orientation = use_state(Qt.Orientation.Horizontal)
+    color: DesignToken = use_state(md_sys_color.outline)
+    thickness: int | DesignToken = use_state(cast("int | DesignToken", 1))
+    orientation: Qt.Orientation = use_state(Qt.Orientation.Horizontal)
 
     @effect(color, thickness, orientation)
     def _apply_line(self) -> None:

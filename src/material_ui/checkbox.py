@@ -1,5 +1,6 @@
 """Checkbox component."""
 
+from dataclasses import field
 from typing import cast
 
 from qtpy.QtCore import QEasingCurve, QPointF, Qt
@@ -17,13 +18,13 @@ from material_ui.tokens._utils import resolve_token
 class Checkbox(Component):
     """Checkbox component."""
 
-    selected = use_state(False)
+    selected: bool = use_state(False)
     """Whether the checkbox is checked."""
 
-    indeterminate = use_state(False)
+    indeterminate: bool = use_state(False)
     """Whether the checkbox is in an indeterminate state."""
 
-    on_change: Signal[bool]
+    on_change: Signal[bool] = field(init=False)
     """Emitted when the user toggles the checkbox."""
 
     _outline_width = use_state(tokens.unselected_outline_width)
@@ -37,9 +38,7 @@ class Checkbox(Component):
         easing=QEasingCurve.Type.InQuad,
     )
 
-    def __init__(self) -> None:
-        super().__init__()
-
+    def _create(self) -> None:
         self.setFixedSize(48, 48)
         self.clicked.connect(self._on_clicked)
         self.should_propagate_click = False

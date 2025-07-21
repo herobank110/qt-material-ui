@@ -24,8 +24,8 @@ from material_ui.tokens._utils import resolve_token
 class CircularProgress(BaseProgress):
     """Circular progress indicator."""
 
-    def __init__(self) -> None:
-        super().__init__()
+    def _create(self) -> None:
+        super()._create()
         self.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         size = resolve_token(tokens.size)
         self.setFixedSize(QSize(size, size))

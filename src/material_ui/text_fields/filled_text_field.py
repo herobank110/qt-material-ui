@@ -15,8 +15,8 @@ class FilledTextField(BaseTextField):
     _FLOATING_LABEL_POS = QPoint(18, 8)
     _RESTING_LABEL_POS = QPoint(16, 18)
 
-    def __init__(self) -> None:
-        super().__init__()
+    def _create(self) -> None:
+        super()._create()
 
         self._background = Shape()
         self._background.corner_shape = tokens.container_shape

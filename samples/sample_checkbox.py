@@ -14,21 +14,10 @@ class SampleCheckbox(Component):
 
         self.sx = {"background-color": md_sys_color.background}
 
-        row = Row()
-        row.gap = 30
-        row.margins = QMargins(40, 30, 40, 30)
-
-        checkbox1 = Checkbox()
-        row.add_widget(checkbox1)
-
-        checkbox2 = Checkbox()
-        checkbox2.selected = True
-        row.add_widget(checkbox2)
-
-        checkbox3 = Checkbox()
-        checkbox3.indeterminate = True
-        row.add_widget(checkbox3)
-
+        row = Row(gap=30, margins=QMargins(40, 30, 40, 30))
+        row.add_widget(Checkbox())
+        row.add_widget(Checkbox(selected=True))
+        row.add_widget(Checkbox(indeterminate=True))
         self.overlay_widget(row)
 
 

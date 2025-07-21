@@ -23,33 +23,33 @@ class Icon(Component):
     Check here for available icons: https://fonts.google.com/icons
     """
 
-    icon_name = use_state("star")
+    icon_name: str = use_state("star")
     """Icon name to display. See: https://fonts.google.com/icons."""
 
-    icon_style = use_state(cast("IconStyle", "outlined"))
+    icon_style: IconStyle = use_state(cast("IconStyle", "outlined"))
     """Icon style. Either 'outlined', 'rounded', or 'sharp'."""
 
-    font_size = use_state(cast("DesignToken | int", 24))
+    font_size: DesignToken | int = use_state(cast("DesignToken | int", 24))
     """Font size of icon."""
 
-    color = use_state(cast("DesignToken | QColor", md_sys_color.on_surface))
+    color: DesignToken | QColor = use_state(
+        cast("DesignToken | QColor", md_sys_color.on_surface),
+    )
     """Color of the icon."""
 
-    weight = use_state(400)
+    weight: int = use_state(400)
     """Main control of thickness. 400 is default, 100 is thin, 700 is thick."""
 
-    filled = use_state(False)
+    filled: bool = use_state(False)
     """Whether the icon should be filled."""
 
-    grade = use_state(0)
+    grade: int = use_state(0)
     """Thickness. 0 is default, -25 is thin, 200 is thick."""
 
-    use_optical_size = use_state(True)
+    use_optical_size: bool = use_state(True)
     """Whether to set the optical size to match the font size."""
 
-    def __init__(self) -> None:
-        super().__init__()
-
+    def _create(self) -> None:
         # Ensure fonts are installed (blocking!).
         install_default_fonts()
 

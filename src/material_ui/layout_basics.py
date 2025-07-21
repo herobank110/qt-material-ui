@@ -1,24 +1,20 @@
 """Components to simplify layout of a few items."""
 
-from typing import cast
-
 from qtpy.QtCore import QMargins, Qt
 from qtpy.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 
 from material_ui._component import Component, effect, use_state
-
-_DefaultAlignment = cast("Qt.AlignmentFlag", Qt.AlignmentFlag())  # type: ignore[assignment, call-arg]
+from material_ui._utils import default_alignment
 
 
 class Row(Component):
     """A horizontal container."""
 
-    alignment = use_state(_DefaultAlignment)
-    gap = use_state(0)
-    margins = use_state(QMargins())
+    alignment: Qt.AlignmentFlag = use_state(default_alignment)
+    gap: int = use_state(0)
+    margins: QMargins = use_state(QMargins())
 
-    def __init__(self) -> None:
-        super().__init__()
+    def _create(self) -> None:
         self._hbox = QHBoxLayout(self)
 
     def add_widget(self, widget: QWidget) -> None:
@@ -35,27 +31,12 @@ class Row(Component):
 class Stack(Component):
     """A vertical container."""
 
-    alignment = use_state(_DefaultAlignment)
-    gap = use_state(0)
-    margins = use_state(QMargins())
+    alignment: Qt.AlignmentFlag = use_state(default_alignment)
+    gap: int = use_state(0)
+    margins: QMargins = use_state(QMargins())
 
-    def __init__(
-        self,
-        *,
-        alignment: Qt.AlignmentFlag | None = None,
-        gap: int | None = None,
-        margins: QMargins | None = None,
-    ) -> None:
-        super().__init__()
-
+    def _create(self) -> None:
         self._vbox = QVBoxLayout(self)
-
-        if alignment is not None:
-            self.alignment = alignment
-        if gap is not None:
-            self.gap = gap
-        if margins is not None:
-            self.margins = margins
 
     def add_widget(self, widget: QWidget) -> None:
         """Add a widget to the stack."""

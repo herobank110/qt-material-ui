@@ -20,11 +20,11 @@ class SampleButtons(Component):
         super().__init__()
         self.resize(700, 200)
 
-        row = Row()
-        row.alignment = Qt.AlignmentFlag.AlignCenter
-        row.gap = 30
-        row.sx = {"background-color": "white"}
-        self.overlay_widget(row)
+        row = Row(
+            alignment=Qt.AlignmentFlag.AlignCenter,
+            gap=30,
+            sx={"background-color": "white"},
+        )
 
         for variant, klass in {
             "Elevated": ElevatedButton,
@@ -33,10 +33,11 @@ class SampleButtons(Component):
             "Outlined": OutlinedButton,
             "Text": TextButton,
         }.items():
-            button = klass()
-            button.text = variant
+            button = klass(text=variant)
             button.clicked.connect(partial(self._on_click_button, variant))
             row.add_widget(button)
+
+        self.overlay_widget(row)
 
     def _on_click_button(self, variant: str) -> None:
         print(f"Clicked: {variant}")

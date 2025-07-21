@@ -14,8 +14,7 @@ from qtpy.QtWidgets import QApplication
 class SampleMenu(Component):
     selected_item = use_state("")
 
-    def __init__(self) -> None:
-        super().__init__()
+    def _create(self) -> None:
         self.sx = {"background-color": md_sys_color.background}
 
         stack = Stack()
@@ -35,25 +34,22 @@ class SampleMenu(Component):
 
     def _on_click_show_menu_button(self) -> None:
         menu = Menu()
-
-        item1 = MenuItem()
-        item1.text = "Item 1"
-        item1_icon = Icon()
-        item1_icon.icon_name = "check"
-        item1.leading_icon = item1_icon
-        item1.clicked.connect(self._on_click_item1)
-        item1.setParent(menu)
-
-        item2 = MenuItem()
-        item2.text = "Item 2"
-        item2.clicked.connect(self._on_click_item2)
-        item2.setParent(menu)
-
-        item3 = MenuItem()
-        item3.text = "Item 3"
-        item3.clicked.connect(self._on_click_item3)
-        item3.setParent(menu)
-
+        MenuItem(
+            parent=menu,
+            text="Item 1",
+            leading_icon=Icon(icon_name="check"),
+            clicked=self._on_click_item1,
+        )
+        MenuItem(
+            parent=menu,
+            text="Item 2",
+            clicked=self._on_click_item2,
+        )
+        MenuItem(
+            parent=menu,
+            text="Item 3",
+            clicked=self._on_click_item3,
+        )
         menu.open(anchor_widget=self._show_menu_button)
 
     def _on_click_item1(self) -> None:
