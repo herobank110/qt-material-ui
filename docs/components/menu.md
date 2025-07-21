@@ -13,7 +13,8 @@ menu = Menu()
 MenuItem(parent=menu, text="Item 1", on_click=lambda: print("Item 1 clicked"))
 MenuItem(parent=menu, text="Item 2", on_click=lambda: print("Item 2 clicked"))
 MenuItem(parent=menu, text="Item 3", on_click=lambda: print("Item 3 clicked"))
-menu.open()
+anchor_widget = some_widget  # Replace `some_widget` with the actual widget to anchor the menu
+menu.open(anchor_widget=anchor_widget)
 ```
 
 ## API
