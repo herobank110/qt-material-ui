@@ -1,12 +1,12 @@
-name: Build CI Docker
+name: Build CI Tests Image
 
 on:
   push:
-    branches: ["main"]
-    paths: ["ci/Dockerfile"]
+    branches: [main]
+    paths: [ci/tests/Dockerfile]
   pull_request:
-    branches: ["main"]
-    paths: ["ci/Dockerfile"]
+    branches: [main]
+    paths: [ci/tests/Dockerfile]
 
 permissions:
   contents: read
@@ -29,6 +29,6 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          file: ci/Dockerfile
+          file: ci/tests/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}/ci:${{ github.head_ref || 'latest' }}
+          tags: ghcr.io/${{ github.repository }}/ci-tests:${{ github.head_ref || 'latest' }}
