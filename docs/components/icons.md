@@ -9,8 +9,7 @@
 ```python
 from material_ui.icon import Icon
 
-icon = Icon()
-icon.icon_name = "star"
+Icon(icon_name="star")
 ```
 
 ## Icon Font
