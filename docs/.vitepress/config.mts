@@ -32,6 +32,7 @@ export default defineConfig({
         items: [
           { text: "Buttons", link: "/components/buttons" },
           { text: "Checkbox", link: "/components/checkbox" },
+          { text: "ComboBox", link: "/components/combobox" },
           { text: "Icons", link: "/components/icons" },
           { text: "Menu", link: "/components/menu" },
           {

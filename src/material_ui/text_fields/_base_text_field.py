@@ -7,6 +7,7 @@ from qtpy.QtWidgets import QLineEdit, QSizePolicy
 
 from material_ui._component import Component, Signal, effect, use_state
 from material_ui._utils import StyleDict, convert_sx_to_qss
+from material_ui.icon import Icon
 from material_ui.theming.theme_hook import ThemeHook
 from material_ui.tokens import md_comp_filled_text_field as tokens
 from material_ui.tokens import md_sys_color
@@ -24,6 +25,9 @@ class BaseTextField(Component):
 
     value = use_state("")
     """Current value of the text field."""
+
+    trailing_icon = use_state(cast("Icon | None", None))
+    """Icon to show in the trailing space."""
 
     on_change: Signal[str]
     """Emitted when the value changed."""
@@ -58,6 +62,9 @@ class BaseTextField(Component):
         self._line_edit.textEdited.connect(self._on_line_edit_text_edited)
         # Focus pass through to the line edit.
         self.setFocusProxy(self._line_edit)
+
+        self._trailing_icon_wrapper = Component()
+        self._trailing_icon_wrapper.setParent(self)
 
         self.clicked.connect(self._on_clicked)
         self.should_propagate_click = False
@@ -155,3 +162,36 @@ class BaseTextField(Component):
     def _apply_line_edit_sx(self) -> None:
         qss = convert_sx_to_qss(self._line_edit_sx)
         self._line_edit.setStyleSheet(qss)
+
+    @effect(trailing_icon)
+    def _insert_trailing_icon(self) -> None:
+        # Delete previous icon if exists.
+        if prev_icon := self._trailing_icon_wrapper.findChild(Icon):
+            if prev_icon is self.trailing_icon:
+                return  # Nothing to do.
+            prev_icon.setParent(None)
+        if self.trailing_icon is None:
+            return  # No icon needed.
+        # Show new icon.
+        self._trailing_icon_wrapper.overlay_widget(self.trailing_icon)
+
+    @effect(trailing_icon, Component.hovered, ThemeHook)
+    def _apply_trailing_icon_properties(self) -> None:
+        if (icon := self.trailing_icon) is None:
+            return
+        icon.font_size = tokens.trailing_icon_size
+        icon.color = (
+            tokens.hover_trailing_icon_color
+            if self.hovered
+            else tokens.trailing_icon_color
+        )
+
+    @effect(Component.size)
+    def _place_trailing_icon_wrapper(self) -> None:
+        # TODO: have an anchor system for overlaying multiple widgets?
+        icon_size = cast("int", resolve_token(tokens.trailing_icon_size))
+        new_pos = QPoint(
+            self.width() - icon_size * 1.5,
+            (self.height() - icon_size) // 2,
+        )
+        self._trailing_icon_wrapper.move(new_pos)

@@ -67,15 +67,24 @@ class Menu(Component):
 
         self.overlay_widget(container, margins=_DROP_SHADOW_MARGIN)
 
-    def open(self, anchor_widget: Component) -> None:
+    def open(
+        self,
+        anchor_widget: Component,
+        *,
+        stretch_width: bool = False,
+    ) -> None:
         """Open the menu anchored to a specific widget.
 
         Args:
             anchor_widget: The widget to anchor the menu to.
+            stretch_width: Whether to fit the width of the anchor
+                widget.
         """
         pos = anchor_widget.mapToGlobal(QPoint(0, anchor_widget.height()))
-        pos -= QPoint(0, _CONTAINER_DROP_SHADOW_SPACE)
+        pos -= QPoint(_CONTAINER_DROP_SHADOW_SPACE, _CONTAINER_DROP_SHADOW_SPACE)
         self.move(pos)
+        if stretch_width:
+            self.setFixedWidth(anchor_widget.width() + _CONTAINER_DROP_SHADOW_SPACE * 2)
         self.show()
 
     def close_menu(self) -> None:
@@ -106,6 +115,9 @@ class MenuItem(Component):
 
     leading_icon = use_state(cast("Icon | None", None))
     """Icon to go at the start of the item."""
+
+    selected = use_state(False)
+    """Whether the item is selected."""
 
     _state_layer_opacity = use_state(
         0.0,
@@ -199,3 +211,12 @@ class MenuItem(Component):
             return
         icon.font_size = tokens.list_item_with_leading_icon_leading_icon_size
         icon.color = tokens.list_item_with_leading_icon_leading_icon_color
+
+    @effect(ThemeHook, selected)
+    def _apply_bg(self) -> None:
+        background_color = (
+            tokens.list_item_selected_container_color
+            if self.selected
+            else tokens.container_color
+        )
+        self.sx = {**self.sx, "background-color": background_color}
