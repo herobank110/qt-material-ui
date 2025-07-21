@@ -476,7 +476,12 @@ class Component(QWidget, metaclass=_ComponentMeta):
         """
         for key, value in kw.items():
             if hasattr(self, key):
-                setattr(self, key, value)
+                if isinstance(signal := getattr(self, key), QtSignal):
+                    # For signals, connect the callback.
+                    signal.connect(value)
+                else:
+                    # Otherwise assign the value directly.
+                    setattr(self, key, value)
 
     def _create(self) -> None:
         """Override in derived Components to create the widget.

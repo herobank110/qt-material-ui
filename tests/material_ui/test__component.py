@@ -2,7 +2,13 @@ import pytest
 from pytest_mock import MockerFixture
 from pytestqt.qtbot import QtBot
 
-from material_ui._component import Component, EffectDependencyError, effect, use_state
+from material_ui._component import (
+    Component,
+    EffectDependencyError,
+    Signal,
+    effect,
+    use_state,
+)
 from material_ui.hook import Hook
 
 
@@ -60,6 +66,21 @@ def test_Component_state_kw_args_init_with_effect_dependency_custom_create(
     c1 = C(a="hi")
     assert stub.called
     assert c1.a == "hi"
+    qtbot.add_widget(c1)
+
+
+def test_Component_state_kw_args_init_assign_to_signal_conversion(
+    qtbot: QtBot,
+    mocker: MockerFixture,
+):
+    stub = mocker.stub()
+
+    class C(Component):
+        a: Signal[int]
+
+    c1 = C(a=stub)
+    c1.a.emit(11)
+    stub.assert_called_with(11)
     qtbot.add_widget(c1)
 
 
