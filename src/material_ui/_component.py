@@ -414,7 +414,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
 
     parent: QObject | None = use_state(None)  # type: ignore[assignment]
 
-    sx = use_state(cast("StyleDict", {}))
+    sx: StyleDict = use_state(cast("StyleDict", {}))
 
     focused = use_state(False)
     """State version of Qt's `focus` property.
@@ -440,6 +440,8 @@ class Component(QWidget, metaclass=_ComponentMeta):
 
         self.__instantiate_state_variables()
         self.__bind_effects()
+        # Create before setting states to prepare dependent effects.
+        self._create()
         self.__apply_initial_kw_states(kw)
 
         # Make qt stylesheets work properly!
@@ -447,8 +449,6 @@ class Component(QWidget, metaclass=_ComponentMeta):
 
         self.should_propagate_click = True
         """Whether the click event should be propagated to the parent widget."""
-
-        self._create()
 
     def __instantiate_state_variables(self) -> None:
         """Create State instances from class variables."""

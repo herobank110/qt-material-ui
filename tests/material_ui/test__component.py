@@ -40,6 +40,29 @@ def test_Component_state_kw_args_init(qtbot: QtBot):
     assert c2.parent is c1
 
 
+def test_Component_state_kw_args_init_with_effect_dependency_custom_create(
+    qtbot: QtBot,
+    mocker: MockerFixture,
+):
+    stub = mocker.stub()
+
+    class C(Component):
+        a: str = use_state("")
+
+        def _create(self) -> None:
+            self.x = 1
+
+        @effect(a)
+        def a_effect(self) -> None:
+            assert self.x == 1
+            stub()
+
+    c1 = C(a="hi")
+    assert stub.called
+    assert c1.a == "hi"
+    qtbot.add_widget(c1)
+
+
 def test_Component_effect_called_initially_and_on_change(
     qtbot: QtBot,
     mocker: MockerFixture,
