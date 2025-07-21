@@ -20,7 +20,7 @@ combo.label = "Select an option"
 
 | Name     | Type        | Default | Description                              |
 | -------- | ----------- | ------- | ---------------------------------------- |
-| `label ` | `str`       | `""`    | Label for the textfield of the combobox. |
+| `label`  | `str`       | `""`    | Label for the textfield of the combobox. |
 | `value`  | `str`       | `""`    | Currently selected value.                |
 | `items`  | `list[str]` | `[]`    | List of items to select from.            |
 
