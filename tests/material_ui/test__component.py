@@ -34,7 +34,7 @@ def test_Component_state_bind_on_assignment(qtbot: QtBot):
     assert c2.a == "hi"
 
 
-def test_Component_state_kw_args_init(qtbot: QtBot):
+def test_Component_state_kw_args_init_custom_state(qtbot: QtBot):
     class C(Component):
         a: str = use_state("")
 
@@ -42,8 +42,12 @@ def test_Component_state_kw_args_init(qtbot: QtBot):
     assert c1.a == "hi"
     qtbot.add_widget(c1)
 
-    c2 = C(parent=c1)
-    assert c2.parent is c1
+
+def test_Component_state_kw_args_init_parent(qtbot: QtBot):
+    c1 = Component(a="hi")
+    qtbot.add_widget(c1)
+    c2 = Component(parent=c1)
+    assert c2.parentWidget() is c1
 
 
 def test_Component_state_kw_args_init_with_effect_dependency_custom_create(

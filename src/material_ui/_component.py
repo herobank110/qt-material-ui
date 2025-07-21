@@ -476,7 +476,10 @@ class Component(QWidget, metaclass=_ComponentMeta):
         """
         for key, value in kw.items():
             if hasattr(self, key):
-                if isinstance(signal := getattr(self, key), QtSignal):
+                if key == "parent":
+                    # Set qt parent property key especially.
+                    self.setParent(value)
+                elif isinstance(signal := getattr(self, key), QtSignal):
                     # For signals, connect the callback.
                     signal.connect(value)
                 else:
