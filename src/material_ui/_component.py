@@ -10,7 +10,6 @@ from typing import (
     Generic,
     TypeVar,
     cast,
-    dataclass_transform,
     get_args,
     overload,
 )
@@ -32,7 +31,7 @@ from qtpy.QtCore import (
 )
 from qtpy.QtGui import QEnterEvent, QFocusEvent, QMouseEvent, QResizeEvent
 from qtpy.QtWidgets import QGraphicsOpacityEffect, QVBoxLayout, QWidget
-from typing_extensions import TypeIs, TypeVarTuple, Unpack
+from typing_extensions import TypeIs, TypeVarTuple, Unpack, dataclass_transform
 
 from material_ui._utils import StyleDict, convert_sx_to_qss, undefined
 from material_ui.hook import Hook
