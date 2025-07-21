@@ -31,4 +31,4 @@ jobs:
         with:
           file: ci/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}/ci:latest
+          tags: ghcr.io/${{ github.repository }}/ci:${{ github.ref_name }}
