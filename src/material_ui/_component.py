@@ -430,17 +430,25 @@ class Component(QWidget, metaclass=_ComponentMeta):
     _children = use_state(cast("list[QObject]", []))
     """Internal state for Qt `children` property."""
 
-    def __init__(self) -> None:
+    def __init__(self, **kw: Any) -> None:
+        """Construct the component.
+
+        Args:
+            kw: keywords to use for dataclass transform fields.
+        """
         super().__init__()
 
         self.__instantiate_state_variables()
         self.__bind_effects()
+        self.__apply_initial_kw_states(kw)
 
         # Make qt stylesheets work properly!
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, on=True)
 
         self.should_propagate_click = True
         """Whether the click event should be propagated to the parent widget."""
+
+        self._create()
 
     def __instantiate_state_variables(self) -> None:
         """Create State instances from class variables."""
@@ -459,6 +467,23 @@ class Component(QWidget, metaclass=_ComponentMeta):
                 state.set_transition(
                     _TransitionConfig(marker.transition, marker.easing),
                 )
+
+    def __apply_initial_kw_states(self, kw: dict[str, Any]) -> None:
+        """Set the state values from keyword args.
+
+        Args:
+            kw: kw from the constructor.
+        """
+        for key, value in kw.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
+
+    def _create(self) -> None:
+        """Override in derived Components to create the widget.
+
+        Use this instead of __init__ to make sure the dataclass
+        constructor can be used to specify props on construction.
+        """
 
     # Prevent IDEs from showing misspelled variables as valid.
     if not TYPE_CHECKING:
