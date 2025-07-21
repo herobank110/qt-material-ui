@@ -2,11 +2,11 @@ name: Build CI Tests Image
 
 on:
   push:
-    branches: [main]
-    paths: [ci/tests/Dockerfile]
+    branches: ["main"]
+    paths: ["ci/tests/Dockerfile"]
   pull_request:
-    branches: [main]
-    paths: [ci/tests/Dockerfile]
+    branches: ["main"]
+    paths: ["ci/tests/Dockerfile"]
 
 permissions:
   contents: read
