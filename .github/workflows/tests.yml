@@ -14,8 +14,13 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/${{ github.repository }}/ci:31-docker-container-ci-image-build-test
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     env:
-      QT_QPA_PLATFORM: 'offscreen'
+      QT_QPA_PLATFORM: "offscreen"
 
     steps:
       - uses: actions/checkout@v4
