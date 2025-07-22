@@ -1,4 +1,5 @@
 FROM python:3.10
-ENV QT_QPA_PLATFORM offscreen
-RUN apk add --no-cache libegl
+ENV QT_QPA_PLATFORM=offscreen
+RUN apt-get update
+RUN apt-get install libegl1 -y
 RUN python -m pip install --upgrade pip
