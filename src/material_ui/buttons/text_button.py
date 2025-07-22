@@ -7,8 +7,8 @@ from material_ui.tokens import md_comp_text_button as tokens
 class TextButton(ButtonBase):
     """TextButton."""
 
-    def __init__(self) -> None:
-        super().__init__()
+    def _create(self) -> None:
+        super()._create()
         self._container.opacity = 0.0
         self._ripple.color = tokens.pressed_state_layer_color
         self._label.font_family = tokens.label_text_font

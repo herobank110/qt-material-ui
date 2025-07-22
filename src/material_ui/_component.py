@@ -2,9 +2,17 @@
 
 import inspect
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import partial
-from typing import TYPE_CHECKING, Any, Generic, TypeVar, cast, get_args, overload
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Generic,
+    TypeVar,
+    cast,
+    get_args,
+    overload,
+)
 
 from qtpy.QtCore import (
     Property,
@@ -23,7 +31,7 @@ from qtpy.QtCore import (
 )
 from qtpy.QtGui import QEnterEvent, QFocusEvent, QMouseEvent, QResizeEvent
 from qtpy.QtWidgets import QGraphicsOpacityEffect, QVBoxLayout, QWidget
-from typing_extensions import TypeIs, TypeVarTuple, Unpack
+from typing_extensions import TypeIs, TypeVarTuple, Unpack, dataclass_transform
 
 from material_ui._utils import StyleDict, convert_sx_to_qss, undefined
 from material_ui.hook import Hook
@@ -175,26 +183,14 @@ def _find_signal_annotations(attrs: dict[str, Any]) -> dict[str, int]:
         # the square brackets. However this means the value is the
         # actual type not a _GenericAlias, so use it as the default arg.
         underlying_value = getattr(value, "__origin__", value)
-        if underlying_value and issubclass(underlying_value, Signal):
+        if (
+            underlying_value
+            and inspect.isclass(underlying_value)
+            and issubclass(underlying_value, Signal)
+        ):
             num_args = len(get_args(value))
             ret_val[key] = num_args
     return ret_val
-
-
-class _ComponentMeta(type(QObject)):  # type: ignore[misc]
-    """Meta class for all widgets."""
-
-    def __new__(cls, name: str, bases: Any, attrs: Any) -> type:
-        # Convert Signal annotations to actual Qt Signal objects.
-        # Use QVariant to avoid runtime type checking by Qt. Can't
-        # remember exact examples but it may fail for certain types.
-        attrs.update(
-            {
-                key: QtSignal(*["QVariant"] * num_args)
-                for key, num_args in _find_signal_annotations(attrs).items()
-            },
-        )
-        return super().__new__(cls, name, bases, attrs)
 
 
 @dataclass
@@ -395,10 +391,29 @@ def _pop_last_accessed_state(value: _T) -> State[_T] | None:
     return None
 
 
+@dataclass_transform(kw_only_default=True)  # , field_specifiers=(use_state,))
+class _ComponentMeta(type(QObject)):  # type: ignore[misc]
+    """Meta class for all widgets."""
+
+    def __new__(cls, name: str, bases: Any, attrs: Any) -> type:
+        # Convert Signal annotations to actual Qt Signal objects.
+        # Use QVariant to avoid runtime type checking by Qt. Can't
+        # remember exact examples but it may fail for certain types.
+        attrs.update(
+            {
+                key: QtSignal(*["QVariant"] * num_args)
+                for key, num_args in _find_signal_annotations(attrs).items()
+            },
+        )
+        return super().__new__(cls, name, bases, attrs)
+
+
 class Component(QWidget, metaclass=_ComponentMeta):
     """Base class for all widgets."""
 
-    sx = use_state(cast("StyleDict", {}))
+    parent: QObject | None = use_state(None)  # type: ignore[assignment]
+
+    sx: StyleDict = use_state(cast("StyleDict", {}))
 
     focused = use_state(False)
     """State version of Qt's `focus` property.
@@ -411,14 +426,22 @@ class Component(QWidget, metaclass=_ComponentMeta):
     _size = use_state(QSize())
     """Internal state for Qt `size` property."""
 
-    _children = use_state([])
+    _children = use_state(cast("list[QObject]", []))
     """Internal state for Qt `children` property."""
 
-    def __init__(self) -> None:
+    def __init__(self, **kw: Any) -> None:
+        """Construct the component.
+
+        Args:
+            kw: keywords to use for dataclass transform fields.
+        """
         super().__init__()
 
         self.__instantiate_state_variables()
         self.__bind_effects()
+        # Create before setting states to prepare dependent effects.
+        self._create()
+        self.__apply_initial_kw_states(kw)
 
         # Make qt stylesheets work properly!
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, on=True)
@@ -443,6 +466,31 @@ class Component(QWidget, metaclass=_ComponentMeta):
                 state.set_transition(
                     _TransitionConfig(marker.transition, marker.easing),
                 )
+
+    def __apply_initial_kw_states(self, kw: dict[str, Any]) -> None:
+        """Set the state values from keyword args.
+
+        Args:
+            kw: kw from the constructor.
+        """
+        for key, value in kw.items():
+            if hasattr(self, key):
+                if key == "parent":
+                    # Set qt parent property key especially.
+                    self.setParent(value)
+                elif isinstance(signal := getattr(self, key), QtSignal):
+                    # For signals, connect the callback.
+                    signal.connect(value)
+                else:
+                    # Otherwise assign the value directly.
+                    setattr(self, key, value)
+
+    def _create(self) -> None:
+        """Override in derived Components to create the widget.
+
+        Use this instead of __init__ to make sure the dataclass
+        constructor can be used to specify props on construction.
+        """
 
     # Prevent IDEs from showing misspelled variables as valid.
     if not TYPE_CHECKING:
@@ -644,7 +692,7 @@ class Component(QWidget, metaclass=_ComponentMeta):
 
     hovered = use_state(False)
     pressed = use_state(False)
-    clicked: Signal
+    clicked: Signal = field(init=False)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:  # noqa: N802
         if event.button() == Qt.MouseButton.LeftButton:

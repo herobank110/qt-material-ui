@@ -9,8 +9,7 @@
 ```python
 from material_ui.text_fields import FilledTextField
 
-text_field = FilledTextField()
-text_field.label = "Name"
+FilledTextField(label="Name")
 ```
 
 ## API

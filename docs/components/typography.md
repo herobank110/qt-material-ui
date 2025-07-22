@@ -9,9 +9,10 @@
 ```python
 from material_ui.typography import Typography
 
-typography = Typography()
-typography.variant = "body-medium"
-typography.text = "Hello world"
+Typography(
+    variant="body-medium",
+    text="Hello world",
+)
 ```
 
 ## Font
@@ -90,7 +91,7 @@ The full list of available variants is as follows:
 | `font_family` | `DesignToken`                                                        | `body_medium_font`   | Font family.                                                 |
 | `font_size `  | `DesignToken`                                                        | `body_medium_size`   | Font size defined by a design token. Units are in DP.        |
 | `font_weight` | `DesignToken`                                                        | `body_medium_weight` | Font weight defined by a design token.                       |
-| `alignment `  | [`AlignmentFlag`](https://doc.qt.io/qt-6/qt.html#AlignmentFlag-enum) | `0` | Text alignment within the widget's geometry.                 |
+| `alignment `  | [`AlignmentFlag`](https://doc.qt.io/qt-6/qt.html#AlignmentFlag-enum) | `0`                  | Text alignment within the widget's geometry.                 |
 
 ### Signals
 

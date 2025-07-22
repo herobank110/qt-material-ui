@@ -17,8 +17,8 @@ class OutlinedTextField(BaseTextField):
     _FLOATING_LABEL_POS = QPoint(12, 0)
     _RESTING_LABEL_POS = QPoint(16, 24)
 
-    def __init__(self) -> None:
-        super().__init__()
+    def _create(self) -> None:
+        super()._create()
         self._container = Shape()
         self._container.corner_shape = tokens.container_shape
         self._container.opacity = 0.0

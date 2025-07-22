@@ -10,21 +10,11 @@
 from material_ui.menu import Menu, MenuItem
 
 menu = Menu()
-
-item1 = MenuItem()
-item1.text = "Item 1"
-item1.on_click.connect(lambda: print("Item 1 clicked"))
-item1.setParent(menu)
-
-item2 = MenuItem()
-item2.text = "Item 2"
-item2.on_click.connect(lambda: print("Item 2 clicked"))
-item2.setParent(menu)
-
-item3 = MenuItem()
-item3.text = "Item 3"
-item3.on_click.connect(lambda: print("Item 3 clicked"))
-item3.setParent(menu)
+MenuItem(parent=menu, text="Item 1", on_click=lambda: print("Item 1 clicked"))
+MenuItem(parent=menu, text="Item 2", on_click=lambda: print("Item 2 clicked"))
+MenuItem(parent=menu, text="Item 3", on_click=lambda: print("Item 3 clicked"))
+anchor_widget = some_widget  # Replace `some_widget` with the actual widget to anchor the menu
+menu.open(anchor_widget=anchor_widget)
 ```
 
 ## API

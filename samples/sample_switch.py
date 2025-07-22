@@ -16,10 +16,11 @@ class SampleSwitch(Component):
         super().__init__()
         self.resize(300, 200)
 
-        stack = Stack()
-        stack.alignment = Qt.AlignmentFlag.AlignCenter
-        stack.gap = 30
-        stack.sx = {"background-color": "white"}
+        stack = Stack(
+            alignment=Qt.AlignmentFlag.AlignCenter,
+            gap=30,
+            sx={"background-color": "white"},
+        )
         self.overlay_widget(stack)
 
         switch = Switch()

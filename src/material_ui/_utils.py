@@ -1,7 +1,9 @@
 """Utilities."""
 
 from collections.abc import Mapping
+from typing import cast
 
+from qtpy.QtCore import Qt
 from qtpy.QtGui import QColor
 
 from material_ui.tokens import DesignToken, resolve_token
@@ -52,3 +54,7 @@ def _stringify_sx_value(value: StyleDictValue) -> str:
 
 undefined = object()
 """A special token to indicate an undefined value."""
+
+
+default_alignment = cast("Qt.AlignmentFlag", Qt.AlignmentFlag())  # type: ignore[assignment, call-arg]
+"""An empty Qt.AlignmentFlag value."""

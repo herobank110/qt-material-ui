@@ -34,10 +34,12 @@ class SampleTypography(Component):
             "label-medium-prominent",
             "label-small",
         ]:
-            typography = Typography()
-            typography.variant = variant
-            typography.text = variant.replace("-", " ").title()
-            stack.add_widget(typography)
+            stack.add_widget(
+                Typography(
+                    variant=variant,
+                    text=variant.replace("-", " ").title(),
+                ),
+            )
 
         self.overlay_widget(stack)
 

@@ -8,8 +8,8 @@ from material_ui.tokens import md_comp_filled_tonal_button as tokens
 class FilledTonalButton(ButtonBase):
     """FilledTonalButton."""
 
-    def __init__(self) -> None:
-        super().__init__()
+    def _create(self) -> None:
+        super()._create()
         self._drop_shadow.shadow_color = tokens.container_shadow_color
         self._drop_shadow.elevation = tokens.container_elevation
         self._container.color = tokens.container_color

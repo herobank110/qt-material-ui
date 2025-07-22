@@ -1,5 +1,6 @@
 """Base class for Text Field components."""
 
+from dataclasses import field
 from typing import Literal, cast
 
 from qtpy.QtCore import QPoint, QSize, Qt
@@ -20,24 +21,22 @@ LabelState = Literal["resting", "floating"]
 class BaseTextField(Component):
     """Base class for Text Field components."""
 
-    label = use_state("")
+    label: str = use_state("")
     """Floating label text."""
 
-    value = use_state("")
+    value: str = use_state("")
     """Current value of the text field."""
 
-    trailing_icon = use_state(cast("Icon | None", None))
+    trailing_icon: Icon | None = use_state(cast("Icon | None", None))
     """Icon to show in the trailing space."""
 
-    on_change: Signal[str]
+    on_change: Signal[str] = field(init=False)
     """Emitted when the value changed."""
 
     _line_edit_sx = use_state(cast("StyleDict", {}))
     """Style to apply to line edit widget."""
 
-    def __init__(self) -> None:
-        super().__init__()
-
+    def _create(self) -> None:
         self.setCursor(Qt.CursorShape.IBeamCursor)
         self.setSizePolicy(
             QSizePolicy.Policy.Expanding,

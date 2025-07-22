@@ -7,17 +7,17 @@ from qtpy.QtGui import QColor, QPainter, QPainterPath, QPaintEvent
 
 from material_ui._component import Component, effect, use_state
 from material_ui.tokens import md_sys_color, md_sys_state
-from material_ui.tokens._utils import resolve_token
+from material_ui.tokens._utils import DesignToken, resolve_token
 
 
 class Ripple(Component):
     """Ripple to overlay on a widget when pressed."""
 
-    ripple_origin = use_state(cast("QPointF | None", None))
-    color = use_state(md_sys_color.primary)
-    opacity = use_state(md_sys_state.pressed_state_layer_opacity)
+    ripple_origin: QPointF | None = use_state(cast("QPointF | None", None))
+    color: DesignToken = use_state(md_sys_color.primary)
+    opacity: DesignToken = use_state(md_sys_state.pressed_state_layer_opacity)
 
-    clip_half_rounded = use_state(True)
+    clip_half_rounded: bool = use_state(True)
     """Whether to clip the ripple to a half-rounded rectangle."""
 
     _opacity_value = use_state(0.0)

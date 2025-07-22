@@ -39,8 +39,7 @@ _GAP_BETWEEN_ELEMENTS_IN_ITEM = 12
 class Menu(Component):
     """A popup menu that displays a list of selectable items."""
 
-    def __init__(self) -> None:
-        super().__init__()
+    def _create(self) -> None:
         self.setWindowFlags(
             Qt.WindowType.Popup  # automatically closed on click outside
             | Qt.WindowType.NoDropShadowWindowHint  # use custom drop shadow
@@ -110,10 +109,10 @@ class Menu(Component):
 class MenuItem(Component):
     """A single menu item."""
 
-    text = use_state("")
+    text: str = use_state("")
     """Text displayed in the menu item."""
 
-    leading_icon = use_state(cast("Icon | None", None))
+    leading_icon: Icon | None = use_state(cast("Icon | None", None))
     """Icon to go at the start of the item."""
 
     selected = use_state(False)
@@ -125,36 +124,35 @@ class MenuItem(Component):
         easing=QEasingCurve.Type.InOutCubic,
     )
 
-    def __init__(self) -> None:
-        super().__init__()
+    def _create(self) -> None:
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setFixedHeight(resolve_token(tokens.list_item_container_height))
 
-        row = Row()
-        row.alignment = Qt.AlignmentFlag.AlignLeading | Qt.AlignmentFlag.AlignVCenter
-        row.margins = QMargins(_LEFT_RIGHT_PADDING, 0, _LEFT_RIGHT_PADDING, 0)
-        row.gap = _GAP_BETWEEN_ELEMENTS_IN_ITEM
+        row = Row(
+            alignment=Qt.AlignmentFlag.AlignLeading | Qt.AlignmentFlag.AlignVCenter,
+            margins=QMargins(_LEFT_RIGHT_PADDING, 0, _LEFT_RIGHT_PADDING, 0),
+            gap=_GAP_BETWEEN_ELEMENTS_IN_ITEM,
+        )
 
         self._leading_icon_wrapper = Component()
         row.add_widget(self._leading_icon_wrapper)
 
-        self._label = Typography()
-        self._label.text = self.text
-        self._label.font_family = tokens.list_item_label_text_font
-        self._label.font_size = tokens.list_item_label_text_size
-        self._label.font_weight = tokens.list_item_label_text_weight
-        self._label.alignment = (
-            Qt.AlignmentFlag.AlignLeading | Qt.AlignmentFlag.AlignVCenter
+        self._label = Typography(
+            font_family=tokens.list_item_label_text_font,
+            font_size=tokens.list_item_label_text_size,
+            font_weight=tokens.list_item_label_text_weight,
+            alignment=(Qt.AlignmentFlag.AlignLeading | Qt.AlignmentFlag.AlignVCenter),
         )
+        self._label.text = self.text  # bind
         row.add_widget(self._label)
 
-        self._state_layer = Shape()
-        self._state_layer.setParent(self)
-        self._state_layer.opacity = self._state_layer_opacity
+        self._state_layer = Shape(parent=self)
+        self._state_layer.opacity = self._state_layer_opacity  # bind
 
-        self._ripple = Ripple()
-        self._ripple.color = tokens.list_item_pressed_state_layer_color
-        self._ripple.clip_half_rounded = False
+        self._ripple = Ripple(
+            color=tokens.list_item_pressed_state_layer_color,
+            clip_half_rounded=False,
+        )
         self._state_layer.overlay_widget(self._ripple)
 
         self.overlay_widget(row)

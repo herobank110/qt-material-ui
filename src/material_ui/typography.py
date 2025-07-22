@@ -1,17 +1,15 @@
-from typing import TYPE_CHECKING, Literal, cast
+from typing import Literal, cast
 
 from qtpy.QtCore import Qt
-from qtpy.QtGui import QFont
+from qtpy.QtGui import QColor, QFont
 from qtpy.QtWidgets import QLabel
 
 from material_ui._component import Component, effect, use_state
 from material_ui._font_utils import install_default_fonts
+from material_ui._utils import default_alignment
 from material_ui.theming.theme_hook import ThemeHook
 from material_ui.tokens import md_sys_color, md_sys_typescale
 from material_ui.tokens._utils import DesignToken, resolve_token, resolve_token_or_value
-
-if TYPE_CHECKING:
-    from qtpy.QtGui import QColor
 
 TypographyVariant = Literal[
     "display-large",
@@ -122,30 +120,32 @@ _VARIANT_SETTINGS_MAPPING: dict[
 class Typography(Component):
     """Typography helps make writing legible and beautiful."""
 
-    text = use_state("")
+    text: str = use_state("")
     """The writing to display."""
 
-    color = use_state(cast("DesignToken | QColor", md_sys_color.on_surface))
+    color: DesignToken | QColor = use_state(
+        cast("DesignToken | QColor", md_sys_color.on_surface),
+    )
     """Text color."""
 
-    variant = use_state(cast("TypographyVariant | None", None))
+    variant: TypographyVariant | None = use_state(
+        cast("TypographyVariant | None", None),
+    )
     """Typography variant to control the font values from a preset."""
 
-    font_family = use_state(md_sys_typescale.body_medium_font)
+    font_family: DesignToken = use_state(md_sys_typescale.body_medium_font)
     """Font family."""
 
-    font_size = use_state(md_sys_typescale.body_medium_size)
+    font_size: DesignToken = use_state(md_sys_typescale.body_medium_size)
     """Font size defined by a design token. Units are in DP."""
 
-    font_weight = use_state(md_sys_typescale.body_medium_weight)
+    font_weight: DesignToken = use_state(md_sys_typescale.body_medium_weight)
     """Font weight defined by a design token."""
 
-    alignment = use_state(cast("Qt.AlignmentFlag", Qt.AlignmentFlag()))  # type: ignore[call-arg]
+    alignment: Qt.AlignmentFlag = use_state(default_alignment)
     """Text alignment within the widget's geometry."""
 
-    def __init__(self) -> None:
-        super().__init__()
-
+    def _create(self) -> None:
         install_default_fonts()
 
         self._label = QLabel()

@@ -10,9 +10,10 @@
 from material_ui.buttons import ElevatedButton
 # also available: FilledButton, FilledTonalButton, OutlinedButton, TextButton
 
-button = ElevatedButton()
-button.text = "Hello"
-button.clicked.connect(lambda: print("Clicked!"))
+ElevatedButton(
+    text="Hello",
+    clicked=lambda: print("Clicked!"),
+)
 ```
 
 ## API

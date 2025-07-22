@@ -12,9 +12,13 @@ from material_ui.progress_indicators import CircularProgress, LinearProgress
 
 spinner = CircularProgress()
 spinner.value = 0.5
+# ... work
+spinner.value = 0.6
+# ...
+spinner.value = 1.0
 
-loading_bar = LinearProgress()
-loading_bar.indeterminate = True
+
+LinearProgress(indeterminate=True)
 ```
 
 ## API

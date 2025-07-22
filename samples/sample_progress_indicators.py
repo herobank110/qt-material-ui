@@ -18,25 +18,13 @@ class ProgressIndicatorsSample(Component):
         row = Row()
         row.gap = 20
 
-        circular = CircularProgress()
-        circular.value = 0.75
-        row.add_widget(circular)
-
-        circular_indeterminate = CircularProgress()
-        circular_indeterminate.indeterminate = True
-        row.add_widget(circular_indeterminate)
+        row.add_widget(CircularProgress(value=0.75))
+        row.add_widget(CircularProgress(indeterminate=True))
 
         stack = Stack()
         stack.setFixedWidth(100)
-
-        linear = LinearProgress()
-        linear.value = 0.75
-        stack.add_widget(linear)
-
-        linear_indeterminate = LinearProgress()
-        linear_indeterminate.indeterminate = True
-        stack.add_widget(linear_indeterminate)
-
+        stack.add_widget(LinearProgress(value=0.75))
+        stack.add_widget(LinearProgress(indeterminate=True))
         row.add_widget(stack)
 
         self.overlay_widget(row, margins=QMargins(40, 30, 40, 30))

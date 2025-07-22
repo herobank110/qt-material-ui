@@ -21,15 +21,12 @@ class SampleTextFields(Component):
         row.margins = QMargins(40, 30, 40, 30)
         self.overlay_widget(row)
 
-        filled = FilledTextField()
-        filled.label = "Filled"
-        filled.value = ""
-        row.add_widget(filled)
-
-        outlined = OutlinedTextField()
-        outlined.label = "Outlined"
-        outlined.value = ""
-        row.add_widget(outlined)
+        row.add_widget(
+            FilledTextField(label="Filled", value=""),
+        )
+        row.add_widget(
+            OutlinedTextField(label="Outlined", value=""),
+        )
 
         # Take the initial focus away from the first text field.
         self.setFocus()

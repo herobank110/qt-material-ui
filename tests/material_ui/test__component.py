@@ -2,7 +2,13 @@ import pytest
 from pytest_mock import MockerFixture
 from pytestqt.qtbot import QtBot
 
-from material_ui._component import Component, EffectDependencyError, effect, use_state
+from material_ui._component import (
+    Component,
+    EffectDependencyError,
+    Signal,
+    effect,
+    use_state,
+)
 from material_ui.hook import Hook
 
 
@@ -26,6 +32,60 @@ def test_Component_state_bind_on_assignment(qtbot: QtBot):
     c1.a = "hi"
     assert c1.a == "hi"
     assert c2.a == "hi"
+
+
+def test_Component_state_kw_args_init_custom_state(qtbot: QtBot):
+    class C(Component):
+        a: str = use_state("")
+
+    c1 = C(a="hi")
+    assert c1.a == "hi"
+    qtbot.add_widget(c1)
+
+
+def test_Component_state_kw_args_init_parent(qtbot: QtBot):
+    c1 = Component(a="hi")
+    qtbot.add_widget(c1)
+    c2 = Component(parent=c1)
+    assert c2.parentWidget() is c1
+
+
+def test_Component_state_kw_args_init_with_effect_dependency_custom_create(
+    qtbot: QtBot,
+    mocker: MockerFixture,
+):
+    stub = mocker.stub()
+
+    class C(Component):
+        a: str = use_state("")
+
+        def _create(self) -> None:
+            self.x = 1
+
+        @effect(a)
+        def a_effect(self) -> None:
+            assert self.x == 1
+            stub()
+
+    c1 = C(a="hi")
+    assert stub.called
+    assert c1.a == "hi"
+    qtbot.add_widget(c1)
+
+
+def test_Component_state_kw_args_init_assign_to_signal_conversion(
+    qtbot: QtBot,
+    mocker: MockerFixture,
+):
+    stub = mocker.stub()
+
+    class C(Component):
+        a: Signal[int]
+
+    c1 = C(a=stub)
+    c1.a.emit(11)
+    stub.assert_called_with(11)
+    qtbot.add_widget(c1)
 
 
 def test_Component_effect_called_initially_and_on_change(

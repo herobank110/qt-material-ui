@@ -17,9 +17,7 @@ class IconsSample(Component):
     filled = use_state(False)
     icon_style = use_state("outlined")
 
-    def __init__(self) -> None:
-        super().__init__()
-
+    def _create(self) -> None:
         self.sx = {"background-color": md_sys_color.background}
 
         main_row = Row()
@@ -29,32 +27,29 @@ class IconsSample(Component):
         icon_grid_layout = QGridLayout(icon_grid)
         self._icons: list[Icon] = []
         for i, icon_name in enumerate(ICONS):
-            icon = Icon()
-            icon.icon_name = icon_name
-            icon.filled = self.filled
+            icon = Icon(icon_name=icon_name)
+            icon.filled = self.filled  # bind
             icon_grid_layout.addWidget(icon, i // 3, i % 3)
             self._icons.append(icon)
 
         main_row.add_widget(icon_grid)
 
-        filters_box = Stack()
-        filters_box.margins = QMargins(10, 10, 10, 10)
-        filters_box.sx = {"background-color": md_sys_color.surface_container}
+        filters_box = Stack(
+            margins=QMargins(10, 10, 10, 10),
+            sx={"background-color": md_sys_color.surface_container},
+        )
 
-        filled_row = Row()
-        filled_row.gap = 5
-
-        filled_switch = Switch()
-        filled_switch.selected = self.filled
-        filled_switch.on_change.connect(self.set_state("filled"))
+        filled_row = Row(gap=5)
+        filled_switch = Switch(on_change=self.set_state("filled"))
+        filled_switch.selected = self.filled  # bind
         filled_row.add_widget(filled_switch)
-
-        filled_label = Typography()
-        filled_label.variant = "body-large"
-        filled_label.alignment = Qt.AlignmentFlag.AlignVCenter
-        filled_label.text = "Filled"
-        filled_row.add_widget(filled_label)
-
+        filled_row.add_widget(
+            Typography(
+                variant="body-large",
+                alignment=Qt.AlignmentFlag.AlignVCenter,
+                text="Filled",
+            ),
+        )
         filters_box.add_widget(filled_row)
 
         main_row.add_widget(filters_box)

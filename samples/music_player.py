@@ -35,9 +35,10 @@ class PlaybackControls(Component):
 
         self.setMinimumWidth(290)
 
-        background = Shape()
-        background.corner_shape = md_sys_shape.corner_extra_large
-        background.color = md_sys_color.surface_container
+        background = Shape(
+            corner_shape=md_sys_shape.corner_extra_large,
+            color=md_sys_color.surface_container,
+        )
 
         stack = Stack(
             alignment=Qt.AlignmentFlag.AlignCenter,
@@ -45,35 +46,39 @@ class PlaybackControls(Component):
             gap=15,
         )
 
-        self._track_name_label = Typography()
-        self._track_name_label.variant = "title-medium"
-        self._track_name_label.alignment = Qt.AlignmentFlag.AlignCenter
-        self._track_name_label.text = "Track Name"
+        self._track_name_label = Typography(
+            variant="title-medium",
+            alignment=Qt.AlignmentFlag.AlignCenter,
+            text="Track Name",
+        )
         stack.add_widget(self._track_name_label)
 
-        buttons_row = Row()
-        buttons_row.alignment = Qt.AlignmentFlag.AlignCenter
-        buttons_row.gap = 30
+        buttons_row = Row(
+            alignment=Qt.AlignmentFlag.AlignCenter,
+            gap=30,
+        )
 
-        self._skip_previous_button = Icon()
-        self._skip_previous_button.icon_name = "skip_previous"
-        self._skip_previous_button.clicked.connect(self.on_click_skip_previous)
+        self._skip_previous_button = Icon(
+            icon_name="skip_previous",
+            clicked=self.on_click_skip_previous,
+        )
         buttons_row.add_widget(self._skip_previous_button)
 
-        self._play_pause_button = Icon()
-        self._play_pause_button.clicked.connect(self.on_click_play_pause)
+        self._play_pause_button = Icon(clicked=self.on_click_play_pause)
         buttons_row.add_widget(self._play_pause_button)
 
-        self._skip_next_button = Icon()
-        self._skip_next_button.icon_name = "skip_next"
-        self._skip_next_button.clicked.connect(self.on_click_skip_next)
+        self._skip_next_button = Icon(
+            icon_name="skip_next",
+            clicked=self.on_click_skip_next,
+        )
         buttons_row.add_widget(self._skip_next_button)
 
         stack.add_widget(buttons_row)
 
-        self._seek_bar = Shape()
-        self._seek_bar.color = md_sys_color.primary
-        self._seek_bar.corner_shape = md_sys_shape.corner_full
+        self._seek_bar = Shape(
+            color=md_sys_color.primary,
+            corner_shape=md_sys_shape.corner_full,
+        )
         self._seek_bar.setFixedHeight(11)
         self._seek_bar.setSizePolicy(
             QSizePolicy.Policy.Expanding,
@@ -81,8 +86,7 @@ class PlaybackControls(Component):
         )
         stack.add_widget(self._seek_bar)
 
-        self._loading_bar = LinearProgress()
-        self._loading_bar.indeterminate = True
+        self._loading_bar = LinearProgress(indeterminate=True)
         stack.add_widget(self._loading_bar)
 
         background.overlay_widget(stack)
