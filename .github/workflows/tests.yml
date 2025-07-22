@@ -3,6 +3,10 @@
 name: tests
 
 on:
+  workflow_run:
+    workflows: ["Build CI Tests Image"]
+    types:
+      - completed
   push:
     branches: ["main"]
   pull_request:
@@ -12,7 +16,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/${{ github.repository }}/ci-tests:31-docker-container-ci-image-build-test
